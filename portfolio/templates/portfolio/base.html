@@ -23,12 +23,14 @@
                 <span>My Portfolio</span>
             </a>
             <div class="space-x-4">
-                <a href="{% url 'portfolio:index' %}#about" class="text-gray-600 hover:text-blue-600">About</a>
-                <a href="{% url 'portfolio:index' %}#skills" class="text-gray-600 hover:text-blue-600">Skills</a>
+                <a href="{% url 'portfolio:about_me' %}" class="text-gray-600 hover:text-blue-600">About</a>
                 {# Update Projects link to point to the new page #}
+                <a href="{% url 'skills:skill_list' %}" class="text-gray-600 hover:text-blue-600">Skills</a>
                 <a href="{% url 'portfolio:all_projects' %}" class="text-gray-600 hover:text-blue-600">Projects</a>
                 <a href="{% url 'portfolio:certificates' %}" class="text-gray-600 hover:text-blue-600">Certificates</a>
-                <a href="{% url 'portfolio:index' %}#contact" class="text-gray-600 hover:text-blue-600">Contact</a>
+                <a href="{% url 'blog:blog_post_list' %}" class="text-gray-600 hover:text-blue-600">Blog</a> {# ADDED BLOG LINK #}
+                {# Update Contact link #}
+                <a href="{% url 'portfolio:contact' %}" class="text-gray-600 hover:text-blue-600">Contact</a>
             </div>
         </div>
     </nav>
@@ -40,8 +42,8 @@
 
     <footer class="bg-gray-900 text-gray-400 py-6 mt-auto">
         <div class="container mx-auto px-6 text-center text-sm">
-            <p>&copy; {% now "Y" %} Your Name. All rights reserved.</p>
-            <p>Built with <a href="https://www.djangoproject.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white">Django</a> & <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white">Tailwind CSS</a>.</p>
+            <p>&copy; {% now "Y" %} Julian Stone. All rights reserved.</p>
+            <p>Built by Julian, using <a href="https://www.djangoproject.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white">Django</a> & <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white">Tailwind CSS</a>.</p>
         </div>
     </footer>
 

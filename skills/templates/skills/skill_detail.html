@@ -1,0 +1,31 @@
+{# skills/templates/skills/skill_detail.html #}
+{% extends 'portfolio/base.html' %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <article class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-3">{{ skill.name }}</h1>
+        {% if skill.category %}
+            <p class="text-sm text-gray-500 mb-6">Category: {{ skill.category.name }}</p>
+        {% endif %}
+
+        {% if skill.description %}
+            <h2 class="text-2xl font-semibold text-gray-700 mt-6 mb-4">Details & Experience</h2>
+            <div class="prose prose-indigo max-w-none text-gray-700 leading-relaxed">
+                {{ skill.description|linebreaks }} {# Use linebreaks or safe filter #}
+            </div>
+        {% else %}
+             <p class="text-gray-600 italic mt-6">No detailed description provided for this skill.</p>
+        {% endif %}
+
+        {# Optional: Add related projects/posts here later #}
+
+    </article>
+
+    <div class="text-center mt-12">
+        <a href="{% url 'skills:skill_list' %}" class="text-blue-600 hover:underline">&larr; Back to All Skills</a>
+    </div>
+</div>
+{% endblock %}

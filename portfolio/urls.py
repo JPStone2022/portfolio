@@ -14,4 +14,9 @@ urlpatterns = [
     path('certificates/', views.certificates_view, name='certificates'),
     # Add path for the all projects page
     path('projects/', views.all_projects_view, name='all_projects'),
+    # Add path for the contact page view
+    path('contact/', views.contact_view, name='contact'),
+    # Add path for the detailed about me page
+    path('about-me/', views.about_me_view, name='about_me'),
+
 ]

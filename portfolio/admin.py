@@ -1,7 +1,7 @@
 # portfolio/admin.py
 
 from django.contrib import admin
-from .models import Project, Certificate # Import both models
+from .models import Project, Certificate # Import BlogPost # Import both models
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):

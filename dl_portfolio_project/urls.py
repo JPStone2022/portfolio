@@ -7,6 +7,8 @@ from django.conf.urls.static import static # Import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('blog/', include('blog.urls', namespace='blog')), # Include blog URLs under /blog/
+    path('skills/', include('skills.urls', namespace='skills')), # Include skills URLs
     # Include URLs from the portfolio app
     path('', include('portfolio.urls')), # Make sure 'portfolio.urls' is correct
 ]

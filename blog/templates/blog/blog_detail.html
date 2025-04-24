@@ -1,0 +1,26 @@
+{# blog/templates/blog/blog_detail.html #}
+{% extends 'portfolio/base.html' %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio Blog{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <article class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-3">{{ post.title }}</h1>
+        <p class="text-sm text-gray-500 mb-6">
+            Published {{ post.published_date|naturaltime }}
+            {# Optional: Add author if using author field #}
+            {# by {{ post.author.get_full_name|default:post.author.username }} #}
+        </p>
+        <div class="prose prose-indigo max-w-none text-gray-700 leading-relaxed">
+            {{ post.content|safe }} {# Use safe if content contains HTML #}
+            {# Or use linebreaks: {{ post.content|linebreaks }} #}
+        </div>
+    </article>
+
+    <div class="text-center mt-12">
+        <a href="{% url 'blog:blog_post_list' %}" class="text-blue-600 hover:underline">&larr; Back to Blog List</a>
+    </div>
+</div>
+{% endblock %}
