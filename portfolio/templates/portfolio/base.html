@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load static %} <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Deep Learning Portfolio{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'portfolio/css/custom.css' %}">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-slate-50 text-gray-800 leading-normal flex flex-col min-h-screen">
+
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="{% url 'portfolio:index' %}" class="flex items-center space-x-2 text-xl font-bold text-gray-800 hover:text-blue-600 transition duration-300">
+                <img src="{% static 'portfolio/images/logo.png' %}" alt="Site Logo" class="h-8 w-auto"
+                     onerror="this.onerror=null; this.style.display='none';">
+                <span>My Portfolio</span>
+            </a>
+            <div class="space-x-4">
+                <a href="{% url 'portfolio:index' %}#about" class="text-gray-600 hover:text-blue-600">About</a>
+                <a href="{% url 'portfolio:index' %}#skills" class="text-gray-600 hover:text-blue-600">Skills</a>
+                {# Update Projects link to point to the new page #}
+                <a href="{% url 'portfolio:all_projects' %}" class="text-gray-600 hover:text-blue-600">Projects</a>
+                <a href="{% url 'portfolio:certificates' %}" class="text-gray-600 hover:text-blue-600">Certificates</a>
+                <a href="{% url 'portfolio:index' %}#contact" class="text-gray-600 hover:text-blue-600">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 py-6 mt-auto">
+        <div class="container mx-auto px-6 text-center text-sm">
+            <p>&copy; {% now "Y" %} Your Name. All rights reserved.</p>
+            <p>Built with <a href="https://www.djangoproject.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white">Django</a> & <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white">Tailwind CSS</a>.</p>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+    </body>
+</html>

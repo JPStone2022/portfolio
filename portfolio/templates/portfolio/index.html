@@ -1,0 +1,200 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title|default:"Deep Learning Portfolio - Home" }}{% endblock %}
+
+{% block content %}
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20 md:py-32">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">Julian Stone</h1>
+            <p class="text-xl md:text-2xl mb-8">Passionate Deep Learning Engineer & Researcher</p>
+            {# Link hero button to the All Projects page #}
+            <a href="{% url 'portfolio:all_projects' %}" class="bg-white text-blue-600 font-semibold py-3 px-6 rounded-lg shadow hover:bg-gray-100 transition duration-300">View My Work</a>
+        </div>
+    </header>
+
+    <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-10">About Me</h2>
+            <div class="max-w-3xl mx-auto text-center text-lg text-gray-700 space-y-4">
+                <p>
+                    Introduce yourself here. Talk about your passion for deep learning, your background (education/experience),
+                    and what drives you. Mention key areas of interest within DL (e.g., Computer Vision, NLP, Reinforcement Learning, Generative Models).
+                </p>
+                <p>
+                    Highlight any significant achievements, research contributions, or unique skills that set you apart.
+                    Keep it concise but engaging.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12">Technical Skills</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                 <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700">Deep Learning Frameworks</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2">
+                        <li>TensorFlow / Keras</li>
+                        <li>PyTorch</li>
+                        <li>Hugging Face Transformers</li>
+                        <li>Scikit-learn (for ML fundamentals)</li>
+                        <li>Other relevant libraries (e.g., OpenCV, NLTK, Spacy)</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700">Programming & Tools</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2">
+                        <li>Python (Expert)</li>
+                        <li>SQL / NoSQL Databases</li>
+                        <li>Git / Version Control</li>
+                        <li>Docker / Containerization</li>
+                        <li>Cloud Platforms (AWS, GCP, Azure)</li>
+                        <li>Linux / Bash Scripting</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700">Domains & Concepts</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2">
+                        <li>Computer Vision (CNNs, Object Detection, Segmentation)</li>
+                        <li>Natural Language Processing (RNNs, LSTMs, Transformers, BERT)</li>
+                        <li>Reinforcement Learning</li>
+                        <li>Generative Models (GANs, VAEs)</li>
+                        <li>Model Deployment (e.g., TF Serving, Flask/Django APIs)</li>
+                        <li>Data Visualization (Matplotlib, Seaborn, Plotly)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Use the new context variable 'featured_projects' #}
+    {% if featured_projects %}
+    <section id="projects" class="py-16 {% if featured_certificates %}bg-gray-50{% else %}bg-white{% endif %}">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12">Featured Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {# Loop through featured_projects instead of projects #}
+                {% for project in featured_projects %}
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden project-card transition duration-300 ease-in-out flex flex-col">
+                        <img src="{{ project.image_url|default:'https://placehold.co/600x400/CCCCCC/FFFFFF?text=Project+Image' }}"
+                             alt="{{ project.title }} Visual"
+                             class="w-full h-48 object-cover"
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x400/E0E0E0/BDBDBD?text=Image+Not+Found';">
+
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="text-xl font-semibold mb-2">
+                                <a href="{% url 'portfolio:project_detail' slug=project.slug %}" class="text-gray-800 hover:text-blue-600 transition duration-300">
+                                    {{ project.title }}
+                                </a>
+                            </h3>
+                            <p class="text-gray-700 mb-4 flex-grow">{{ project.description|truncatewords:30 }}</p>
+                            <div class="flex justify-between items-center mb-4">
+                                {% if project.github_url %}
+                                    <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium text-sm">View Code</a>
+                                {% else %}
+                                    <span>&nbsp;</span>
+                                {% endif %}
+                                {% if project.demo_url %}
+                                    <a href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer" class="text-green-600 hover:underline font-medium text-sm">Live Demo</a>
+                                {% elif project.paper_url %}
+                                     <a href="{{ project.paper_url }}" target="_blank" rel="noopener noreferrer" class="text-purple-600 hover:underline font-medium text-sm">Read Paper</a>
+                                {% else %}
+                                    <span>&nbsp;</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="mt-auto pt-4 border-t border-gray-200">
+                                <span class="text-sm font-medium text-gray-600">Tech:</span>
+                                {% for tech in project.get_technologies_list %}
+                                    {# Simple logic for assigning colors based on common tech keywords #}
+                                    {% if 'PyTorch' in tech or 'TensorFlow' in tech or 'Keras' in tech %}
+                                        {% with bg_color='bg-blue-100' text_color='text-blue-800' %}
+                                        <span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>
+                                        {% endwith %}
+                                    {% elif 'CNN' in tech or 'Computer Vision' in tech or 'OpenCV' in tech %}
+                                        {% with bg_color='bg-green-100' text_color='text-green-800' %}
+                                        <span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>
+                                        {% endwith %}
+                                    {% elif 'NLP' in tech or 'BERT' in tech or 'Transformer' in tech or 'Hugging Face' in tech %}
+                                         {% with bg_color='bg-indigo-100' text_color='text-indigo-800' %}
+                                        <span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>
+                                         {% endwith %}
+                                    {% elif 'GAN' in tech or 'Generative' in tech %}
+                                         {% with bg_color='bg-purple-100' text_color='text-purple-800' %}
+                                        <span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>
+                                         {% endwith %}
+                                    {% else %}
+                                         {% with bg_color='bg-gray-200' text_color='text-gray-800' %}
+                                        <span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>
+                                         {% endwith %}
+                                    {% endif %}
+                                {% empty %}
+                                    <span class="ml-2 text-sm text-gray-500">N/A</span>
+                                {% endfor %}
+                            </div>
+                            </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {# Add link to the All Projects page #}
+            <div class="text-center mt-10">
+                 <a href="{% url 'portfolio:all_projects' %}" class="text-blue-600 hover:underline font-semibold">View All Projects &rarr;</a>
+            </div>
+        </div>
+        <hr>
+    </section>
+    {% endif %}
+
+
+    {% if featured_certificates %}
+    <section id="featured-certificates" class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+
+            <h2 class="text-3xl font-bold text-center mb-12">Featured Certificates</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                {% for cert in featured_certificates %}
+                    <div class="bg-gray-50 p-4 rounded-lg shadow-md flex flex-col items-center text-center transition duration-300 hover:shadow-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">{{ cert.title }}</h3>
+                        <p class="text-sm text-gray-600 mb-2">Issued by: <span class="font-medium">{{ cert.issuer }}</span></p>
+                        {% if cert.date_issued %}
+                            <p class="text-xs text-gray-500 mb-3">{{ cert.date_issued|date:"F Y" }}</p>
+                        {% endif %}
+                        {% if cert.certificate_file %}
+                            <a href="{{ cert.certificate_file.url }}"
+                               target="_blank" rel="noopener noreferrer" class="mt-auto text-blue-600 hover:underline font-medium text-sm">
+                                View Certificate &rarr;
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-center mt-10">
+                 <a href="{% url 'portfolio:certificates' %}" class="text-blue-600 hover:underline font-semibold">View All Certificates &rarr;</a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <section id="contact" class="py-16 bg-gray-800 text-gray-200">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-8">Get In Touch</h2>
+            <p class="text-lg mb-8 max-w-2xl mx-auto">
+                I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.
+                Feel free to reach out!
+            </p>
+            <div class="flex justify-center space-x-6 text-lg">
+                <a href="mailto:your.email@example.com" class="hover:text-blue-400 transition duration-300">your.email@example.com</a>
+                <span>|</span>
+                <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition duration-300">LinkedIn</a>
+                <span>|</span>
+                <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition duration-300">GitHub</a>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+{% endblock %}

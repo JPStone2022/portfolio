@@ -1,0 +1,88 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}All Projects - Portfolio{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+
+    <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-12">All Projects</h1>
+
+    {% if projects %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {% for project in projects %}
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden project-card transition duration-300 ease-in-out flex flex-col">
+                    <img src="{{ project.image_url|default:'https://placehold.co/600x400/CCCCCC/FFFFFF?text=Project+Image' }}"
+                         alt="{{ project.title }} Visual"
+                         class="w-full h-48 object-cover"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/E0E0E0/BDBDBD?text=Image+Not+Found';">
+
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-semibold mb-2">
+                            <a href="{% url 'portfolio:project_detail' slug=project.slug %}" class="text-gray-800 hover:text-blue-600 transition duration-300">
+                                {{ project.title }}
+                            </a>
+                        </h3>
+                        <p class="text-gray-700 mb-4 flex-grow">{{ project.description|truncatewords_html:50 }}</p> {# Show more words than index #}
+
+                        <div class="flex justify-between items-center mb-4">
+                            {% if project.github_url %}
+                                <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium text-sm">View Code</a>
+                            {% else %}
+                                <span>&nbsp;</span>
+                            {% endif %}
+                            {% if project.demo_url %}
+                                <a href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer" class="text-green-600 hover:underline font-medium text-sm">Live Demo</a>
+                            {% elif project.paper_url %}
+                                 <a href="{{ project.paper_url }}" target="_blank" rel="noopener noreferrer" class="text-purple-600 hover:underline font-medium text-sm">Read Paper</a>
+                            {% else %}
+                                <span>&nbsp;</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-auto pt-4 border-t border-gray-200">
+                            <span class="text-sm font-medium text-gray-600">Tech:</span>
+                            {% for tech in project.get_technologies_list %}
+                                {# Simple logic for assigning colors based on common tech keywords #}
+                                {% if 'PyTorch' in tech or 'TensorFlow' in tech or 'Keras' in tech %}
+                                    {% with bg_color='bg-blue-100' text_color='text-blue-800' %}
+                                    <span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>
+                                    {% endwith %}
+                                {% elif 'CNN' in tech or 'Computer Vision' in tech or 'OpenCV' in tech %}
+                                    {% with bg_color='bg-green-100' text_color='text-green-800' %}
+                                    <span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>
+                                    {% endwith %}
+                                {% elif 'NLP' in tech or 'BERT' in tech or 'Transformer' in tech or 'Hugging Face' in tech %}
+                                     {% with bg_color='bg-indigo-100' text_color='text-indigo-800' %}
+                                    <span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>
+                                    {% endwith %}
+                                {% elif 'GAN' in tech or 'Generative' in tech %}
+                                     {% with bg_color='bg-purple-100' text_color='text-purple-800' %}
+                                    <span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>
+                                    {% endwith %}
+                                {% else %}
+                                     {% with bg_color='bg-gray-200' text_color='text-gray-800' %}
+                                    <span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>
+                                     {% endwith %}
+                                {% endif %}
+                            {% empty %}
+                                <span class="ml-2 text-sm text-gray-500">N/A</span>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-4 text-right">
+                           <a href="{% url 'portfolio:project_detail' slug=project.slug %}" class="text-sm text-blue-600 hover:underline font-medium">View Details &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-gray-600">No projects have been added yet.</p>
+    {% endif %}
+
+    <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 hover:underline">&larr; Back to Home</a>
+    </div>
+
+</div>
+{% endblock %}
