@@ -9,19 +9,27 @@ load_dotenv() # Loads variables from .env file into environment
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/stable/howto/deployment/checklist/
+# Construct the path to the .env file
+dotenv_path = BASE_DIR / '.env'
+
+# Load .env only if it exists (indicating development)
+if dotenv_path.is_file():
+    print("Development environment detected: Loading .env file.") # Optional: for confirmation
+    load_dotenv(dotenv_path=dotenv_path)
+else:
+    print("Production or CI environment detected: Not loading .env file.") # Optional
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Read secret key from environment variable in production
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-=your-default-development-key-here') # Replace fallback key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True' # Default to True for dev, set env var to 'False' in prod
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True' # Default to True for dev, set env var to 'False' in prod
 
 # Update ALLOWED_HOSTS based on environment
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split(' ')
 
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 # Application definition
 
