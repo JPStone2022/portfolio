@@ -32,7 +32,20 @@ class Project(models.Model):
         help_text="Important takeaways, insights, or lessons learned from the project."
     )
     # --- End New Fields ---
-
+    # --- New Field for Code Snippet ---
+    code_snippet = models.TextField(
+        blank=True,
+        help_text="An interesting code snippet related to the project (paste code here)."
+    )
+    # Optional: Field to specify the language for syntax highlighting
+    code_language = models.CharField(
+        max_length=50,
+        blank=True,
+        default='python', # Default to python
+        help_text="Language for syntax highlighting (e.g., python, javascript, html, css, sql)."
+    )
+    # --- End New Field ---
+    
     # Deprecated field - keep for now if data migration is needed later
     technologies = models.CharField(
         max_length=300,

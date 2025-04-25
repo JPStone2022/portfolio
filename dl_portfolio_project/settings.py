@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize', # For template filters like naturaltime
+    'django.contrib.sitemaps', # Add this line
     'portfolio', # Your portfolio app
     'blog',      # Your blog app
     'skills',    # Your skills app

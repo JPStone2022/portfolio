@@ -1,26 +1,29 @@
 {# blog/templates/blog/blog_detail.html #}
-{% extends 'portfolio/base.html' %}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
 {% load humanize %}
 
-{% block title %}{{ page_title }} - Portfolio Blog{% endblock %}
+{% block title %}{{ post.title }} - Portfolio Blog{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-6 py-12">
-    <article class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-3">{{ post.title }}</h1>
-        <p class="text-sm text-gray-500 mb-6">
+    {# Dark mode background/shadow/text for main article box #}
+    <article class="max-w-3xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-blue-900/20 transition-colors duration-300 ease-in-out">
+        {# Dark mode text #}
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-3">{{ post.title }}</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
             Published {{ post.published_date|naturaltime }}
             {# Optional: Add author if using author field #}
-            {# by {{ post.author.get_full_name|default:post.author.username }} #}
+            {# by <span class="font-medium text-gray-700 dark:text-gray-300">{{ post.author.get_full_name|default:post.author.username }}</span> #}
         </p>
-        <div class="prose prose-indigo max-w-none text-gray-700 leading-relaxed">
+        {# Add dark:prose-invert for automatic dark mode typography #}
+        <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
             {{ post.content|safe }} {# Use safe if content contains HTML #}
             {# Or use linebreaks: {{ post.content|linebreaks }} #}
         </div>
     </article>
 
     <div class="text-center mt-12">
-        <a href="{% url 'blog:blog_post_list' %}" class="text-blue-600 hover:underline">&larr; Back to Blog List</a>
+        <a href="{% url 'blog:blog_post_list' %}" class="text-blue-600 dark:text-blue-400 hover:underline">&larr; Back to Blog List</a>
     </div>
 </div>
 {% endblock %}

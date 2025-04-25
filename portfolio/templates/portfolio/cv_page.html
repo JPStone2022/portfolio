@@ -6,21 +6,25 @@
 
 {% block content %}
 <div class="container mx-auto px-6 py-12">
-    <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-12">My CV / Resume</h1>
+    {# Dark mode text #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-800 dark:text-gray-100 mb-12">My CV / Resume</h1>
 
-    <div class="max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-lg shadow-lg">
+    {# Dark mode background/shadow/text #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg dark:shadow-blue-900/20 transition-colors duration-300 ease-in-out">
 
         {# Embedded PDF Viewer using iframe #}
-        <div class="mb-8 border rounded-lg overflow-hidden shadow">
+        {# Note: iframe content appearance (PDF) depends on browser/system settings, not easily styled by Tailwind #}
+        <div class="mb-8 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow">
             <iframe src="{% static 'portfolio/files/Julian-Stone_CV_Redacted.pdf' %}" {# *** UPDATE FILENAME HERE *** #}
                     width="100%"
                     height="700px" {# Adjust height as needed #}
                     style="border: none;"
                     title="CV Document Viewer">
-                <p class="p-4 text-red-600">
+                {# Fallback text dark mode styling #}
+                <p class="p-4 text-red-600 dark:text-red-400">
                     Your browser does not support embedded PDFs.
                     <a href="{% static 'portfolio/files/Julian-Stone_CV_Redacted.pdf' %}" {# *** UPDATE FILENAME HERE *** #}
-                       class="text-blue-600 hover:underline"
+                       class="text-blue-600 dark:text-blue-400 hover:underline"
                        target="_blank"
                        download>
                        Please download the PDF to view it.
@@ -29,13 +33,14 @@
             </iframe>
         </div>
 
-        {# Download Button #}
+        {# Download Button Section #}
         <div class="text-center">
-            <p class="text-sm text-gray-600 mb-4">If you would like my contact details, you can download the file directly:</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">If the preview doesn't load correctly, you can download the file directly:</p>
+            {# Dark mode button styles #}
             <a href="{% static 'portfolio/files/Julian-Stone_CV.pdf' %}" {# *** UPDATE FILENAME HERE *** #}
-               target="_blank" {# Opens the PDF in a new tab #}
-               download {# Suggests downloading the file #}
-               class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+               target="_blank"
+               download
+               class="inline-block bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
                 Download CV (PDF)
             </a>
         </div>
@@ -43,7 +48,7 @@
     </div>
 
      <div class="text-center mt-12">
-        <a href="{% url 'portfolio:index' %}" class="text-blue-600 hover:underline">&larr; Back to Home</a>
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline">&larr; Back to Home</a>
     </div>
 
 </div>

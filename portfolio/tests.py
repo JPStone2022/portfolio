@@ -249,7 +249,7 @@ class PortfolioViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200) # Should redirect back to contact page
         self.assertTemplateUsed(response, 'portfolio/contact_page.html')
-        self.assertContains(response, 'message has been sent successfully') # Check success message
+        self.assertContains(response, 'Message sent successfully! Thank you.') # Check success message
 
         # *** This assertion should now pass ***
         self.assertEqual(len(mail.outbox), 1) # Check that one email was stored in the outbox

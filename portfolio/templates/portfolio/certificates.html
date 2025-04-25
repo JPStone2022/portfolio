@@ -1,3 +1,4 @@
+{# portfolio/templates/portfolio/certificates.html #}
 {% extends 'portfolio/base.html' %}
 {% load static %}
 
@@ -6,35 +7,36 @@
 {% block content %}
 <div class="container mx-auto px-6 py-12">
 
-    <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-12">Certificates & Accomplishments</h1>
+    <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-800 dark:text-gray-100 mb-12">Certificates & Accomplishments</h1>
 
     <div class="max-w-4xl mx-auto space-y-8">
 
         {% if certificates %}
             {% for cert in certificates %}
-                <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+                {# Add dark mode background/text/border to certificate card #}
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-blue-900/20 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 transition-colors duration-300 ease-in-out">
                     <div class="flex-shrink-0 w-24 h-24">
-                        {% if cert.logo_image %}
+                        {# Display the generated thumbnail if it exists #}
+                        {% if cert.logo_image %} {# Assuming logo_image field exists #}
                             <img src="{{ cert.logo_image.url }}"
                                  alt="{{ cert.issuer }} Logo"
-                                 class="w-full h-full object-contain rounded-md border p-1">
+                                 class="w-full h-full object-contain rounded-md border border-gray-200 dark:border-gray-700 p-1 bg-white dark:bg-gray-300"> {# Added bg for contrast #}
                         {% else %}
-                            <img src="https://placehold.co/150x150/CCCCCC/FFFFFF?text=Logo"
-                                 alt="{{ cert.issuer }} Logo Placeholder"
-                                 class="w-full h-full object-contain rounded-md border p-1"
-                                 onerror="this.onerror=null; this.src='https://placehold.co/150x150/E0E0E0/BDBDBD?text=Logo';">
+                            <div class="w-full h-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-500">
+                                <span class="text-gray-500 dark:text-gray-400 text-xs">Logo</span>
+                            </div>
                         {% endif %}
                     </div>
                     <div class="flex-grow text-center md:text-left">
-                        <h2 class="text-2xl font-semibold text-gray-800 mb-1">{{ cert.title }}</h2>
-                        <p class="text-gray-600 mb-2">Issued by: <span class="font-medium">{{ cert.issuer }}</span></p>
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-1">{{ cert.title }}</h2>
+                        <p class="text-gray-600 dark:text-gray-400 mb-2">Issued by: <span class="font-medium text-gray-700 dark:text-gray-300">{{ cert.issuer }}</span></p>
                         {% if cert.date_issued %}
-                            <p class="text-sm text-gray-500 mb-3">Date Issued: {{ cert.date_issued|date:"F Y" }}</p> {# Format date #}
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Date Issued: {{ cert.date_issued|date:"F Y" }}</p> {# Format date #}
                         {% endif %}
                         {# Link to the uploaded certificate file if it exists #}
                         {% if cert.certificate_file %}
-                            <a href="{{ cert.certificate_file.url }}" {# Use .url for FileField #}
-                               target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium text-sm">
+                            <a href="{{ cert.certificate_file.url }}"
+                               target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 rounded">
                                 View Certificate File &rarr;
                             </a>
                         {% endif %}
@@ -42,13 +44,13 @@
                 </div>
             {% endfor %}
         {% else %}
-            <p class="text-center text-gray-600">No certificates have been added yet.</p>
+            <p class="text-center text-gray-600 dark:text-gray-400">No certificates have been added yet.</p>
         {% endif %}
 
     </div>
 
     <div class="text-center mt-16">
-        <a href="{% url 'portfolio:index' %}" class="text-blue-600 hover:underline">&larr; Back to Home</a>
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline">&larr; Back to Home</a>
     </div>
 
 </div>

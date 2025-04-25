@@ -1,3 +1,4 @@
+{# portfolio/templates/portfolio/index.html #}
 {% extends 'portfolio/base.html' %}
 {% load static %}
 {% load humanize %}
@@ -9,40 +10,39 @@
         <div class="container mx-auto px-6 text-center">
             <h1 class="text-4xl md:text-6xl font-bold mb-4">Your Name</h1>
             <p class="text-xl md:text-2xl mb-8">Passionate Deep Learning Engineer & Researcher</p>
+            {# Button already has light text, contrast should be okay #}
             <a href="{% url 'portfolio:all_projects' %}" class="bg-white text-blue-600 font-semibold py-3 px-6 rounded-lg shadow hover:bg-gray-100 transition duration-300">View My Work</a>
         </div>
     </header>
 
-    <section id="about" class="py-16 bg-white">
+    <section id="about" class="py-16 bg-white dark:bg-gray-900 transition-colors duration-300 ease-in-out">
         <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-bold text-center mb-10">About Me</h2>
-            <div class="max-w-3xl mx-auto text-center text-lg text-gray-700 space-y-4">
-                 {# Optional: Add profile pic here too if desired #}
-                 <p>
+            <h2 class="text-3xl font-bold text-center mb-10 text-gray-800 dark:text-gray-100">About Me</h2>
+            <div class="max-w-3xl mx-auto text-center text-lg text-gray-700 dark:text-gray-300 space-y-4">
+                <p>
                     A brief, engaging summary (1-2 sentences) about your core focus or passion.
                     (e.g., I'm a Deep Learning Engineer passionate about leveraging AI to solve challenging problems in computer vision and NLP.)
                 </p>
                 <p>
                     Mention your main area of interest or a key highlight. (e.g., Currently exploring advancements in generative models and their applications.)
                 </p>
-                 {# Add link to the detailed about page #}
                 <div class="mt-6">
-                    <a href="{% url 'portfolio:about_me' %}" class="text-blue-600 hover:underline font-semibold">
+                    {# Link dark mode colors #}
+                    <a href="{% url 'portfolio:about_me' %}" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold">
                         Learn More About Me &rarr;
                     </a>
                 </div>
             </div>
         </div>
     </section>
-
-    <section id="skills" class="py-16 bg-gray-50">
+    <section id="skills" class="py-16 bg-gray-50 dark:bg-gray-800 transition-colors duration-300 ease-in-out">
         <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-bold text-center mb-12">Technical Skills Overview</h2> {# Renamed slightly #}
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">Technical Skills Overview</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                 {# Keep the original hardcoded skill categories #}
-                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold mb-4 text-blue-700">Deep Learning Frameworks</h3>
-                    <ul class="list-disc list-inside text-gray-700 space-y-2">
+                 {# Add dark mode background/text to skill cards #}
+                 <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md transition-colors duration-300 ease-in-out">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-400">Deep Learning Frameworks</h3>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
                         <li>TensorFlow / Keras</li>
                         <li>PyTorch</li>
                         <li>Hugging Face Transformers</li>
@@ -50,9 +50,9 @@
                         <li>Other relevant libraries (e.g., OpenCV, NLTK, Spacy)</li>
                     </ul>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold mb-4 text-blue-700">Programming & Tools</h3>
-                    <ul class="list-disc list-inside text-gray-700 space-y-2">
+                <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md transition-colors duration-300 ease-in-out">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-400">Programming & Tools</h3>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
                         <li>Python (Expert)</li>
                         <li>SQL / NoSQL Databases</li>
                         <li>Git / Version Control</li>
@@ -61,9 +61,9 @@
                         <li>Linux / Bash Scripting</li>
                     </ul>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold mb-4 text-blue-700">Domains & Concepts</h3>
-                    <ul class="list-disc list-inside text-gray-700 space-y-2">
+                <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md transition-colors duration-300 ease-in-out">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700 dark:text-blue-400">Domains & Concepts</h3>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
                         <li>Computer Vision (CNNs, Object Detection, Segmentation)</li>
                         <li>Natural Language Processing (RNNs, LSTMs, Transformers, BERT)</li>
                         <li>Reinforcement Learning</li>
@@ -73,27 +73,27 @@
                     </ul>
                 </div>
             </div>
-             {# Add link to the detailed skills page #}
             <div class="text-center mt-10">
-                 <a href="{% url 'skills:skill_list' %}" class="text-blue-600 hover:underline font-semibold">View Detailed Skills &rarr;</a>
+                 <a href="{% url 'skills:skill_list' %}" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold">View Detailed Skills &rarr;</a>
             </div>
         </div>
     </section>
     {% if featured_certificates %}
-    <section id="featured-certificates" class="py-16 bg-white">
+    <section id="featured-certificates" class="py-16 bg-white dark:bg-gray-900 transition-colors duration-300 ease-in-out">
         <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-bold text-center mb-12">Featured Certificates</h2>
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">Featured Certificates</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
                 {% for cert in featured_certificates %}
-                    <div class="bg-gray-50 p-4 rounded-lg shadow-md flex flex-col items-center text-center transition duration-300 hover:shadow-lg">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">{{ cert.title }}</h3>
-                        <p class="text-sm text-gray-600 mb-2">Issued by: <span class="font-medium">{{ cert.issuer }}</span></p>
+                    {# Add dark mode background/text to certificate cards #}
+                    <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-col items-center text-center transition duration-300 hover:shadow-lg dark:hover:shadow-blue-900/30">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1">{{ cert.title }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Issued by: <span class="font-medium text-gray-700 dark:text-gray-300">{{ cert.issuer }}</span></p>
                         {% if cert.date_issued %}
-                            <p class="text-xs text-gray-500 mb-3">{{ cert.date_issued|date:"F Y" }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">{{ cert.date_issued|date:"F Y" }}</p>
                         {% endif %}
                         {% if cert.certificate_file %}
                             <a href="{{ cert.certificate_file.url }}"
-                               target="_blank" rel="noopener noreferrer" class="mt-auto text-blue-600 hover:underline font-medium text-sm">
+                               target="_blank" rel="noopener noreferrer" class="mt-auto text-blue-600 dark:text-blue-400 hover:underline font-medium text-sm">
                                 View Certificate &rarr;
                             </a>
                         {% endif %}
@@ -101,98 +101,96 @@
                 {% endfor %}
             </div>
             <div class="text-center mt-10">
-                 <a href="{% url 'portfolio:certificates' %}" class="text-blue-600 hover:underline font-semibold">View All Certificates &rarr;</a>
+                 <a href="{% url 'portfolio:certificates' %}" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold">View All Certificates &rarr;</a>
             </div>
         </div>
     </section>
     {% endif %}
 
     {% if featured_projects %}
-    <section id="projects" class="py-16 {% if featured_certificates %}bg-gray-50{% else %}bg-white{% endif %}">
+    <section id="projects" class="py-16 {% if featured_certificates %}bg-gray-50 dark:bg-gray-800{% else %}bg-white dark:bg-gray-900{% endif %} transition-colors duration-300 ease-in-out">
         <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-bold text-center mb-12">Featured Projects</h2>
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">Featured Projects</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 {% for project in featured_projects %}
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden project-card transition duration-300 ease-in-out flex flex-col">
+                    {# Add dark mode background/text/border to project cards #}
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-lg dark:shadow-blue-900/20 overflow-hidden project-card transition duration-300 ease-in-out flex flex-col">
                         <img src="{{ project.image_url|default:'https://placehold.co/600x400/CCCCCC/FFFFFF?text=Project+Image' }}"
                              alt="{{ project.title }} Visual"
                              class="w-full h-48 object-cover"
                              onerror="this.onerror=null; this.src='https://placehold.co/600x400/E0E0E0/BDBDBD?text=Image+Not+Found';">
                         <div class="p-6 flex flex-col flex-grow">
                             <h3 class="text-xl font-semibold mb-2">
-                                <a href="{% url 'portfolio:project_detail' slug=project.slug %}" class="text-gray-800 hover:text-blue-600 transition duration-300">
+                                <a href="{% url 'portfolio:project_detail' slug=project.slug %}" class="text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition duration-300">
                                     {{ project.title }}
                                 </a>
                             </h3>
-                            <p class="text-gray-700 mb-4 flex-grow">{{ project.description|truncatewords:30 }}</p>
+                            <p class="text-gray-700 dark:text-gray-300 mb-4 flex-grow">{{ project.description|truncatewords:30 }}</p>
                             <div class="flex justify-between items-center mb-4">
                                 {% if project.github_url %}
-                                    <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium text-sm">View Code</a>
+                                    <a href="{{ project.github_url }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline font-medium text-sm">View Code</a>
                                 {% else %}<span>&nbsp;</span>{% endif %}
                                 {% if project.demo_url %}
-                                    <a href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer" class="text-green-600 hover:underline font-medium text-sm">Live Demo</a>
+                                    <a href="{{ project.demo_url }}" target="_blank" rel="noopener noreferrer" class="text-green-600 dark:text-green-400 hover:underline font-medium text-sm">Live Demo</a>
                                 {% elif project.paper_url %}
-                                     <a href="{{ project.paper_url }}" target="_blank" rel="noopener noreferrer" class="text-purple-600 hover:underline font-medium text-sm">Read Paper</a>
+                                     <a href="{{ project.paper_url }}" target="_blank" rel="noopener noreferrer" class="text-purple-600 dark:text-purple-400 hover:underline font-medium text-sm">Read Paper</a>
                                 {% else %}<span>&nbsp;</span>{% endif %}
                             </div>
-                            <div class="mt-auto pt-4 border-t border-gray-200">
-                                <span class="text-sm font-medium text-gray-600">Tech:</span>
+                            <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-600">
+                                <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Tech:</span>
                                 {% for tech in project.get_technologies_list %}
-                                    {% if 'PyTorch' in tech or 'TensorFlow' in tech or 'Keras' in tech %}{% with bg_color='bg-blue-100' text_color='text-blue-800' %}<span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>{% endwith %}
-                                    {% elif 'CNN' in tech or 'Computer Vision' in tech or 'OpenCV' in tech %}{% with bg_color='bg-green-100' text_color='text-green-800' %}<span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>{% endwith %}
-                                    {% elif 'NLP' in tech or 'BERT' in tech or 'Transformer' in tech or 'Hugging Face' in tech %}{% with bg_color='bg-indigo-100' text_color='text-indigo-800' %}<span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>{% endwith %}
-                                    {% elif 'GAN' in tech or 'Generative' in tech %}{% with bg_color='bg-purple-100' text_color='text-purple-800' %}<span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>{% endwith %}
-                                    {% else %}{% with bg_color='bg-gray-200' text_color='text-gray-800' %}<span class="ml-1 inline-block {{ bg_color }} {{ text_color }} text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>{% endwith %}
-                                    {% endif %}
-                                {% empty %}<span class="ml-2 text-sm text-gray-500">N/A</span>{% endfor %}
+                                    {# Adjust tag colors for dark mode if needed, or use neutral ones #}
+                                    <span class="ml-1 inline-block bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs font-semibold mr-1 px-2 py-0.5 rounded">{{ tech }}</span>
+                                {% empty %}<span class="ml-2 text-sm text-gray-500 dark:text-gray-400">N/A</span>{% endfor %}
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
             <div class="text-center mt-10">
-                 <a href="{% url 'portfolio:all_projects' %}" class="text-blue-600 hover:underline font-semibold">View All Projects &rarr;</a>
+                 <a href="{% url 'portfolio:all_projects' %}" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold">View All Projects &rarr;</a>
             </div>
         </div>
     </section>
     {% endif %}
 
     {% if latest_blog_post %}
-    <section id="latest-post" class="py-16 {% if featured_projects or featured_certificates %}bg-white{% else %}bg-gray-50{% endif %}">
+    <section id="latest-post" class="py-16 {% if featured_projects or featured_certificates %}bg-white dark:bg-gray-900{% else %}bg-gray-50 dark:bg-gray-800{% endif %} transition-colors duration-300 ease-in-out">
         <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-bold text-center mb-12">Latest Thoughts</h2>
-            <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-                <h3 class="text-2xl font-semibold text-gray-800 mb-2">
-                    <a href="{% url 'blog:blog_post_detail' slug=latest_blog_post.slug %}" class="hover:text-blue-600">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-gray-100">Latest Thoughts</h2>
+            {# Add dark mode background/text to blog post card, use prose-invert for content #}
+            <div class="max-w-3xl mx-auto bg-white dark:bg-gray-700 p-8 rounded-lg shadow-lg dark:shadow-blue-900/20 transition-colors duration-300 ease-in-out">
+                <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                    <a href="{% url 'blog:blog_post_detail' slug=latest_blog_post.slug %}" class="hover:text-blue-600 dark:hover:text-blue-400">
                         {{ latest_blog_post.title }}
                     </a>
                 </h3>
-                <p class="text-sm text-gray-500 mb-4">
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
                     Published {{ latest_blog_post.published_date|naturaltime }}
                 </p>
-                <div class="prose prose-indigo max-w-none text-gray-700 leading-relaxed">
+                {# Add dark:prose-invert for automatic dark mode prose styling #}
+                <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
                      {{ latest_blog_post.content|truncatewords_html:100|safe }}
                 </div>
                  <div class="text-right mt-6">
-                     <a href="{% url 'blog:blog_post_list' %}" class="text-blue-600 hover:underline font-semibold">View Blog &rarr;</a>
+                     <a href="{% url 'blog:blog_post_list' %}" class="text-blue-600 dark:text-blue-400 hover:underline font-semibold">View Blog &rarr;</a>
                  </div>
             </div>
         </div>
     </section>
     {% endif %}
 
-    <section id="contact" class="py-16 bg-gray-800 text-gray-200">
+    <section id="contact" class="py-16 bg-gray-800 dark:bg-gray-900 text-gray-200 dark:text-gray-300 transition-colors duration-300 ease-in-out">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-3xl font-bold mb-8">Get In Touch</h2>
             <p class="text-lg mb-8 max-w-2xl mx-auto">
                 I'm always open to discussing new projects, creative ideas, or opportunities.
                 Please use the contact form to reach out!
             </p>
-            {# Add a prominent button linking to the contact form page #}
+            {# Button needs dark mode contrast if desired, but white on dark bg is okay #}
             <a href="{% url 'portfolio:contact' %}" class="inline-block bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg shadow hover:bg-gray-100 transition duration-300 mb-8">
                 Go to Contact Form
             </a>
-            {# Optional: Keep social links if desired #}
             <div class="flex justify-center space-x-6 text-lg">
                 <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition duration-300">LinkedIn</a>
                 <span>|</span>
@@ -200,23 +198,6 @@
             </div>
         </div>
     </section>
-
-    <!-- <section id="contact" class="py-16 bg-gray-800 text-gray-200">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-3xl font-bold mb-8">Get In Touch</h2>
-            <p class="text-lg mb-8 max-w-2xl mx-auto">
-                I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.
-                Feel free to reach out!
-            </p>
-            <div class="flex justify-center space-x-6 text-lg">
-                <a href="mailto:your.email@example.com" class="hover:text-blue-400 transition duration-300">your.email@example.com</a>
-                <span>|</span>
-                <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition duration-300">LinkedIn</a>
-                <span>|</span>
-                <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition duration-300">GitHub</a>
-            </div>
-        </div>
-    </section> -->
 
 {% endblock %}
 

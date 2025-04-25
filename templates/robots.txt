@@ -1,3 +1,22 @@
+# templates/robots.txt
+
+User-agent: *
+Disallow: /admin/
+
+# Allow access to everything else (optional, often default)
+Allow: /
+
+# Point crawlers to your sitemap
+Sitemap: {{ request.scheme }}://{{ request.get_host }}{% url 'django.contrib.sitemaps.views.sitemap' %}
+
+```
+* *Note:* This uses template variables `{{ request.scheme }}` and `{{ request.get_host }}` to dynamically generate the correct domain for the sitemap URL.
+
+2.  **Update Project URLs (`dl_portfolio_project/urls.py`)**
+* Add a URL pattern specifically for `/robots.txt` that uses Django's generic `TemplateView` to render the template you just created. Make sure to set the `content_type` to `text/plain`.
+
+
+```python
 # dl_portfolio_project/urls.py
 
 from django.contrib import admin
@@ -31,11 +50,8 @@ urlpatterns = [
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
             name='django.contrib.sitemaps.views.sitemap'),
 
-    # Add the robots.txt URL pattern using TemplateView
-    path(
-        'robots.txt',
-        TemplateView.as_view(template_name="robots.txt", content_type="text/plain")
-    ),
+    # Add the robots.txt URL pattern
+    path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
 
     # Keep portfolio URLs at the root (should be last for catch-all)
     path('', include('portfolio.urls')),
