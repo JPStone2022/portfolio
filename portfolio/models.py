@@ -4,6 +4,11 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from django.urls import reverse
+# Import the Skill model from the skills app
+try:
+    from skills.models import Skill
+except ImportError:
+    Skill = None # Handle case where skills app might not exist yet
 
 # Existing Project Model...
 class Project(models.Model):
@@ -12,11 +17,37 @@ class Project(models.Model):
     slug = models.SlugField(max_length=250, unique=True, blank=True, help_text="URL-friendly version of the title (auto-generated).")
     description = models.TextField(help_text="A detailed description of the project.")
     image_url = models.URLField(max_length=500, blank=True, null=True, help_text="URL for the project's main image or GIF.")
+
+    # --- New Fields Added ---
+    results_metrics = models.TextField(
+        blank=True,
+        help_text="Specific results, metrics, or outcomes achieved (e.g., accuracy improvement, performance gains)."
+    )
+    challenges = models.TextField(
+        blank=True,
+        help_text="Key challenges faced during the project and how they were addressed."
+    )
+    lessons_learned = models.TextField(
+        blank=True,
+        help_text="Important takeaways, insights, or lessons learned from the project."
+    )
+    # --- End New Fields ---
+
+    # Deprecated field - keep for now if data migration is needed later
     technologies = models.CharField(
         max_length=300,
         default='',
         blank=True,
-        help_text="Comma-separated list of key technologies used (e.g., PyTorch, CNN, OpenCV)."
+        # help_text="Comma-separated list of key technologies used (e.g., PyTorch, CNN, OpenCV)."
+        help_text="DEPRECATED: Comma-separated list. Use the 'Skills' field instead." # Mark old field as deprecated
+    )
+    # Add the ManyToManyField to Skill
+    # ManyToManyField to Skill (ensure Skill model is imported)
+    skills = models.ManyToManyField(
+        Skill,
+        blank=True, # Allow projects to have no skills linked
+        related_name="projects", # Allows accessing project_set as skill.projects
+        verbose_name="Associated Skills"
     )
     github_url = models.URLField(max_length=500, blank=True, null=True, help_text="Link to the project's GitHub repository.")
     demo_url = models.URLField(max_length=500, blank=True, null=True, help_text="Link to a live demo, if available.")
@@ -31,8 +62,13 @@ class Project(models.Model):
         return self.title
 
     def get_technologies_list(self):
+         # Prioritize new skills field if available
+        if self.skills.exists():
+             return [skill.name for skill in self.skills.all()]
+        # Fallback to old field if needed (optional)
         if self.technologies:
-            return [tech.strip() for tech in self.technologies.split(',') if tech.strip()]
+             print(f"Warning: Project '{self.title}' is using the deprecated 'technologies' field.")
+             return [tech.strip() for tech in self.technologies.split(',') if tech.strip()]
         return []
 
     def get_absolute_url(self):

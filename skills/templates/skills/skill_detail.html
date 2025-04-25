@@ -1,7 +1,8 @@
 {# skills/templates/skills/skill_detail.html #}
 {% extends 'portfolio/base.html' %}
+{% load static %}
 
-{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block title %}{{ skill.name }} Skill Details - Portfolio{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-6 py-12">
@@ -14,13 +15,27 @@
         {% if skill.description %}
             <h2 class="text-2xl font-semibold text-gray-700 mt-6 mb-4">Details & Experience</h2>
             <div class="prose prose-indigo max-w-none text-gray-700 leading-relaxed">
-                {{ skill.description|linebreaks }} {# Use linebreaks or safe filter #}
+                {{ skill.description|linebreaks }}
             </div>
         {% else %}
              <p class="text-gray-600 italic mt-6">No detailed description provided for this skill.</p>
         {% endif %}
 
-        {# Optional: Add related projects/posts here later #}
+        {# Display Related Projects #}
+        {% if skill.projects.all %} {# Use related_name 'projects' #}
+            <section class="mt-10 border-t pt-6">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Related Projects</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {% for project in skill.projects.all %}
+                        <a href="{% url 'portfolio:project_detail' slug=project.slug %}" class="block p-4 bg-gray-50 rounded-lg shadow hover:shadow-md transition duration-200">
+                            <h3 class="font-semibold text-blue-700 hover:underline">{{ project.title }}</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ project.description|truncatewords:15 }}</p>
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+        {# End Related Projects #}
 
     </article>
 

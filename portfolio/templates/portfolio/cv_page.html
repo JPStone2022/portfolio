@@ -1,0 +1,50 @@
+{# portfolio/templates/portfolio/cv_page.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}CV / Resume - Portfolio{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-12">My CV / Resume</h1>
+
+    <div class="max-w-4xl mx-auto bg-white p-6 md:p-8 rounded-lg shadow-lg">
+
+        {# Embedded PDF Viewer using iframe #}
+        <div class="mb-8 border rounded-lg overflow-hidden shadow">
+            <iframe src="{% static 'portfolio/files/Julian-Stone_CV_Redacted.pdf' %}" {# *** UPDATE FILENAME HERE *** #}
+                    width="100%"
+                    height="700px" {# Adjust height as needed #}
+                    style="border: none;"
+                    title="CV Document Viewer">
+                <p class="p-4 text-red-600">
+                    Your browser does not support embedded PDFs.
+                    <a href="{% static 'portfolio/files/Julian-Stone_CV_Redacted.pdf' %}" {# *** UPDATE FILENAME HERE *** #}
+                       class="text-blue-600 hover:underline"
+                       target="_blank"
+                       download>
+                       Please download the PDF to view it.
+                    </a>
+                </p>
+            </iframe>
+        </div>
+
+        {# Download Button #}
+        <div class="text-center">
+            <p class="text-sm text-gray-600 mb-4">If you would like my contact details, you can download the file directly:</p>
+            <a href="{% static 'portfolio/files/Julian-Stone_CV.pdf' %}" {# *** UPDATE FILENAME HERE *** #}
+               target="_blank" {# Opens the PDF in a new tab #}
+               download {# Suggests downloading the file #}
+               class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Download CV (PDF)
+            </a>
+        </div>
+
+    </div>
+
+     <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 hover:underline">&larr; Back to Home</a>
+    </div>
+
+</div>
+{% endblock %}

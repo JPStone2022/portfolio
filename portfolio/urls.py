@@ -18,5 +18,8 @@ urlpatterns = [
     path('contact/', views.contact_view, name='contact'),
     # Add path for the detailed about me page
     path('about-me/', views.about_me_view, name='about_me'),
-
+    # Add path for the CV page view
+    path('cv/', views.cv_view, name='cv'),
+    # Add path for the search results view
+    path('search/', views.search_results_view, name='search_results'),
 ]

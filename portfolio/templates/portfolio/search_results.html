@@ -1,0 +1,75 @@
+{# portfolio/templates/portfolio/search_results.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}Search Results for "{{ query }}"{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">
+        Search Results for "<span class="text-blue-600">{{ query }}</span>"
+    </h1>
+
+    {# Display Project Results #}
+    {% if projects %}
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-6 border-b pb-2">Matching Projects ({{ projects.count }})</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for project in projects %}
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg flex flex-col">
+                         {# Link to project detail page #}
+                         <a href="{% url 'portfolio:project_detail' slug=project.slug %}" class="block hover:opacity-90">
+                             <img src="{{ project.image_url|default:'https://placehold.co/600x400/CCCCCC/FFFFFF?text=Project+Image' }}"
+                                  alt="{{ project.title }} Visual"
+                                  class="w-full h-40 object-cover" {# Slightly smaller height for results page #}
+                                  onerror="this.onerror=null; this.src='https://placehold.co/600x400/E0E0E0/BDBDBD?text=Image+Not+Found';">
+                         </a>
+                         <div class="p-4 flex flex-col flex-grow">
+                             <h3 class="text-lg font-semibold mb-1">
+                                 <a href="{% url 'portfolio:project_detail' slug=project.slug %}" class="text-gray-800 hover:text-blue-600">
+                                     {{ project.title }}
+                                 </a>
+                             </h3>
+                             <p class="text-sm text-gray-600 mb-3 flex-grow">{{ project.description|truncatewords:25 }}</p>
+                             {# Optional: Add technologies or other info #}
+                             <div class="mt-auto text-right">
+                                <a href="{% url 'portfolio:project_detail' slug=project.slug %}" class="text-xs text-blue-600 hover:underline font-medium">View Details &rarr;</a>
+                             </div>
+                         </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {# Display Skill Results #}
+    {% if skills %}
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-6 border-b pb-2">Matching Skills ({{ skills.count }})</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                 {% for skill in skills %}
+                    <a href="{% url 'skills:skill_detail' slug=skill.slug %}" class="block bg-white p-4 rounded-lg shadow hover:shadow-md hover:bg-gray-50 transition duration-200 text-center">
+                        <span class="font-medium text-gray-700">{{ skill.name }}</span>
+                        {% if skill.category %}
+                            <span class="block text-xs text-gray-500 mt-1">({{ skill.category.name }})</span>
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {# Message if no results found at all #}
+    {% if not projects and not skills %}
+        <div class="text-center py-10 bg-white rounded-lg shadow">
+            <p class="text-xl text-gray-600">No results found matching your query.</p>
+            <p class="text-gray-500 mt-2">Try searching for different keywords.</p>
+        </div>
+    {% endif %}
+
+     <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 hover:underline">&larr; Back to Home</a>
+    </div>
+
+</div>
+{% endblock %}
