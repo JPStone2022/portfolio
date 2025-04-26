@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+import dj_database_url
 # --- Add these lines ---
 from dotenv import load_dotenv
 load_dotenv() # Loads variables from .env file into environment
@@ -27,7 +28,7 @@ if dotenv_path.is_file():
 else:
     print("Production or CI environment detected: Not loading .env file.") # Optional
     # Database configuration (using dj-database-url example)
-    import dj_database_url
+    
     DATABASES = {
         'default': dj_database_url.config(
             default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
@@ -45,7 +46,16 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True' # Default to True for 
 
 # Update ALLOWED_HOSTS based on environment
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split(' ')
-
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+# Add your custom domain here if you set one up later
+# CUSTOM_DOMAIN = os.environ.get('CUSTOM_DOMAIN')
+# if CUSTOM_DOMAIN:
+#     ALLOWED_HOSTS.append(CUSTOM_DOMAIN)
+# Add localhost for local testing if needed (e.g., when DEBUG=False locally)
+if DEBUG or os.environ.get('DJANGO_DEVELOPMENT'): # Add localhost if DEBUG or dev env var set
+    ALLOWED_HOSTS.extend(['127.0.0.1', 'localhost'])
 
 # Application definition
 
@@ -62,10 +72,14 @@ INSTALLED_APPS = [
     'blog',      # Your blog app
     'skills',    # Your skills app
     'recommendations', # Add the new app
+    # Add whitenoise.runserver_nostatic if DEBUG is True for easier local static serving
+    # 'whitenoise.runserver_nostatic', # Optional for development convenience
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # Add WhiteNoise middleware right after SecurityMiddleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -113,7 +127,6 @@ WSGI_APPLICATION = 'dl_portfolio_project.wsgi.application'
 # Database used in production
 
 # # Database configuration (using dj-database-url example)
-# import dj_database_url
 # DATABASES = {
 #     'default': dj_database_url.config(
 #         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
@@ -154,6 +167,19 @@ STATIC_ROOT = BASE_DIR / 'staticfiles' # For collectstatic in production
 MEDIA_URL = '/media/' # Base URL for serving media files
 MEDIA_ROOT = BASE_DIR / 'mediafiles' # Absolute filesystem path to the directory for user uploads
 
+# # Staticfiles storage using WhiteNoise (Recommended for Render)
+# # For Django 4.2+
+# STORAGES = {
+#     "staticfiles": {
+#         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+#     },
+# # If you use django-storages for media files (e.g., S3), configure default here:
+#     "default": {
+#      "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+#     },
+#     }
+# # For Django < 4.2, use this instead of STORAGES["staticfiles"]:
+# # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/stable/ref/settings/#default-auto-field
@@ -184,3 +210,12 @@ SERVER_EMAIL = os.environ.get('SERVER_EMAIL', EMAIL_HOST_USER)
 
 # --------------------------------------------------------------------------
 
+# Security settings for production (when DEBUG=False)
+# Uncomment and configure these as needed, especially if using HTTPS
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+# SECURE_SSL_REDIRECT = True
+# SECURE_HSTS_SECONDS = 31536000 # e.g., 1 year
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') # If behind a proxy like Render's
