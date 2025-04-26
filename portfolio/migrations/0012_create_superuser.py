@@ -48,6 +48,7 @@ class Migration(migrations.Migration):
         # Or if it's the first migration in portfolio:
         # ('portfolio', '__first__'),
         # IMPORTANT: It MUST also depend on the initial auth migration
+        ('portfolio', '0011_remove_certificate_logo_image_project_topics_and_more'), # <-- ADD THIS LINE
         ('auth', '0012_alter_user_first_name_max_length'), # Check latest auth migration number
     ]
 
