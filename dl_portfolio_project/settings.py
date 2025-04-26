@@ -16,8 +16,25 @@ dotenv_path = BASE_DIR / '.env'
 if dotenv_path.is_file():
     print("Development environment detected: Loading .env file.") # Optional: for confirmation
     load_dotenv(dotenv_path=dotenv_path)
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+        # Configure production database using environment variables if needed
+        # ssl_require=True if not DEBUG else False # Example for Heroku PG
+    }
+}
 else:
     print("Production or CI environment detected: Not loading .env file.") # Optional
+    # Database configuration (using dj-database-url example)
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+            conn_max_age=600,
+            # ssl_require=True if not DEBUG else False # Example for Heroku PG
+        )
+    }
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Read secret key from environment variable in production
@@ -29,7 +46,6 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True' # Default to True for 
 # Update ALLOWED_HOSTS based on environment
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split(' ')
 
-DATABASE_URL = os.environ.get('DATABASE_URL')
 
 # Application definition
 
@@ -45,6 +61,7 @@ INSTALLED_APPS = [
     'portfolio', # Your portfolio app
     'blog',      # Your blog app
     'skills',    # Your skills app
+    'recommendations', # Add the new app
 ]
 
 MIDDLEWARE = [
@@ -71,6 +88,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Add the path to your recommendations context processor
+                'recommendations.context_processors.recommendation_context',
+
             ],
         },
     },
@@ -79,15 +99,30 @@ TEMPLATES = [
 WSGI_APPLICATION = 'dl_portfolio_project.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/stable/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        # Configure production database using environment variables if needed
-    }
-}
+# Database used in development
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#         # Configure production database using environment variables if needed
+#         # ssl_require=True if not DEBUG else False # Example for Heroku PG
+#     }
+# }
+
+# Database used in production
+
+# # Database configuration (using dj-database-url example)
+# import dj_database_url
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+#         conn_max_age=600,
+#         # ssl_require=True if not DEBUG else False # Example for Heroku PG
+#     )
+# }
+
+#print("DEBUG DATABASES:", DATABASES)
 
 
 # Password validation

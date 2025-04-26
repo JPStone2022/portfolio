@@ -10,6 +10,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     # Project detail page
     path('project/<slug:slug>/', views.project_detail, name='project_detail'),
+    # Add path for topic detail page
+    path('topic/<slug:topic_slug>/', views.topic_detail, name='topic_detail'),
     # Add path for certificates page
     path('certificates/', views.certificates_view, name='certificates'),
     # Add path for the all projects page

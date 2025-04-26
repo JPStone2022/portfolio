@@ -134,3 +134,4 @@ cython_debug/
 
 # Secret Key (if hardcoded - better to use environment variables!)
 # secret_key.txt
+pythonanywhere.txt

@@ -17,4 +17,19 @@ html {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
+/* --- Page Load Fade-In Animation --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); } /* Start slightly down and invisible */
+  to { opacity: 1; transform: translateY(0); } /* Fade in and move up to final position */
+}
+
+.fade-in-content {
+  animation: fadeIn 0.5s ease-out forwards; /* Apply the animation */
+  /* 'forwards' keeps the element visible after animation ends */
+  /* Adjust duration (0.5s) and timing function (ease-out) as desired */
+}
+/* --- End Fade-In Animation --- */
+
+
 /* Add any other custom styles here */
+

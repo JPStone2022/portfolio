@@ -1,35 +1,48 @@
 # portfolio/admin.py
 
 from django.contrib import admin
-from portfolio.models import Project, Certificate
+# Import models from this app
+from .models import Project, Certificate, ProjectTopic
 
+# Import Skill model safely
 try:
     from skills.models import Skill
 except ImportError:
     Skill = None
 
+# Register ProjectTopic Admin
+@admin.register(ProjectTopic)
+class ProjectTopicAdmin(admin.ModelAdmin):
+    list_display = ('name', 'order')
+    list_editable = ('order',)
+    prepopulated_fields = {'slug': ('name',)}
+    search_fields = ('name', 'description')
+
+# Update Project Admin
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('title', 'date_created', 'order')
-    list_filter = ('date_created', 'skills')
-    search_fields = ('title', 'description', 'skills__name')
+    # Add topics to filter
+    list_filter = ('date_created', 'skills', 'topics')
+    # Add topics to search
+    search_fields = ('title', 'description', 'skills__name', 'topics__name')
     list_editable = ('order',)
     prepopulated_fields = {'slug': ('title',)}
     fieldsets = (
         (None, {
             'fields': ('title', 'slug', 'description', 'image_url')
         }),
-        ('Associated Skills', {
-            'fields': ('skills',)
+        # Combine Topics & Skills
+        ('Topics & Skills', {
+            'fields': ('topics', 'skills') # Add topics field
         }),
         ('Project Outcomes', {
             'classes': ('collapse',),
             'fields': ('results_metrics', 'challenges', 'lessons_learned')
         }),
-        # Add Section for Code Snippet
         ('Code Snippet', {
-            'classes': ('collapse',), # Optional: Make collapsible
-            'fields': ('code_snippet', 'code_language') # Add new fields
+            'classes': ('collapse',),
+            'fields': ('code_snippet', 'code_language')
         }),
         ('Links', {
             'fields': ('github_url', 'demo_url', 'paper_url')
@@ -38,8 +51,10 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('order', 'date_created')
         }),
     )
-    filter_horizontal = ('skills',) if Skill else ()
+    # Add topics to filter_horizontal
+    filter_horizontal = ('skills', 'topics',) if Skill else ('topics',)
 
+# Certificate Admin (remains the same)
 @admin.register(Certificate)
 class CertificateAdmin(admin.ModelAdmin):
     list_display = ('title', 'issuer', 'date_issued', 'order', 'certificate_file')
