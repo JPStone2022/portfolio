@@ -12,30 +12,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Construct the path to the .env file
 dotenv_path = BASE_DIR / '.env'
+load_dotenv(dotenv_path=dotenv_path)
 
-# Load .env only if it exists (indicating development)
-if dotenv_path.is_file():
-    print("Development environment detected: Loading .env file.") # Optional: for confirmation
-    load_dotenv(dotenv_path=dotenv_path)
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        # Configure production database using environment variables if needed
-        # ssl_require=True if not DEBUG else False # Example for Heroku PG
-    }
-}
-else:
-    print("Production or CI environment detected: Not loading .env file.") # Optional
-    # Database configuration (using dj-database-url example)
+# # Load .env only if it exists (indicating development)
+# if dotenv_path.is_file():
+#     print("Development environment detected: Loading .env file.") # Optional: for confirmation
+#     load_dotenv(dotenv_path=dotenv_path)
+#     DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#         # Configure production database using environment variables if needed
+#         # ssl_require=True if not DEBUG else False # Example for Heroku PG
+#     }
+# }
+# else:
+#     print("Production or CI environment detected: Not loading .env file.") # Optional
+#     # Database configuration (using dj-database-url example)
     
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-            conn_max_age=600,
-            # ssl_require=True if not DEBUG else False # Example for Heroku PG
-        )
-    }
+#     DATABASES = {
+#         'default': dj_database_url.config(
+#             default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+#             conn_max_age=600,
+#             # ssl_require=True if not DEBUG else False # Example for Heroku PG
+#         )
+#     }
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Read secret key from environment variable in production
@@ -46,20 +47,21 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True' # Default to True for 
 
 # Update ALLOWED_HOSTS based on environment
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split(' ')
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+ALLOWED_HOSTS.extend(['127.0.0.1', 'localhost'])
+# RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+# if RENDER_EXTERNAL_HOSTNAME:
+#     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 # Add your custom domain here if you set one up later
 # CUSTOM_DOMAIN = os.environ.get('CUSTOM_DOMAIN')
 # if CUSTOM_DOMAIN:
 #     ALLOWED_HOSTS.append(CUSTOM_DOMAIN)
 # Add localhost for local testing if needed (e.g., when DEBUG=False locally)
-if DEBUG or os.environ.get('DJANGO_DEVELOPMENT'): # Add localhost if DEBUG or dev env var set
-    ALLOWED_HOSTS.extend(['127.0.0.1', 'localhost'])
+# if DEBUG or os.environ.get('DJANGO_DEVELOPMENT'): # Add localhost if DEBUG or dev env var set
+#     ALLOWED_HOSTS.extend(['127.0.0.1', 'localhost'])
 
-HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME') # Optional: Set this env var on Heroku
-if HEROKU_APP_NAME:
-    ALLOWED_HOSTS.append(f"{HEROKU_APP_NAME}.herokuapp.com")
+# HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME') # Optional: Set this env var on Heroku
+# if HEROKU_APP_NAME:
+#     ALLOWED_HOSTS.append(f"{HEROKU_APP_NAME}.herokuapp.com")
 
 # Application definition
 
@@ -130,14 +132,14 @@ WSGI_APPLICATION = 'dl_portfolio_project.wsgi.application'
 
 # Database used in production
 
-# # Database configuration (using dj-database-url example)
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-#         conn_max_age=600,
-#         # ssl_require=True if not DEBUG else False # Example for Heroku PG
-#     )
-# }
+# Database configuration (using dj-database-url example)
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        # ssl_require=True if not DEBUG else False # Example for Heroku PG
+    )
+}
 
 #print("DEBUG DATABASES:", DATABASES)
 
