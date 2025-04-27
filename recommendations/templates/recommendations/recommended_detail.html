@@ -1,0 +1,50 @@
+{# recommendations/templates/recommendations/recommendation_detail.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{# Override Meta Tags #}
+{% block meta_description %}{{ meta_description|default:"Product Recommendation" }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"recommendation, product" }}{% endblock %}
+{% block title %}{{ page_title }} - Recommendations{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+
+    <article class="max-w-3xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-blue-900/20 transition-colors duration-300 ease-in-out">
+        {# Product Image #}
+        {% if product.image_url %}
+            <img src="{{ product.image_url }}" alt="{{ product.name }} Image"
+                 class="w-full max-w-sm mx-auto h-auto object-contain mb-6 rounded border border-gray-200 dark:border-gray-700 p-2 bg-gray-50 dark:bg-gray-700"
+                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/E0E0E0/BDBDBD?text=Image+Not+Found';">
+        {% endif %}
+
+        {# Product Name - Apply gradient text #}
+        <h1 class="text-3xl md:text-4xl font-bold text-center mb-2 bg-gradient-to-r from-green-500 to-cyan-500 dark:from-green-400 dark:to-cyan-400 bg-clip-text text-transparent">
+            {{ product.name }}
+        </h1>
+        {% if product.category %}
+            <p class="text-center text-sm font-medium text-gray-500 dark:text-gray-400 mb-6">{{ product.category }}</p>
+        {% endif %}
+
+        {# Product Description #}
+        {% if product.description %}
+            <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-200 mt-6 mb-3">Why I Recommend It:</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                {{ product.description|linebreaks }}
+            </div>
+        {% endif %}
+
+        {# Link to Product #}
+        <div class="mt-8 text-center border-t border-gray-200 dark:border-gray-700 pt-6">
+            <a href="{{ product.product_url }}" target="_blank" rel="noopener nofollow"
+               class="inline-block bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow hover:shadow-md transform hover:scale-[1.02] transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                View Product Here &rarr;
+            </a>
+        </div>
+    </article>
+
+    <div class="text-center mt-12">
+        <a href="{% url 'recommendations:recommendation_list' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to All Recommendations</a>
+    </div>
+</div>
+{% endblock %}

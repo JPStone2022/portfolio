@@ -76,7 +76,7 @@
                 {% if recommendation_count > 0 %}
                 <a href="{% url 'recommendations:recommendation_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Recommends</a>
                 {% endif %}
-                <a href="{% url 'portfolio:cv' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">CV</a>
+                <!-- <a href="{% url 'portfolio:cv' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">CV</a> -->
                 <a href="{% url 'portfolio:contact' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Contact</a>
                 <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 transition-colors duration-200">
                     <svg id="theme-toggle-sun-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 7.072l.707-.707a1 1 0 10-1.414-1.414l-.707.707a1 1 0 001.414 1.414zM3 11a1 1 0 100 2H2a1 1 0 100-2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
@@ -96,8 +96,8 @@
     <footer class="bg-gray-900 dark:bg-black text-gray-400 dark:text-gray-500 py-6 mt-auto transition-colors duration-300 ease-in-out">
        {# ... Footer content ... #}
         <div class="container mx-auto px-6 text-center text-sm">
-            <p>&copy; {% now "Y" %} Your Name. All rights reserved.</p>
-            <p>Built with <a href="https://www.djangoproject.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Django</a> & <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Tailwind CSS</a>.</p>
+            <p>&copy; {% now "Y" %} Julian Stone. All rights reserved.</p>
+            <p>Built by Julian, with <a href="https://www.djangoproject.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Django</a> & <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Tailwind CSS</a>.</p>
         </div>
     </footer>
 

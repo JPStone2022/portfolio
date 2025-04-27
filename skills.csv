@@ -1,0 +1,5 @@
+﻿name,slug,description,category_name,order
+NumPy,numpy,"NumPy (Numerical Python) is the cornerstone library for numerical and scientific computing in Python. It provides support for large, multi-dimensional arrays and matrices, along with a vast collection of high-level mathematical functions to operate on these arrays efficiently.",Data Analysis,0
+Pandas,pandas,"Pandas: Built on top of NumPy, Pandas offers high-performance, easy-to-use data structures (like DataFrames) and data analysis tools. It's essential for data cleaning, manipulation, merging, reshaping, and analysis.",Data Analysis,1
+Python,python,A popular programming language used in data science,Programming,2
+Keras,keras,used as part of machine learning,Data Analysis,3

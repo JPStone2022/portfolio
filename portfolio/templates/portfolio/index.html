@@ -9,7 +9,7 @@
     <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20 md:py-32">
         <div class="container mx-auto px-6 text-center">
             <h1 class="text-4xl md:text-6xl font-bold mb-4">Julian Stone</h1>
-            <p class="text-xl md:text-2xl mb-8">Passionate Deep Learning Engineer & Researcher</p>
+            <p class="text-xl md:text-2xl mb-8">Passionate Deep Learning Engineer & AI Researcher</p>
             {# Add focus ring to button #}
             <a href="{% url 'portfolio:all_projects' %}"
                class="inline-block bg-white text-blue-600 font-semibold py-3 px-6 rounded-lg shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 transition duration-300">
@@ -120,6 +120,7 @@
         </div>
     </section>
 
+
     {# --- Featured Topics Section (NEW) --- #}
     {% if featured_topics %}
     <section id="featured-topics" class="py-16 bg-white dark:bg-gray-900 transition-colors duration-300 ease-in-out">
@@ -144,6 +145,7 @@
     </section>
     {% endif %}
     {# --- End Featured Topics Section --- #}
+
 
     {% if featured_certificates %}
     <section id="featured-certificates" class="py-16 {% if featured_topics %}bg-gray-50 dark:bg-gray-800{% else %}bg-white dark:bg-gray-900{% endif %} transition-colors duration-300 ease-in-out">>
@@ -295,9 +297,11 @@
                 Go to Contact Form
             </a>
             <div class="flex justify-center space-x-6 text-lg">
-                <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition duration-300">LinkedIn</a>
+                <a href="https://linkedin.com/in/julianpstone" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition duration-300">LinkedIn</a>
                 <span>|</span>
-                <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition duration-300">GitHub</a>
+                <a href="https://github.com/JPStone2022" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition duration-300">GitHub</a>
+                <span>|</span>
+                <a href="{% url 'portfolio:cv' %}" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition duration-300">CV</a>
             </div>
         </div>
     </section>

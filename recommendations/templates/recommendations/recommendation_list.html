@@ -6,35 +6,39 @@
 
 {% block content %}
 <div class="container mx-auto px-6 py-12">
-    {# Dark mode text #}
     <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-800 dark:text-gray-100 mb-12">{{ page_title }}</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {% if recommendations %}
             {% for item in recommendations %}
-                {# Dark mode background/shadow/text #}
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-blue-900/20 overflow-hidden flex flex-col transition-colors duration-300 ease-in-out">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-blue-900/20 overflow-hidden flex flex-col transition-colors duration-300 ease-in-out transform hover:scale-[1.02] hover:shadow-xl"> {# Added hover effect #}
                     {% if item.image_url %}
-                        <img src="{{ item.image_url }}" alt="{{ item.name }} Image"
-                             class="w-full h-48 object-contain bg-gray-100 dark:bg-gray-700 p-2" {# Contain image, add padding/bg #}
-                             onerror="this.onerror=null; this.src='https://placehold.co/600x400/E0E0E0/BDBDBD?text=Image+Not+Found';">
+                        {# Link image to detail page #}
+                        <a href="{{ item.get_absolute_url }}" class="block bg-gray-100 dark:bg-gray-700">
+                            <img src="{{ item.image_url }}" alt="{{ item.name }} Image"
+                                 class="w-full h-48 object-contain p-2 transition duration-300 ease-in-out hover:opacity-90"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/600x400/E0E0E0/BDBDBD?text=Image+Not+Found';">
+                        </a>
                     {% else %}
-                         {# Placeholder if no image #}
                          <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                              <span class="text-gray-500 dark:text-gray-400">No Image</span>
                          </div>
                     {% endif %}
                     <div class="p-6 flex flex-col flex-grow">
-                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">{{ item.name }}</h2>
+                        {# Link title to detail page #}
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                            <a href="{{ item.get_absolute_url }}" class="hover:text-blue-600 dark:hover:text-blue-400">
+                                {{ item.name }}
+                            </a>
+                        </h2>
                         {% if item.category %}
                             <p class="text-sm font-medium text-blue-600 dark:text-blue-400 mb-3">{{ item.category }}</p>
                         {% endif %}
-                        <p class="text-gray-700 dark:text-gray-300 mb-4 flex-grow">{{ item.description }}</p>
-                        {# Link to the product URL #}
+                        <p class="text-gray-700 dark:text-gray-300 mb-4 flex-grow">{{ item.description|truncatewords:25 }}</p> {# Truncate description #}
                         <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700 text-center">
-                            <a href="{{ item.product_url }}" target="_blank" rel="noopener nofollow" {# nofollow is often used for external/affiliate links #}
-                               class="inline-block bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold py-2 px-5 rounded-lg shadow transition duration-300 text-sm">
-                                View Product &rarr;
+                            <a href="{{ item.product_url }}" target="_blank" rel="noopener nofollow"
+                               class="inline-block bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold py-2 px-5 rounded-lg shadow transition duration-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                                View Product Site &rarr;
                             </a>
                         </div>
                     </div>

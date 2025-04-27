@@ -57,6 +57,10 @@ if RENDER_EXTERNAL_HOSTNAME:
 if DEBUG or os.environ.get('DJANGO_DEVELOPMENT'): # Add localhost if DEBUG or dev env var set
     ALLOWED_HOSTS.extend(['127.0.0.1', 'localhost'])
 
+HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME') # Optional: Set this env var on Heroku
+if HEROKU_APP_NAME:
+    ALLOWED_HOSTS.append(f"{HEROKU_APP_NAME}.herokuapp.com")
+
 # Application definition
 
 INSTALLED_APPS = [
