@@ -1,8 +1,0 @@
-﻿name,slug,description,category_name,order
-NumPy,numpy,"The fundamental package for numerical computing in Python. It provides powerful N-dimensional array objects, linear algebra functions, Fourier transforms, random number capabilities, and more. It's the foundation for many other data science libraries.",Data Analysis,0
-Pandas,pandas,"Built on top of NumPy, Pandas offers high-performance, easy-to-use data structures (like DataFrames) and data analysis tools. It's essential for data cleaning, manipulation, merging, reshaping, and analysis",Data Analysis,1
-Python,python,A popular programming language used in data science,Programming,2
-Keras,keras,used as part of machine learning,Data Analysis,3
-Matplotlib,matplotlib,"The most established Python library for creating static, animated, and interactive visualizations. It provides a wide range of plot types (line plots, scatter plots, histograms, bar charts, etc.) and fine-grained control over plot elements.",Data Analysis,4
-Seaborn,seaborn,"Built on Matplotlib, Seaborn provides a higher-level interface for drawing attractive and informative statistical graphics. It simplifies creating complex visualizations like heatmaps, violin plots, pair plots, and integrates well with Pandas DataFrames",Data Science,5
-Scikit-learn,scikit-learn,"The go-to library for traditional machine learning algorithms. It offers efficient tools for data preprocessing, feature extraction, classification, regression, clustering, dimensionality reduction, model selection, and evaluation.",Data Analysis,6

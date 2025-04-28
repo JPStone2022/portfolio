@@ -48,7 +48,15 @@ def index(request):
         except Exception as e: print(f"Could not query RecommendedProduct: {e}"); pass
 
     # Fetch featured topics (e.g., top 3 based on ordering)
-    featured_topics = ProjectTopic.objects.all()[:3]
+    featured_topics = ProjectTopic.objects.all()[:8]
+
+    # Fetch featured skills (e.g., top 6 based on ordering)
+    featured_skills = None
+    if Skill:
+        try:
+            featured_skills = Skill.objects.all()[:6] # Get top 6 based on default ordering
+        except Exception as e:
+            print(f"Could not query Skill: {e}"); pass
 
     context = {
         'page_title': 'My Deep Learning Portfolio',
@@ -57,6 +65,7 @@ def index(request):
         'latest_blog_post': latest_blog_post,
         'featured_recommendations': featured_recommendations, # Add to context
         'featured_topics': featured_topics, # Add featured topics to context
+        'featured_skills': featured_skills, # Add featured skills to context
     }
     return render(request, 'portfolio/index.html', context=context)
 
@@ -231,3 +240,14 @@ def search_results_view(request):
     }
     return render(request, 'portfolio/search_results.html', context=context)
 
+# --- Hire Me View (NEW) ---
+def hire_me_view(request):
+    """ Renders the Hire Me page. """
+    context = {
+        'page_title': 'Hire Me',
+        # Add specific meta tags if desired
+        'meta_description': "Looking to hire a Deep Learning Engineer? Learn about my skills, availability, and the types of opportunities I'm seeking.",
+        'meta_keywords': "hire me, deep learning engineer, machine learning engineer, AI developer, freelance AI, available for hire, [Your Name]",
+    }
+    # You could potentially add context here about specific services if you model them
+    return render(request, 'portfolio/hire_me_page.html', context=context)

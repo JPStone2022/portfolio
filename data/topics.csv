@@ -1,0 +1,44 @@
+name,slug,description,order
+AI Development,ai-development,AI Product Manager:,0
+AI Engineering,ai-engineering,AI Engineer:,1
+Apache Spark,apache-spark,,2
+Big Data,big-data,,3
+Business Intelligence,business-intelligence,Business Intelligence Developer:,4
+Chatbot Development,chatbot-development,,5
+Cloud Computing,cloud-computing,,6
+Command Line,command-line,,7
+Computer Science,computer-science,,8
+Content Creation,content-creation,,9
+Cybersecurity,cybersecurity,,10
+Data Analysis,data-analysis,Data Analyst:,11
+Data Engineering,data-engineerling,Data Engineer:,12
+Data Inference,data-inference,,13
+Data Modeling,data-modeling,,14
+Data Science,data-science,Data Scientist:,15
+Data Warehousing,data-warehousing,,16
+Database Management,database-management,,17
+Deep Learning,deep-learning,,18
+Digital Marketing,digital-marketing,,19
+Ethical Hacking,ethical-hacking,,20
+Excel Skills,excel-skills,,21
+Explainable AI,explainable-ai,,22
+Generative AI,generative-ai,,23
+Hadoop Ecosystem,hadoop-ecosystem,,24
+Machine Learning,machine-learning,Machine Learning Engineer:,25
+Machine Learning Pipelines,machine-learning-pipelines,,26
+Math Skills,math-skills,,27
+Model Deployment,model-deployment,MLOps Engineer:,29
+Natural Language Processing,natural-language-processing,Natural Language Processing Engineer:,30
+NoSQL Databases,nosql-databases,,31
+Problem Solving,problem-solving,Problem Solvings Skills:,32
+Programming,programming,,33
+Project Management,project-management,,34
+Research,research,Research Scientist:,35
+Software Development,software-development,Software Engineer:,36
+Statistical Analysis,statistical-analysis,,37
+Statistical Modeling,statistical-modeling,,38
+Testing,testing,,39
+UX Design,ux-design,,40
+Web Design,web-design,,41
+Web Development,web-development,,42
+Web Scraping,web-scraping,,43

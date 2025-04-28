@@ -1,0 +1,71 @@
+{# portfolio/templates/portfolio/hire_me_page.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}Hire Me - Portfolio{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Gradient heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-12 bg-gradient-to-r from-teal-500 to-cyan-500 dark:from-teal-400 dark:to-cyan-400 bg-clip-text text-transparent">
+        Work With Me
+    </h1>
+
+    {# Main content area #}
+    <div class="max-w-3xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-cyan-900/20 transition-colors duration-300 ease-in-out">
+
+        {# Introduction #}
+        <div class="prose prose-indigo dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-5 mb-8">
+            <p class="text-lg">
+                I'm passionate about applying deep learning and AI to solve real-world problems and am currently seeking new opportunities. Whether you're looking for a dedicated team member or need expertise for a specific project, let's see how we can collaborate.
+            </p>
+
+            {# What You're Looking For #}
+            <h2 class="!mb-3 !mt-8 dark:text-gray-100">What I'm Looking For:</h2>
+            <ul class="list-disc pl-5 space-y-1">
+                <li>Challenging roles as a **Machine Learning Engineer**, **Data Scientist**, or **AI Researcher**.</li>
+                <li>Opportunities focusing on **[Mention 1-2 specific areas like Computer Vision, NLP, Generative AI, MLOps]**.</li>
+                <li>Collaborative team environments where I can contribute and continue learning.</li>
+                <li>Freelance/contract projects involving **[Mention specific project types, e.g., model development, data analysis, AI integration]**. (Adjust if only seeking full-time)</li>
+            </ul>
+
+            {# Key Strengths/Services #}
+            <h2 class="!mb-3 !mt-8 dark:text-gray-100">My Key Strengths:</h2>
+             <ul class="list-disc pl-5 space-y-1">
+                <li>Expertise in **[Key Skill 1, e.g., PyTorch/TensorFlow]** and **[Key Skill 2, e.g., Transformer models]**.</li>
+                <li>Proven ability to take projects from concept to deployment (mention MLOps if applicable).</li>
+                <li>Strong problem-solving skills and a data-driven approach.</li>
+                <li>Experience with **[Specific Tool/Platform, e.g., AWS SageMaker, Hugging Face]**.</li>
+                 <li>[Add another key strength relevant to desired roles].</li>
+            </ul>
+
+             {# Availability #}
+             <h2 class="!mb-3 !mt-8 dark:text-gray-100">Current Availability:</h2>
+             <p>
+                 I am currently available for **[e.g., full-time opportunities / new contract projects starting immediately / new projects starting from Month Year]**.
+             </p>
+        </div>
+
+        {# Call to Action #}
+        <div class="mt-10 text-center border-t border-gray-200 dark:border-gray-700 pt-8">
+            <p class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Interested in working together?</p>
+            <a href="{% url 'portfolio:contact' %}"
+               class="inline-block bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-semibold py-3 px-8 rounded-lg shadow hover:shadow-md transform hover:scale-[1.02] transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                Get In Touch via Contact Form
+            </a>
+            {# Optional: Link to CV #}
+            <p class="mt-4 text-sm">
+                <a href="{% url 'portfolio:cv' %}" class="text-blue-600 dark:text-blue-400 hover:underline">
+                    Or view my CV for more details.
+                </a>
+            </p>
+        </div>
+
+    </div>
+
+     <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}
+

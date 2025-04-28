@@ -24,4 +24,6 @@ urlpatterns = [
     path('cv/', views.cv_view, name='cv'),
     # Add path for the search results view
     path('search/', views.search_results_view, name='search_results'),
+    # Add path for the Hire Me page view
+    path('hire-me/', views.hire_me_view, name='hire_me'),
 ]

@@ -1,0 +1,49 @@
+name,slug,description,category_name,order
+Bash,bash,,Command Line and Shell Access:,0
+BeautifulSoup,beautifulsoup,,,1
+C#,c-sharp,,Programming Languages,2
+CSS,css,,Web Development,3
+Django,django,,,4
+Excel,excel,,,5
+Flask,flask,,,6
+Git,git,,Git and Version Control:,7
+GitHub,github,,,8
+Go,go,,Programming Languages,9
+HTML,html,,Web Development,10
+Hugging Face Transformers,hugging-face-transformers,,,11
+Itertools,itertools,,,12
+Java,java,,Programming Languages,13
+JavaScript,javascript,,Programming Languages,14
+Keras,keras,"Keras is a high-level API that runs on top of TensorFlow (or other backends), making it easier and faster to build and train neural networks.",Machine Learning,15
+Kotlin,kotlin,,Programming Languages,16
+Linux,linux,,,17
+Matplotlib,matplotlib,"The most established Python library for creating static, animated, and interactive visualizations. It provides a wide range of plot types (line plots, scatter plots, histograms, bar charts, etc.) and fine-grained control over plot elements.",Data Analysis,18
+Mlxtend,mlxtend,,,19
+MongoDB,mongodb,,,20
+NLTK,nltk,,,21
+NMap,nmap,,Cyber Security,22
+NumPy,numpy,"The fundamental package for numerical computing in Python. It provides powerful N-dimensional array objects, linear algebra functions, Fourier transforms, random number capabilities, and more. It's the foundation for many other data science libraries.",Data Analysis,23
+Pandas,pandas,"Built on top of NumPy, Pandas offers high-performance, easy-to-use data structures (like DataFrames) and data analysis tools. It's essential for data cleaning, manipulation, merging, reshaping, and analysis",Data Analysis,24
+PHP,php,,Programming Languages,25
+Pillow,pillow,,,26
+Pipenv,pipenv,,,27
+Plotly,plotly,,,28
+PostgreSQL,postgresql,,,29
+Powershell,powershell,,,30
+PySpark,pyspark,,,31
+Python,python,A popular programming language used in data science,Programming Languages,32
+PyTorch,pytorch,"Another major open-source deep learning framework known for its flexibility, Pythonic feel, and strong community support, especially in research.",Machine Learning,33
+R Language,r-language,,Programming Languages,34
+Requests,requests,,,35
+Ruby,ruby,,Programming Languages,36
+Scikit-learn,scikit-learn,"The go-to library for traditional machine learning algorithms. It offers efficient tools for data preprocessing, feature extraction, classification, regression, clustering, dimensionality reduction, model selection, and evaluation.",Data Analysis,37
+SciPy,scipy,"Builds on NumPy and provides a large collection of algorithms and functions for scientific and technical computing, including optimization, integration, interpolation, eigenvalue problems, signal processing, and more.",Data Analysis,38
+Seaborn,seaborn,"Built on Matplotlib, Seaborn provides a higher-level interface for drawing attractive and informative statistical graphics. It simplifies creating complex visualizations like heatmaps, violin plots, pair plots, and integrates well with Pandas DataFrames",Data Science,39
+Sklearn,sklearn,,Scikit-learn:,40
+SpaCy,spacy,,,41
+SQL,sql,,Web Development,42
+Statsmodels,statsmodels,,,43
+Tableu,tableu,,,44
+TensorFlow,tensorflow,"TensorFlow is a powerful open-source library developed by Google for numerical computation and large-scale machine learning, particularly deep learning.",Machine Learning,45
+Transformers,transformers,,,46
+Wireshark,wireshark,,Cyber Security,47

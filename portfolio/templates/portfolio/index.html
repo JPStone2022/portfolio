@@ -110,6 +110,22 @@
                     </ul>
                 </div>
             </div>
+            {# --- Featured Skills Section (NEW) --- #}
+            {% if featured_skills %}
+            <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+                 <h3 class="text-xl font-semibold text-center mb-6 text-gray-700 dark:text-gray-200">Featured Skills</h3>
+                 <div class="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
+                     {% for skill in featured_skills %}
+                         <a href="{{ skill.get_absolute_url }}"
+                            class="inline-block bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 font-medium px-3 py-1 rounded-full shadow-sm hover:shadow-md transform hover:-translate-y-0.5 transition duration-200 ease-in-out text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800">
+                             {{ skill.name }}
+                         </a>
+                     {% endfor %}
+                 </div>
+            </div>
+            {% endif %}
+            {# --- End Featured Skills Section --- #}
+            
             <div class="text-center mt-10">
                  {# Add focus ring to link #}
                  <a href="{% url 'skills:skill_list' %}"
