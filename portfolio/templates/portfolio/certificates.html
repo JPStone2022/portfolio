@@ -19,13 +19,13 @@
                 {# Add dark mode background/shadow/border to certificate card, add transition #}
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-blue-900/20 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 transition-colors duration-300 ease-in-out transform hover:scale-[1.02] hover:shadow-xl">
                     <div class="flex-shrink-0 w-24 h-24">
-                        {# Display the logo image if it exists #}
+                        {# Display the uploaded logo_image if it exists #}
                         {% if cert.logo_image %}
-                            <img src="{{ cert.logo_image.url }}"
+                            <img src="{{ cert.logo_image.url }}" {# Use .url attribute #}
                                  alt="{{ cert.issuer }} Logo"
                                  class="w-full h-full object-contain rounded-md border border-gray-200 dark:border-gray-700 p-1 bg-white dark:bg-gray-300"> {# Added bg for contrast #}
                         {% else %}
-                            {# Fallback if no logo image #}
+                            {# Fallback if no logo image uploaded #}
                             <div class="w-full h-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center rounded-md border border-gray-300 dark:border-gray-500">
                                 <span class="text-gray-500 dark:text-gray-400 text-xs">Logo</span>
                             </div>

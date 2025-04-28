@@ -28,7 +28,7 @@ from django.utils.text import Truncator
 def index(request):
     """ View function for the home page. """
     featured_projects = Project.objects.all()[:6]
-    featured_certificates = Certificate.objects.all()[:3]
+    featured_certificates = Certificate.objects.all()[:6]
     latest_blog_post = None
     if BlogPost:
         try:

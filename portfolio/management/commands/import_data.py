@@ -118,6 +118,7 @@ class Command(BaseCommand):
                 if model_type == 'projects': required_headers = ['title', 'description']
                 elif model_type == 'skills': required_headers = ['name']
                 elif model_type == 'topics': required_headers = ['name']
+                elif model_type == 'certificates': required_headers = ['title']
                 # Add checks for other models...
 
                 if not reader.fieldnames:

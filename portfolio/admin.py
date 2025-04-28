@@ -57,9 +57,10 @@ class ProjectAdmin(admin.ModelAdmin):
 # Certificate Admin (remains the same)
 @admin.register(Certificate)
 class CertificateAdmin(admin.ModelAdmin):
-    list_display = ('title', 'issuer', 'date_issued', 'order', 'certificate_file')
+    # Add logo_image to list_display (optional, but useful)
+    list_display = ('title', 'issuer', 'date_issued', 'order', 'certificate_file', 'logo_image')
     list_filter = ('issuer', 'date_issued')
     search_fields = ('title', 'issuer')
     list_editable = ('order',)
-    fields = ('title', 'issuer', 'date_issued', 'certificate_file', 'order')
-
+    # Add logo_image to the fields displayed in the add/change form
+    fields = ('title', 'issuer', 'date_issued', 'certificate_file', 'logo_image', 'order')
