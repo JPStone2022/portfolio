@@ -32,7 +32,7 @@ echo "Importing/Updating data from CSV..."
 
 # Example for skills (update based on name)
 # Ensure data/skills.csv is committed to your Git repo
-python manage.py import_data data/skills.csv --model_type skills --update --unique_field name
+# python manage.py import_data data/skills.csv --model_type skills --update --unique_field name
 
 # Example for topics (update based on slug)
 # Ensure data/topics.csv is committed to your Git repo
