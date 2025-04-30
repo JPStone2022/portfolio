@@ -40,7 +40,7 @@ echo "Importing/Updating data from CSV..."
 
 # Example for certificates (update based on title)
 # Ensure data/certificates.csv is committed to your Git repo
-# python manage.py import_data data/certificates.csv --model_type certificates --update --unique_field title
+python manage.py import_data data/certificates.csv --model_type certificates --update --unique_field title
 
 # Example for recommendations (update based on name)
 # Ensure data/recommendations.csv is committed to your Git repo
