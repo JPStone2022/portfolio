@@ -50,7 +50,7 @@ def index(request):
         except Exception as e: print(f"Could not query RecommendedProduct: {e}"); pass
 
     # Fetch featured topics (e.g., top 3 based on ordering)
-    featured_topics = ProjectTopic.objects.all()[:8]
+    featured_topics = ProjectTopic.objects.all()[:10]
 
     # Fetch featured skills (e.g., top 6 based on ordering)
     featured_skills = None
