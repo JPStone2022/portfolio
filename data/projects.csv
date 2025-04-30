@@ -1,3 +1,3 @@
 title,slug,description,image_url,results_metrics,challenges,lessons_learned,code_snippet,code_language,github_url,demo_url,paper_url,order,skills,topics
-news,news,this is news,,none,none,none,,Python,,,,0,,
-something new,something-new,I am testing this out,,very,hard,lots,,"Python,Pandas,NumPy",,,,1,"python,pandas",Data Analysis
+Basic Image Analysis,basic image analysis,this is news,https://placehold.co/600x400/f97316/FFFFFF?text=Basic+Image+Analysis,none,none,none,,Python,,,,0,"Python,Matplotlib,NumPy",Data Science
+Sales Data Analysis,sales data analysis,I am testing this out,https://placehold.co/600x400/f97316/FFFFFF?text=Sales+Data+Analysis,very,hard,lots,,Python,,,,1,"Python,Pandas,NumPy",Data Science

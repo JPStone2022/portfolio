@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'blog',      # Your blog app
     'skills',    # Your skills app
     'recommendations', # Add the new app
+    'demos',
     # Add whitenoise.runserver_nostatic if DEBUG is True for easier local static serving
     'whitenoise.runserver_nostatic', # Optional for development convenience
 ]

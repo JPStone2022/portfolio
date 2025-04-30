@@ -1,0 +1,96 @@
+{# demos/templates/demos/sentiment_analysis_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-yellow-500 to-orange-500 dark:from-yellow-400 dark:to-orange-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10">
+        Enter a sentence or paragraph below, and this demo will use a pre-trained DistilBERT model (from Hugging Face) to predict whether the sentiment is positive or negative.
+    </p>
+
+    {# Display Error Messages #}
+    {% if error_message %}
+        <div class="max-w-xl mx-auto mb-6 p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200" role="alert">
+            <strong>Error:</strong> {{ error_message }}
+        </div>
+    {% endif %}
+
+    {# Grid for Form and Results #}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+
+        {# Input Form Card #}
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-orange-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Enter Text</h2>
+            <form method="post" action="{% url 'demos:sentiment_analyzer' %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    {# Render form field - includes label and input styled via widget #}
+                    {{ form.text_input.label_tag }}
+                    {{ form.text_input }}
+                    {% if form.text_input.errors %}
+                        <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.text_input.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+                <button type="submit"
+                        class="w-full bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                    Analyze Sentiment
+                </button>
+            </form>
+        </div>
+
+        {# Results Card #}
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-orange-900/20 transition-colors duration-300 ease-in-out min-h-[200px]"> {# Added min-height #}
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Analysis Result</h2>
+
+            {% if submitted_text %}
+                <div class="mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Analyzed Text:</h3>
+                    <p class="text-gray-700 dark:text-gray-300 italic bg-gray-50 dark:bg-gray-700 p-3 rounded text-sm">"{{ submitted_text|truncatechars:200 }}"</p>
+                </div>
+            {% endif %}
+
+            {% if sentiment_result %}
+                <div class="text-center">
+                     <p class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Predicted Sentiment:</p>
+                     {# Style based on result label #}
+                     {% if sentiment_result.label == 'POSITIVE' %}
+                        <span class="text-3xl font-bold text-green-600 dark:text-green-400">
+                            {{ sentiment_result.label }}
+                        </span>
+                     {% elif sentiment_result.label == 'NEGATIVE' %}
+                         <span class="text-3xl font-bold text-red-600 dark:text-red-400">
+                            {{ sentiment_result.label }}
+                         </span>
+                     {% else %}
+                         <span class="text-3xl font-bold text-gray-700 dark:text-gray-300">
+                            {{ sentiment_result.label }}
+                         </span>
+                     {% endif %}
+                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-3">
+                         Confidence: <span class="font-semibold">{{ sentiment_result.score }}%</span>
+                     </p>
+                </div>
+            {% elif submitted_text %}
+                 <div class="text-center text-gray-500 dark:text-gray-400 italic py-5">
+                     Processing... (or error occurred).
+                 </div>
+            {% else %}
+                <div class="text-center text-gray-500 dark:text-gray-400 italic py-10">
+                    Submit some text to see the sentiment analysis result here.
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+     <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

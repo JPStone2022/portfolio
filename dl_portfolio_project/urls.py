@@ -27,6 +27,7 @@ urlpatterns = [
     path('blog/', include('blog.urls', namespace='blog')),
     path('skills/', include('skills.urls', namespace='skills')),
     path('recommendations/', include('recommendations.urls', namespace='recommendations')), # Include recommendations URLs
+    path('demos/', include('demos.urls', namespace='demos')), # Include demos URLs
 
     # Add the sitemap URL pattern
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps},

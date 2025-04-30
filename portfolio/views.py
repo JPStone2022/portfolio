@@ -16,6 +16,8 @@ except ImportError:
     SkillCategory = None
 try: from recommendations.models import RecommendedProduct # Import recommendations model
 except ImportError: RecommendedProduct = None
+try: from demos.models import Demo # Import Demo model
+except ImportError: Demo = None
 
 from django.utils import timezone
 from .forms import ContactForm
@@ -54,9 +56,17 @@ def index(request):
     featured_skills = None
     if Skill:
         try:
-            featured_skills = Skill.objects.all()[:6] # Get top 6 based on default ordering
+            featured_skills = Skill.objects.all()[:10] # Get top 6 based on default ordering
         except Exception as e:
             print(f"Could not query Skill: {e}"); pass
+
+    # Fetch featured demos
+    featured_demos = None
+    if Demo:
+        try:
+            featured_demos = Demo.objects.filter(is_featured=True).order_by('order')[:3] # Get top 3 featured
+        except Exception as e:
+            print(f"Could not query Demo: {e}"); pass
 
     context = {
         'page_title': 'My Deep Learning Portfolio',
@@ -66,6 +76,7 @@ def index(request):
         'featured_recommendations': featured_recommendations, # Add to context
         'featured_topics': featured_topics, # Add featured topics to context
         'featured_skills': featured_skills, # Add featured skills to context
+        'featured_demos': featured_demos, # Add featured demos to context
     }
     return render(request, 'portfolio/index.html', context=context)
 

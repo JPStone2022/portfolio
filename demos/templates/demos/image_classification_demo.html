@@ -1,0 +1,99 @@
+{# demos/templates/demos/image_classification_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10">
+        Upload an image (like a photo of an animal, object, or scene) and this demo will use the pre-trained MobileNetV2 model to predict what it sees.
+    </p>
+
+    {# Display Error Messages #}
+    {% if error_message %}
+        <div class="max-w-xl mx-auto mb-6 p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200" role="alert">
+            <strong>Error:</strong> {{ error_message }}
+        </div>
+    {% endif %}
+
+    {# Grid for Form and Results #}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+
+        {# Upload Form Card #}
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-pink-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Upload Image</h2>
+            <form method="post" enctype="multipart/form-data" action="{% url 'demos:image_classifier' %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    {# Render form field - includes label and input styled via widget #}
+                    {{ form.image.label_tag }}
+                    {{ form.image }}
+                    {% if form.image.help_text %}
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ form.image.help_text }}</p>
+                    {% endif %}
+                    {% if form.image.errors %}
+                        <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ form.image.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+                <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                    Classify Image
+                </button>
+            </form>
+        </div>
+
+        {# Results Card #}
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-pink-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">Results</h2>
+
+            {# Display Uploaded Image Preview #}
+            {% if uploaded_image_url %}
+                <div class="mb-6 text-center">
+                    <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">Uploaded Image:</h3>
+                    <img src="{{ uploaded_image_url }}" alt="Uploaded Image Preview"
+                         class="max-w-full h-48 mx-auto object-contain rounded border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 p-1">
+                </div>
+            {% else %}
+                 <div class="text-center text-gray-500 dark:text-gray-400 italic py-10">
+                     Upload an image to see the results here.
+                 </div>
+            {% endif %}
+
+            {# Display Predictions #}
+            {% if prediction_results %}
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-3">Top Predictions:</h3>
+                    <ul class="space-y-2">
+                        {% for result in prediction_results %}
+                            <li class="flex justify-between items-center text-sm">
+                                {# Removed the invalid |replace filter #}
+                                <span class="text-gray-800 dark:text-gray-200 capitalize">{{ result.label }}</span>
+                                <span class="font-mono text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-xs">
+                                    {# Display as percentage with 1 decimal place #}
+                                    {{ result.probability|floatformat:1 }}%
+                                </span>
+                            </li>
+                            {# Simple Progress Bar #}
+                            <li>
+                                <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1.5">
+                                    <div class="bg-blue-500 dark:bg-blue-400 h-1.5 rounded-full" style="width: {{ result.probability|floatformat:1 }}%"></div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+     <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

@@ -17,7 +17,7 @@
     {# Optional: Topic Description #}
     {% if topic.description %}
     <div class="max-w-3xl mx-auto text-center text-lg text-gray-600 dark:text-gray-400 mb-12">
-        {{ topic.description|linebreaks }}
+        {{ topic.description|safe }}
     </div>
     {% endif %}
 
