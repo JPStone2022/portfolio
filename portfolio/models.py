@@ -129,10 +129,10 @@ class Certificate(models.Model):
     title = models.CharField(max_length=250)
     issuer = models.CharField(max_length=150)
     date_issued = models.DateField(blank=True, null=True)
-    certificate_file = models.FileField(upload_to='portfolio/images//', blank=True, null=True)
+    certificate_file = models.FileField(upload_to='portfolio/images/', blank=True, null=True)
     # Add ImageField for logo
     logo_image = models.ImageField(
-        upload_to='portfolio/images//', # Subdirectory within MEDIA_ROOT
+        upload_to='portfolio/images/', # Subdirectory within MEDIA_ROOT
         blank=True,
         null=True,
         help_text="Upload a logo image for the issuer or certificate (optional)."
