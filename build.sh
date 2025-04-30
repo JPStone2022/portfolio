@@ -21,4 +21,33 @@ echo "Running database migrations..."
 python manage.py migrate --no-input
 echo "Migrations finished."
 
+# --- Add Data Import/Update Commands Here ---
+# IMPORTANT: Use the --update flag to avoid duplicates on redeploy!
+# Adjust paths, model_type, and unique_field as needed for your CSVs.
+echo "Importing/Updating data from CSV..."
+
+# Example for projects (update based on slug)
+# Ensure data/projects.csv is committed to your Git repo
+# python manage.py import_data data/projects.csv --model_type projects --update --unique_field slug
+
+# Example for skills (update based on name)
+Ensure data/skills.csv is committed to your Git repo
+python manage.py import_data data/skills.csv --model_type skills --update --unique_field name
+
+# Example for topics (update based on slug)
+Ensure data/topics.csv is committed to your Git repo
+python manage.py import_data data/topics.csv --model_type topics --update --unique_field slug
+
+# Example for certificates (update based on title)
+# Ensure data/certificates.csv is committed to your Git repo
+# python manage.py import_data data/certificates.csv --model_type certificates --update --unique_field title
+
+# Example for recommendations (update based on name)
+# Ensure data/recommendations.csv is committed to your Git repo
+# python manage.py import_data data/recommendations.csv --model_type recommendations --update --unique_field name
+
+echo "Data import/update step finished."
+# --- End Data Import/Update Commands ---
+
+
 echo "Build finished successfully!"
