@@ -16,8 +16,15 @@ except ImportError:
     SkillCategory = None
 try: from recommendations.models import RecommendedProduct # Import recommendations model
 except ImportError: RecommendedProduct = None
-try: from demos.models import Demo # Import Demo model
-except ImportError: Demo = None
+
+# --- Import Demo model conditionally ---
+try:
+    from demos.models import Demo
+    DEMOS_APP_ENABLED = True
+except ImportError:
+    Demo = None # Define Demo as None if app is not installed
+    DEMOS_APP_ENABLED = False
+# --- End Conditional Import ---
 
 from django.utils import timezone
 from .forms import ContactForm
@@ -60,11 +67,11 @@ def index(request):
         except Exception as e:
             print(f"Could not query Skill: {e}"); pass
 
-    # Fetch featured demos
+    # Fetch featured demos only if the app is enabled/imported
     featured_demos = None
-    if Demo:
+    if DEMOS_APP_ENABLED and Demo: # Check both flag and model
         try:
-            featured_demos = Demo.objects.filter(is_featured=True).order_by('order')[:6] # Get top 3 featured
+            featured_demos = Demo.objects.filter(is_featured=True).order_by('order')[:3]
         except Exception as e:
             print(f"Could not query Demo: {e}"); pass
 
