@@ -37,28 +37,23 @@ else:
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Read secret key from environment variable in production
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-=your-default-development-key-here') # Replace fallback key
+#SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-=your-default-development-key-here') # Replace fallback key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True' # Default to True for dev, set env var to 'False' in prod
-#DEBUG = 'False'
-# Update ALLOWED_HOSTS based on environment
-#ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split(' ')
-ALLOWED_HOSTS = [os.environ.get('PYTHONANYWHERE_DOMAIN')] # Add your domain/IP in production
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY and os.environ.get('DJANGO_SETTINGS_MODULE') == 'dl_portfolio_project.settings':
+    SECRET_KEY = 'django-insecure-=replace-with-your-local-dev-key-here'
+#DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = []
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-# Add your custom domain here if you set one up later
+if RENDER_EXTERNAL_HOSTNAME: ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+# Allow pythonanywhere domain if set
+PYTHONANYWHERE_DOMAIN = os.environ.get('PYTHONANYWHERE_DOMAIN')
+if PYTHONANYWHERE_DOMAIN: ALLOWED_HOSTS.append(PYTHONANYWHERE_DOMAIN)
+if DEBUG: ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
 # CUSTOM_DOMAIN = os.environ.get('CUSTOM_DOMAIN')
-# if CUSTOM_DOMAIN:
-#     ALLOWED_HOSTS.append(CUSTOM_DOMAIN)
-# Add localhost for local testing if needed (e.g., when DEBUG=False locally)
-# if DEBUG or os.environ.get('DJANGO_DEVELOPMENT'): # Add localhost if DEBUG or dev env var set
-#     ALLOWED_HOSTS.extend(['127.0.0.1', 'localhost'])
-
-# HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME') # Optional: Set this env var on Heroku
-# if HEROKU_APP_NAME:
-#     ALLOWED_HOSTS.append(f"{HEROKU_APP_NAME}.herokuapp.com")
+# if CUSTOM_DOMAIN: ALLOWED_HOSTS.append(CUSTOM_DOMAIN)
 
 # Application definition
 
@@ -79,6 +74,13 @@ INSTALLED_APPS = [
     # Add whitenoise.runserver_nostatic if DEBUG is True for easier local static serving
     'whitenoise.runserver_nostatic', # Optional for development convenience
 ]
+
+# Conditionally add 'demos' app only if DEBUG is True
+if DEBUG:
+    INSTALLED_APPS += [
+        'demos',
+    ]
+# --- End Conditional App ---
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
