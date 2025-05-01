@@ -41,10 +41,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-=your-default-develop
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True' # Default to True for dev, set env var to 'False' in prod
-DEBUG = 'True'
+DEBUG = 'False'
 # Update ALLOWED_HOSTS based on environment
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split(' ')
-#ALLOWED_HOSTS = [os.environ.get('PYTHONANYWHERE_DOMAIN')] # Add your domain/IP in production
+#ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split(' ')
+ALLOWED_HOSTS = [os.environ.get('PYTHONANYWHERE_DOMAIN')] # Add your domain/IP in production
 # RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 # if RENDER_EXTERNAL_HOSTNAME:
 #     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
@@ -75,7 +75,7 @@ INSTALLED_APPS = [
     'blog',      # Your blog app
     'skills',    # Your skills app
     'recommendations', # Add the new app
-    'demos',
+    #'demos',
     # Add whitenoise.runserver_nostatic if DEBUG is True for easier local static serving
     'whitenoise.runserver_nostatic', # Optional for development convenience
 ]
