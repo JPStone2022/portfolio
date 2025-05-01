@@ -16,14 +16,8 @@ except ImportError:
     SkillCategory = None
 try: from recommendations.models import RecommendedProduct # Import recommendations model
 except ImportError: RecommendedProduct = None
-
-try:
-    from demos.models import Demo
-    DEMOS_APP_ENABLED = True
-except ImportError:
-    Demo = None # Define Demo as None if app is not installed
-    DEMOS_APP_ENABLED = False
-# --- End Conditional Import ---
+try: from demos.models import Demo # Import Demo model
+except ImportError: Demo = None
 
 from django.utils import timezone
 from .forms import ContactForm

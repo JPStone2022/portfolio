@@ -27,7 +27,7 @@ urlpatterns = [
     path('blog/', include('blog.urls', namespace='blog')),
     path('skills/', include('skills.urls', namespace='skills')),
     path('recommendations/', include('recommendations.urls', namespace='recommendations')), # Include recommendations URLs
-    #path('demos/', include('demos.urls', namespace='demos')), # Include demos URLs
+    path('demos/', include('demos.urls', namespace='demos')), # Include demos URLs
 
     # Add the sitemap URL pattern
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
@@ -42,13 +42,6 @@ urlpatterns = [
     # Keep portfolio URLs at the root (should be last for catch-all)
     path('', include('portfolio.urls')),
 ]
-
-# --- Conditionally add Demos URLs ---
-if settings.DEBUG:
-    urlpatterns += [
-        path('demos/', include('demos.urls', namespace='demos')),
-    ]
-# --- End Conditional Demos URLs ---
 
 # Media file serving for development
 if settings.DEBUG:
