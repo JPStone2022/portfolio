@@ -1,0 +1,147 @@
+{# demos/templates/demos/flask_api_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+
+{% block meta_description %}{{ meta_description|default:"Learn how Flask is used for simple ML APIs." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Flask, API, machine learning, deployment" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-gray-300 dark:to-gray-100 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        While this portfolio is built with Django, another popular Python web framework, **Flask**, is often used for creating simple APIs, especially for serving machine learning models. This page demonstrates the concept.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-gray-900/20 transition-colors duration-300 ease-in-out">
+
+        <div class="prose prose-indigo dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-6">
+            <h2 class="!mb-3 dark:text-gray-100">Why Flask for ML APIs?</h2>
+            <ul>
+                <li><strong>Microframework:</strong> Flask is lightweight and provides just the essentials for web development, making it quick to get started for simple tasks like an API endpoint.</li>
+                <li><strong>Flexibility:</strong> It doesn't impose a strict project structure like Django, giving developers more freedom (which can be good or bad depending on the project scale).</li>
+                <li><strong>Simplicity:</strong> Creating a basic API endpoint often requires less boilerplate code compared to Django.</li>
+            </ul>
+
+            <h2 class="!mb-3 !mt-8 dark:text-gray-100">Example: Simple Prediction API</h2>
+            <p>
+                Imagine you have a trained Scikit-learn model (saved, perhaps using `joblib`) that predicts Iris species based on petal measurements. Here's how a basic Flask API endpoint for it might look:
+            </p>
+        </div>
+
+        {# Flask Code Snippet #}
+        <div class="mt-6 mb-8">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Illustrative Flask Code (`app.py`):</h3>
+            {# Use pre/code tags with language class for Prism.js #}
+            <pre><code class="language-python">
+# Example app.py (Conceptual - Requires Flask, joblib, scikit-learn installed)
+# --- Imports ---
+from flask import Flask, request, jsonify
+import joblib
+import numpy as np
+
+# --- App Initialization ---
+app = Flask(__name__)
+
+# --- Load Model (Load once on startup) ---
+# Assumes model was saved using joblib.dump(model, 'iris_model.pkl')
+try:
+    model = joblib.load('iris_model.pkl')
+    # Define expected feature names and target names (replace with actual)
+    feature_names = ['petal length (cm)', 'petal width (cm)'] # Example: using only 2 features
+    target_names = ['setosa', 'versicolor', 'virginica']
+    print("Model loaded successfully.")
+except FileNotFoundError:
+    print("Error: Model file 'iris_model.pkl' not found.")
+    model = None
+except Exception as e:
+    print(f"Error loading model: {e}")
+    model = None
+
+
+# --- API Endpoint ---
+@app.route('/predict', methods=['POST'])
+def predict_iris():
+    if not model:
+        return jsonify({'error': 'Model not loaded'}), 500
+
+    try:
+        # Get JSON data from the request
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No input data provided'}), 400
+
+        # Extract features (ensure order matches model training)
+        # Add validation for missing keys or incorrect types
+        petal_length = float(data['petal_length'])
+        petal_width = float(data['petal_width'])
+        features = np.array([[petal_length, petal_width]])
+
+        # Make prediction
+        prediction_idx = model.predict(features)[0]
+        predicted_species = target_names[prediction_idx]
+
+        # Get probabilities (optional)
+        probabilities = model.predict_proba(features)[0]
+        proba_dict = {name: round(prob * 100, 1) for name, prob in zip(target_names, probabilities)}
+
+        # Return JSON response
+        return jsonify({
+            'prediction': predicted_species,
+            'probabilities': proba_dict
+        })
+
+    except KeyError as e:
+        return jsonify({'error': f'Missing feature in input data: {e}'}), 400
+    except ValueError as e:
+         return jsonify({'error': f'Invalid input data type: {e}'}), 400
+    except Exception as e:
+        print(f"Prediction error: {e}") # Log the error server-side
+        return jsonify({'error': 'An error occurred during prediction.'}), 500
+
+
+# --- Run the App (for local testing) ---
+if __name__ == '__main__':
+    # Note: For production, use a WSGI server like Gunicorn instead of app.run()
+    # Example: gunicorn --bind 0.0.0.0:5000 app:app
+    app.run(debug=True) # debug=True ONLY for development
+
+            </code></pre>
+        </div>
+
+        <div class="prose prose-indigo dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-6">
+            <h2 class="!mb-3 !mt-8 dark:text-gray-100">How it Works (Conceptual)</h2>
+            <ul>
+                <li><strong>Imports:</strong> Import Flask, `request` (to access incoming data), `jsonify` (to create JSON responses), and libraries for loading/using the model (`joblib`, `numpy`).</li>
+                <li><strong>App Initialization:</strong> `app = Flask(__name__)` creates the Flask application instance.</li>
+                <li><strong>Model Loading:</strong> The pre-trained model (`iris_model.pkl`) is loaded once when the application starts for efficiency.</li>
+                <li><strong>API Endpoint (`@app.route`)**:</strong> The `@app.route('/predict', methods=['POST'])` decorator defines a URL route (`/predict`) that only accepts POST requests.</li>
+                <li><strong>Request Handling:** Inside the `predict_iris` function:
+                    <ul>
+                        <li>`request.get_json()` retrieves data sent in the request body (expected to be JSON).</li>
+                        <li>Input features are extracted and converted to a NumPy array suitable for the model.</li>
+                        <li>`model.predict()` makes the prediction.</li>
+                        <li>`jsonify({...})` creates a JSON response containing the prediction (and optionally probabilities).</li>
+                    </ul>
+                </li>
+                 <li><strong>Error Handling:</strong> Basic `try...except` blocks handle potential issues like missing data, incorrect data types, or model errors.</li>
+                 <li><strong>Running:** `app.run(debug=True)` starts Flask's development server (Gunicorn is used for production).</li>
+            </ul>
+            <p>
+                This simple structure allows external applications or front-ends to send feature data to the `/predict` endpoint and receive the model's prediction back in a standard JSON format. While Django can certainly build APIs, Flask's minimal nature often makes it a faster choice for creating these kinds of focused prediction microservices.
+            </p>
+        </div>
+
+    </div>
+
+     <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

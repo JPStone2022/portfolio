@@ -64,7 +64,7 @@ def index(request):
     featured_demos = None
     if Demo:
         try:
-            featured_demos = Demo.objects.filter(is_featured=True).order_by('order')[:3] # Get top 3 featured
+            featured_demos = Demo.objects.filter(is_featured=True).order_by('order')[:6] # Get top 3 featured
         except Exception as e:
             print(f"Could not query Demo: {e}"); pass
 

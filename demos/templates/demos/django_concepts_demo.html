@@ -1,0 +1,175 @@
+{# demos/templates/demos/django_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+
+{% block meta_description %}{{ meta_description|default:"Learn about key Django framework features." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Django, Python, web framework, ORM, admin" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        This portfolio itself is built using Django! It's a powerful Python web framework designed for rapid development of secure and maintainable websites. Here's a look at some core concepts that make it effective:
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-emerald-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Models (ORM) Section --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Models & ORM (Object-Relational Mapper)</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>Instead of writing raw SQL, you define your database structure using Python classes called Models. Django's ORM handles the translation between your Python code and the database.</p>
+                <p><strong>Benefits:</strong> Database abstraction (easier to switch databases), less SQL boilerplate, Pythonic data access, built-in migrations.</p>
+            </div>
+            <div class="mt-4">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example (`models.py`):</h4>
+                <pre><code class="language-python">
+from django.db import models
+from django.utils import timezone
+
+class Project(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    date_created = models.DateField(default=timezone.now)
+    # Relationships like ForeignKey, ManyToManyField are also defined here
+    # skills = models.ManyToManyField(Skill)
+
+    def __str__(self):
+        return self.title
+                </code></pre>
+            </div>
+        </section>
+
+        {# --- Views Section --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Views (Request Handling Logic)</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>Views are Python functions (or classes) that take a web request and return a web response. They contain the logic to fetch data from models, process user input (from forms), and decide which template to render.</p>
+                <p><strong>Benefits:</strong> Separates business logic from presentation, allows complex request processing.</p>
+            </div>
+             <div class="mt-4">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example (`views.py`):</h4>
+                <pre><code class="language-python">
+from django.shortcuts import render, get_object_or_404
+from .models import Project
+
+def project_detail(request, project_slug):
+    # Fetch data using the ORM
+    project = get_object_or_404(Project, slug=project_slug)
+
+    # Prepare context data for the template
+    context = {
+        'project': project,
+        'page_title': project.title
+    }
+    # Render the template with the context
+    return render(request, 'portfolio/project_detail.html', context)
+                </code></pre>
+            </div>
+        </section>
+
+        {# --- Templates Section --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Templates (Presentation Layer)</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                {# *** CORRECTED use of templatetag *** #}
+                <p>Django's template language allows you to embed dynamic content (variables) and logic (tags like loops and conditionals) within your HTML files. It supports template inheritance (`{% templatetag openblock %} extends 'portfolio/base.html' {% templatetag closeblock %}`) to reduce code duplication.</p>
+                <p><strong>Benefits:</strong> Clean separation of presentation from logic, reusable template components, powerful built-in tags and filters.</p>
+            </div>
+             <div class="mt-4">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example (`project_detail.html`):</h4>
+                {# *** CORRECTED escaping using templatetag *** #}
+                <pre><code class="language-html">
+{% templatetag openblock %} extends 'portfolio/base.html' {% templatetag closeblock %}
+
+{% templatetag openblock %} block title {% templatetag closeblock %}{% templatetag openvariable %} project.title {% templatetag closevariable %}{% templatetag openblock %} endblock {% templatetag closeblock %}
+
+{% templatetag openblock %} block content {% templatetag closeblock %}
+  &lt;h1&gt;{% templatetag openvariable %} project.title {% templatetag closevariable %}&lt;/h1&gt; {# Display variable #}
+  &lt;p&gt;{% templatetag openvariable %} project.description|linebreaks {% templatetag closevariable %}&lt;/p&gt; {# Use filter #}
+
+  &lt;h2&gt;Skills Used:&lt;/h2&gt;
+  &lt;ul&gt;
+    {% templatetag openblock %} for skill in project.skills.all {% templatetag closeblock %} {# Loop tag #}
+      &lt;li&gt;{% templatetag openvariable %} skill.name {% templatetag closevariable %}&lt;/li&gt;
+    {% templatetag openblock %} empty {% templatetag closeblock %}
+      &lt;li&gt;No skills listed.&lt;/li&gt;
+    {% templatetag openblock %} endfor {% templatetag closeblock %}
+  &lt;/ul&gt;
+  &lt;a href="{% templatetag openblock %} url 'portfolio:all_projects' {% templatetag closeblock %}"&gt;Back&lt;/a&gt; {# URL tag #}
+{% templatetag openblock %} endblock {% templatetag closeblock %}
+                </code></pre>
+            </div>
+        </section>
+
+        {# --- Forms Section --- #}
+         <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">4. Forms (Handling User Input)</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>Django's Forms library simplifies handling user input, including rendering HTML form elements, validating submitted data against defined rules, and cleaning the data.</p>
+                <p><strong>Benefits:</strong> Automatic HTML generation, robust validation, CSRF protection integration, separation of validation logic.</p>
+            </div>
+             <div class="mt-4">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example (`forms.py`):</h4>
+                <pre><code class="language-python">
+from django import forms
+
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100, required=True)
+    email = forms.EmailField(required=True)
+    message = forms.CharField(widget=forms.Textarea, required=True)
+                </code></pre>
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mt-3 mb-1">Example (`template.html`):</h4>
+                 {# *** CORRECTED escaping using templatetag *** #}
+                 <pre><code class="language-html">
+&lt;form method="post"&gt;
+    {% templatetag openblock %} csrf_token {% templatetag closeblock %} {# Security token #}
+    {% templatetag openvariable %} form.as_p {% templatetag closevariable %} {# Render form fields as paragraphs #}
+    &lt;button type="submit"&gt;Send&lt;/button&gt;
+&lt;/form&gt;
+                </code></pre>
+            </div>
+        </section>
+
+         {# --- Admin Section --- #}
+         <section>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">5. Admin Interface</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>Django automatically generates a powerful and customizable administration interface based on your models. This allows trusted users to easily create, read, update, and delete content without needing custom views.</p>
+                <p><strong>Benefits:</strong> Huge time saver for content management, customizable, handles authentication and permissions.</p>
+            </div>
+             <div class="mt-4">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example (`admin.py`):</h4>
+                <pre><code class="language-python">
+from django.contrib import admin
+from .models import Project, Skill
+
+# Simple registration
+admin.site.register(Project)
+
+# Registration with customization
+@admin.register(Skill)
+class SkillAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category')
+    list_filter = ('category',)
+    search_fields = ('name',)
+                </code></pre>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}
