@@ -3,7 +3,8 @@
 import os
 import io # For handling dataframe info in memory
 import uuid # For unique filenames
-from django.shortcuts import render
+import base64
+from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from .forms import ImageUploadForm, SentimentAnalysisForm, CSVUploadForm, ExplainableAIDemoForm # Import new form
@@ -102,6 +103,13 @@ try:
     STATSMODELS_AVAILABLE = True
 except ImportError:
     print("Statsmodels not found. Causal Inference demo disabled."); STATSMODELS_AVAILABLE = False
+
+# SciPy (for Optimization Demo)
+try:
+    from scipy import optimize
+    SCIPY_AVAILABLE = True
+except ImportError:
+    print("SciPy not found. Optimization demo disabled."); SCIPY_AVAILABLE = False
 
 # --- Image Classification View ---
 def image_classification_view(request):
@@ -594,3 +602,181 @@ def causal_inference_demo_view(request):
     }
     return render(request, 'demos/causal_inference_demo.html', context=context)
 
+# --- Optimization Demo View (NEW) ---
+def optimization_demo_view(request):
+    """
+    Demonstrates finding the minimum of a function using SciPy's optimize module.
+    """
+    results = None
+    error_message = None
+    plot_url = None
+
+    if not SCIPY_AVAILABLE or not DATA_LIBS_AVAILABLE or not np:
+        error_message = "Required libraries (SciPy, NumPy, Matplotlib) not installed."
+        context = {'error_message': error_message, 'page_title': 'Optimization Demo (SciPy)'}
+        return render(request, 'demos/optimization_demo.html', context)
+
+    try:
+        # 1. Define the function to minimize (Himmelblau's function)
+        # This function has multiple local minima.
+        def himmelblau(p):
+            x, y = p
+            # f(x, y) = (x^2 + y - 11)^2 + (x + y^2 - 7)^2
+            term1 = (x**2 + y - 11)**2
+            term2 = (x + y**2 - 7)**2
+            return term1 + term2
+
+        function_str = "(x**2 + y - 11)**2 + (x + y**2 - 7)**2"
+        start_point = np.array([0.0, 0.0]) # Where the optimization starts
+
+        # 2. Perform Optimization
+        # Use scipy.optimize.minimize. 'Nelder-Mead' is a common gradient-free method.
+        optimization_result = optimize.minimize(
+            himmelblau,
+            start_point,
+            method='Nelder-Mead',
+            options={'xatol': 1e-6, 'disp': False} # Tolerance and display options
+        )
+
+        # 3. Prepare results
+        if optimization_result.success:
+            found_minimum_x = optimization_result.x
+            found_minimum_value = optimization_result.fun
+            results = {
+                'function': function_str,
+                'start_point': start_point.tolist(),
+                'method': 'Nelder-Mead',
+                'success': optimization_result.success,
+                'message': optimization_result.message,
+                'found_minimum_point': [round(coord, 4) for coord in found_minimum_x],
+                'found_minimum_value': round(found_minimum_value, 4),
+                'iterations': optimization_result.nit,
+            }
+        else:
+            error_message = f"Optimization failed: {optimization_result.message}"
+            results = {'success': False, 'message': optimization_result.message}
+
+
+        # 4. Generate Contour Plot
+        try:
+            x_range = np.arange(-5.0, 5.0, 0.1)
+            y_range = np.arange(-5.0, 5.0, 0.1)
+            X_grid, Y_grid = np.meshgrid(x_range, y_range)
+            Z_grid = himmelblau([X_grid, Y_grid])
+
+            plt.figure(figsize=(7, 6))
+            # Use contourf for filled contours, contour for lines
+            contour_plot = plt.contourf(X_grid, Y_grid, Z_grid, levels=np.logspace(0, 3, 15), cmap='viridis', alpha=0.8)
+            plt.colorbar(contour_plot, label='Function Value (log scale)')
+            plt.contour(X_grid, Y_grid, Z_grid, levels=np.logspace(0, 3, 15), colors='white', linewidths=0.5, alpha=0.5)
+
+            # Mark known minima for Himmelblau's function
+            known_minima = [
+                (3.0, 2.0),
+                (-2.805118, 3.131312),
+                (-3.779310, -3.283186),
+                (3.584428, -1.848126)
+            ]
+            for km in known_minima:
+                plt.plot(km[0], km[1], 'r*', markersize=10, label='Known Minimum' if km == known_minima[0] else "")
+
+            # Mark start point and found minimum
+            plt.plot(start_point[0], start_point[1], 'go', markersize=8, label='Start Point')
+            if optimization_result.success:
+                plt.plot(found_minimum_x[0], found_minimum_x[1], 'yo', markersize=8, label='Found Minimum')
+
+            plt.xlabel('x')
+            plt.ylabel('y')
+            plt.title("Optimization of Himmelblau's Function")
+            plt.legend(fontsize='small')
+            plt.grid(True, linestyle=':', alpha=0.4)
+            plt.axis('equal') # Ensure aspect ratio is equal
+
+            # Save plot to buffer and encode as base64
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png', bbox_inches='tight')
+            buf.seek(0)
+            plot_url = base64.b64encode(buf.getvalue()).decode('utf-8')
+            plt.close() # Close the figure
+            if results: results['plot_url'] = f"data:image/png;base64,{plot_url}"
+
+        except Exception as plot_e:
+            print(f"Error generating plot: {plot_e}")
+            if results: results['plot_url'] = None # Handle plot error gracefully
+
+    except Exception as e:
+        error_message = f"An error occurred during optimization setup: {e}"
+        print(f"Optimization Demo Error: {e}") # Log for debugging
+
+    context = {
+        'results': results,
+        'error_message': error_message,
+        'page_title': 'Optimization Demo (SciPy)',
+        'meta_description': "Demonstration of finding function minima using SciPy's optimization tools.",
+        'meta_keywords': "scipy, optimization, minimize, Nelder-Mead, Himmelblau, data science, demo",
+    }
+    return render(request, 'demos/optimization_demo.html', context=context)
+
+# --- Django Security Demo View (NEW) ---
+def django_security_demo_view(request):
+    """ Renders the page explaining key Django security features. """
+    context = {
+        'page_title': 'Demo: Django Security Features',
+        'meta_description': "Learn about built-in security features in the Django framework like CSRF protection, XSS prevention, and SQL injection prevention.",
+        'meta_keywords': "Django, security, web framework, CSRF, XSS, SQL injection, protection",
+    }
+    return render(request, 'demos/django_security_demo.html', context=context)
+
+
+
+# --- Django Testing Demo View (NEW) ---
+def django_testing_demo_view(request):
+    """ Renders the page explaining Django's testing framework. """
+    context = {
+        'page_title': 'Django Testing Framework',
+        'meta_description': "Learn how Django's built-in testing framework helps ensure application reliability by testing models, views, and forms.",
+        'meta_keywords': "Django, testing, unit testing, TestCase, web framework, Python",
+    }
+    return render(request, 'demos/django_testing_demo.html', context=context)
+
+# --- AI Tools Demo View (NEW) ---
+def ai_tools_demo_view(request):
+    """ Renders the page explaining the use and risks of AI tools in development. """
+    context = {
+        'page_title': 'Demo: AI Tools in ML/DS Development',
+        'meta_description': "Exploring the benefits and potential dangers of using AI code assistants and large language models in machine learning and data science workflows.",
+        'meta_keywords': "AI tools, LLM, code assistant, Copilot, ChatGPT, machine learning, data science, productivity, risks, ethics",
+    }
+    return render(request, 'demos/ai_tools_demo.html', context=context)
+
+# --- Python Concepts Demo View (NEW) ---
+def python_concepts_demo_view(request):
+    """ Renders the page explaining/demonstrating core Python concepts. """
+    context = {
+        'page_title': 'Demo: Core Python Concepts for ML/DS',
+        'meta_description': "Interactive examples showcasing Python lists, dictionaries, loops, and functions and their relevance to data science and machine learning.",
+        'meta_keywords': "Python, core concepts, data structures, list, dictionary, function, loop, machine learning, data science, demo",
+    }
+    return render(request, 'demos/python_concepts_demo.html', context=context)
+
+
+# --- R Concepts Demo View (NEW) ---
+def r_concepts_demo_view(request):
+    """ Renders the page explaining core R concepts for Data Science. """
+    context = {
+        'page_title': 'Demo: R Language for Data Science',
+        'meta_description': "Explore key concepts and packages in the R programming language commonly used for statistical analysis, data visualization, and machine learning.",
+        'meta_keywords': "R language, data science, statistics, dplyr, ggplot2, data visualization, machine learning, demo",
+    }
+    return render(request, 'demos/r_concepts_demo.html', context=context)
+
+
+# --- Go Concepts Demo View (NEW) ---
+def go_concepts_demo_view(request):
+    """ Renders the page explaining Go's role in ML/DS infrastructure. """
+    context = {
+        'page_title': 'Demo: Go (Golang) in ML/DS Infrastructure',
+        'meta_description': "Learn how the Go programming language is used for building performant backend systems, APIs, and infrastructure components supporting machine learning workflows.",
+        'meta_keywords': "Go, Golang, machine learning, data science, infrastructure, performance, concurrency, API",
+    }
+    return render(request, 'demos/go_concepts_demo.html', context=context)

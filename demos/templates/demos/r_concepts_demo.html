@@ -1,0 +1,168 @@
+{# demos/templates/demos/r_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn about R for data science." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"R language, data science, statistics, dplyr, ggplot2" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-blue-500 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        Alongside Python, <strong>R</strong> is a powerful language and environment specifically designed for <strong>statistical computing and graphics</strong>. It's widely used by statisticians and data analysts, particularly in academia and fields like bioinformatics. This page highlights some core R concepts and popular packages relevant to data science.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-cyan-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Data Structures --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Core Data Structures</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>R has several fundamental data structures:</p>
+                <ul>
+                    <li><strong>Vectors:</strong> Ordered collections where all elements *must* be the same data type (numeric, character, logical). Created with `c()`. The foundation for many operations.</li>
+                    <li><strong>Data Frames:</strong> The primary structure for tabular data (like a Pandas DataFrame). A list of vectors of equal length. Columns can have different types. Created with `data.frame()`.</li>
+                    <li><strong>Lists:</strong> Ordered collections where elements *can* be of different types, including other lists or data frames. Created with `list()`.</li>
+                </ul>
+                <p><strong>Relevance:</strong> Data frames are central to data analysis in R. Vectors enable efficient vectorized operations (applying functions element-wise without explicit loops).</p>
+            </div>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example Code:</h4>
+            <pre><code class="language-r">
+# Create a numeric vector
+heights <- c(175, 182, 168, 179)
+
+# Create a character vector
+names <- c("Alice", "Bob", "Charlie", "David")
+
+# Create a data frame
+my_data <- data.frame(
+Name = names,
+Height = heights,
+LikesR = c(TRUE, FALSE, TRUE, TRUE) # Logical vector
+)
+
+# Access data frame column (returns a vector)
+print(my_data$Height)
+# Output: [1] 175 182 168 179
+
+# Access specific element (R uses 1-based indexing!)
+print(my_data[1, 2]) # First row, second column
+# Output: [1] 175
+            </code></pre>
+        </section>
+
+        {# --- Section 2: Key Packages (Tidyverse) --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Key Packages: The Tidyverse</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>While base R is powerful, the <strong>Tidyverse</strong> is a collection of R packages designed for data science that share an underlying design philosophy, grammar, and data structures. It makes data manipulation and visualization intuitive and efficient.</p>
+                <ul>
+                    <li><strong>`dplyr`:</strong> Essential for data manipulation (filtering, selecting, mutating, summarizing). Uses intuitive "verbs".</li>
+                    <li><strong>`ggplot2`:</strong> The standard for declarative data visualization in R, based on the "Grammar of Graphics".</li>
+                    <li><strong>`tidyr`:</strong> For tidying data (reshaping between wide and long formats).</li>
+                    <li><strong>`readr`:</strong> For reading rectangular data files (like CSVs) quickly.</li>
+                    <li><strong>`purrr`:</strong> Enhances functional programming capabilities.</li>
+                    <li><strong>`tibble`:</strong> A modern reimagining of data frames.</li>
+                </ul>
+                <p><strong>Relevance:</strong> The Tidyverse (especially `dplyr` and `ggplot2`) forms the core workflow for most modern data analysis in R.</p>
+            </div>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example Code (`dplyr` & `ggplot2`):</h4>
+            <pre><code class="language-r">
+# Load libraries (assumes installed: install.packages("tidyverse"))
+library(dplyr)
+library(ggplot2)
+
+# Example using the built-in 'iris' dataset
+data(iris)
+
+# dplyr: Filter for Setosa species and select only Petal dimensions
+setosa_petals <- iris %>%
+filter(Species == "setosa") %>%
+select(Petal.Length, Petal.Width)
+
+print(head(setosa_petals)) # Show first few rows
+
+# ggplot2: Create a scatter plot of Petal Length vs Width, colored by Species
+plot <- ggplot(iris, aes(x = Petal.Length, y = Petal.Width, color = Species)) +
+geom_point() + # Add points
+labs(title = "Iris Petal Dimensions by Species",
+   x = "Petal Length (cm)",
+   y = "Petal Width (cm)") +
+theme_minimal() # Apply a clean theme
+
+# In an interactive session, this would display the plot:
+# print(plot)
+# To save: ggsave("iris_petal_plot.png", plot)
+            </code></pre>
+        </section>
+
+        {# --- Section 3: Statistical Modeling --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Statistical Modeling & Machine Learning</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>R excels at traditional statistical modeling and has extensive packages for machine learning.</p>
+                <ul>
+                    <li><strong>Base R:</strong> Includes functions for linear models (`lm`), generalized linear models (`glm`), ANOVA, t-tests, etc.</li>
+                    <li><strong>`caret`:</strong> A comprehensive package providing a unified interface to hundreds of regression and classification models, plus tools for data splitting, preprocessing, feature selection, and hyperparameter tuning.</li>
+                    <li><strong>`tidymodels`:</strong> A newer, Tidyverse-aligned framework for modeling and machine learning that aims to be modular and consistent. Includes packages like `rsample` (splitting), `recipes` (preprocessing), `parsnip` (model interface), `tune` (tuning), and `yardstick` (evaluation).</li>
+                    <li><strong>Specific Models:</strong> Packages exist for almost any algorithm (e.g., `randomForest`, `e1071` for SVM, `xgboost`, deep learning interfaces like `keras` and `torch` for R).</li>
+                </ul>
+                 <p><strong>Relevance:</strong> R is a first-class environment for rigorous statistical analysis, hypothesis testing, and applying a wide range of ML algorithms.</p>
+            </div>
+             <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example Code (Conceptual Model Fit with `caret`):</h4>
+             <pre><code class="language-r">
+# Load library (assumes installed)
+library(caret)
+
+# Example using iris data
+data(iris)
+set.seed(123) # for reproducibility
+
+# Split data (using caret function)
+trainIndex <- createDataPartition(iris$Species, p = .8, list = FALSE, times = 1)
+irisTrain <- iris[ trainIndex,]
+irisTest  <- iris[-trainIndex,]
+
+# Define training control (e.g., 10-fold cross-validation)
+fitControl <- trainControl(method = "cv", number = 10)
+
+# Train a Random Forest model
+# Formula: Species depends on all other variables (.)
+rfFit <- train(Species ~ ., data = irisTrain,
+           method = "rf", # Random Forest
+           trControl = fitControl,
+           tuneLength = 3) # Try 3 different mtry values
+
+# Print model summary (shows best parameters found)
+print(rfFit)
+
+# Make predictions (example)
+# predictions <- predict(rfFit, newdata = irisTest)
+# confusionMatrix(predictions, irisTest$Species) # Evaluate
+             </code></pre>
+        </section>
+
+         {# --- Conclusion --- #}
+         <section>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Conclusion</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>While Python often dominates ML deployment and deep learning, R remains a powerhouse for statistical analysis, data visualization, and specific modeling tasks. Its expressive syntax for statistics (via base R and packages like `caret` or `tidymodels`) and the elegant Grammar of Graphics (`ggplot2`) make it an indispensable tool for many data scientists and analysts.</p>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

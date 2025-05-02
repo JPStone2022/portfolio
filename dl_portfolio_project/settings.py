@@ -41,7 +41,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-=your-default-develop
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True' # Default to True for dev, set env var to 'False' in prod
-DEBUG = 'False'
+DEBUG = 'True'
 # Update ALLOWED_HOSTS based on environment
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split(' ')
 #ALLOWED_HOSTS = [os.environ.get('PYTHONANYWHERE_DOMAIN')] # Add your domain/IP in production
@@ -53,8 +53,8 @@ if RENDER_EXTERNAL_HOSTNAME:
 # if CUSTOM_DOMAIN:
 #     ALLOWED_HOSTS.append(CUSTOM_DOMAIN)
 # Add localhost for local testing if needed (e.g., when DEBUG=False locally)
-# if DEBUG or os.environ.get('DJANGO_DEVELOPMENT'): # Add localhost if DEBUG or dev env var set
-#     ALLOWED_HOSTS.extend(['127.0.0.1', 'localhost'])
+if DEBUG or os.environ.get('DJANGO_DEVELOPMENT'): # Add localhost if DEBUG or dev env var set
+    ALLOWED_HOSTS.extend(['127.0.0.1', 'localhost'])
 
 # HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME') # Optional: Set this env var on Heroku
 # if HEROKU_APP_NAME:

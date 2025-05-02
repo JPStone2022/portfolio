@@ -1,0 +1,160 @@
+{# demos/templates/demos/go_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn about Go (Golang) in ML/DS infrastructure." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Go, Golang, machine learning, infrastructure, concurrency" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-cyan-500 to-teal-500 dark:from-cyan-400 dark:to-teal-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        While Python dominates core ML model development, <strong>Go (Golang)</strong> is increasingly used for building the <strong>performant infrastructure and backend services</strong> that support ML/AI systems. Its strengths lie in simplicity, concurrency, and speed.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-teal-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Why Go? --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Why Use Go in the ML/AI Ecosystem?</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>Go is typically chosen for specific components where its advantages shine:</p>
+                <ul>
+                    <li><strong>Performance:</strong> Go compiles to efficient machine code, often resulting in faster execution than interpreted languages like Python for CPU-bound tasks.</li>
+                    <li><strong>Concurrency:</strong> Go has excellent built-in support for concurrency using <strong>Goroutines</strong> (lightweight threads) and <strong>Channels</strong> (for communication between goroutines), making it ideal for handling many simultaneous requests (like API calls) or parallel processing tasks.</li>
+                    <li><strong>Simplicity & Readability:</strong> Go has a relatively small, clean syntax, making code easier to read and maintain, especially in larger teams or complex systems.</li>
+                    <li><strong>Static Typing:</strong> Helps catch errors at compile time rather than runtime.</li>
+                    <li><strong>Fast Compilation:</strong> Quick build times improve the development cycle.</li>
+                    <li><strong>Infrastructure Tools:</strong> Many popular infrastructure tools (Docker, Kubernetes, Terraform) are written in Go, making it a natural fit for MLOps and platform engineering roles.</li>
+                </ul>
+                <p><strong>Relevance:</strong> Used for building high-performance API servers to serve ML models, data processing pipelines, infrastructure management tools, and backend microservices within a larger ML system.</p>
+            </div>
+        </section>
+
+        {# --- Section 2: Key Concepts --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Key Go Concepts Illustrated</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>While we can't run Go here, these snippets illustrate core ideas:</p>
+            </div>
+            {# Goroutine Example #}
+            <div class="mb-6">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example: Goroutines (Lightweight Concurrency)</h4>
+                <pre><code class="language-go">
+package main
+
+import (
+    "fmt"
+    "time"
+)
+
+func say(s string, times int) {
+    for i := 0; i < times; i++ {
+        time.Sleep(100 * time.Millisecond)
+        fmt.Println(s)
+    }
+}
+
+func main() {
+    // Start functions concurrently using 'go' keyword
+    go say("world", 3) // Runs in the background
+    say("hello", 3)    // Runs in the foreground
+
+    // Output is interleaved (e.g., hello, world, hello, world...)
+    // Need mechanisms like WaitGroups or Channels to synchronize properly
+    // time.Sleep(500 * time.Millisecond) // Simple wait to see some output
+}
+                </code></pre>
+                 <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">Goroutines make it easy to run functions concurrently without the heavy overhead of traditional threads.</p>
+            </div>
+             {# HTTP Server Example #}
+            <div>
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example: Simple HTTP API Server</h4>
+                <pre><code class="language-go">
+package main
+
+import (
+    "encoding/json"
+    "log"
+    "net/http"
+)
+
+type PredictionRequest struct {
+    Features []float64 `json:"features"`
+}
+
+type PredictionResponse struct {
+    Prediction string  `json:"prediction"`
+    Confidence float64 `json:"confidence"`
+}
+
+func handlePredict(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        http.Error(w, "Only POST method allowed", http.StatusMethodNotAllowed)
+        return
+    }
+
+    var req PredictionRequest
+    // Decode JSON request body
+    err := json.NewDecoder(r.Body).Decode(&req)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    // --- Placeholder for actual ML model inference ---
+    // prediction, confidence := model.Predict(req.Features)
+    prediction := "Class_A" // Dummy response
+    confidence := 0.95      // Dummy response
+    // --- End Placeholder ---
+
+
+    resp := PredictionResponse{Prediction: prediction, Confidence: confidence}
+
+    // Encode response as JSON
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(resp)
+}
+
+func main() {
+    http.HandleFunc("/predict", handlePredict) // Route requests to handler
+    log.Println("Starting server on :8080...")
+    err := http.ListenAndServe(":8080", nil) // Start server
+    if err != nil {
+        log.Fatal("ListenAndServe: ", err)
+    }
+}
+                </code></pre>
+                 <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">Go's standard library makes building efficient HTTP servers relatively straightforward, ideal for creating model serving APIs.</p>
+            </div>
+        </section>
+
+        {# --- Section 3: Use Cases in ML/DS --- #}
+        <section>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Typical Use Cases</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <ul>
+                    <li><strong>Model Serving APIs:</strong> Creating fast, concurrent APIs to serve predictions from models trained in Python (often loaded via ONNX, TensorFlow Lite, or custom bindings).</li>
+                    <li><strong>Data Pipelines:</strong> Building efficient data processing or ETL components, especially those involving heavy I/O or network communication.</li>
+                    <li><strong>Infrastructure & MLOps Tools:</strong> Developing custom tools for deployment, monitoring, or managing ML infrastructure (similar to how Kubernetes or Docker are built).</li>
+                    <li><strong>Real-time Systems:</strong> Implementing backend components for systems requiring low latency and high throughput that might incorporate ML features.</li>
+                </ul>
+                 <p>While you wouldn't typically write the core model training loop in Go, it's a valuable language for building the robust and performant systems *around* the ML models.</p>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+{% endblock %}

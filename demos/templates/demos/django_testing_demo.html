@@ -1,0 +1,165 @@
+{# demos/templates/demos/django_testing_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %} {# Load if needed, e.g., for templatetag escaping #}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn about Django's testing framework." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Django, testing, unit testing, Python" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-yellow-500 to-amber-500 dark:from-yellow-400 dark:to-amber-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        Writing automated tests is crucial for building reliable and maintainable applications. Django includes a powerful testing framework based on Python's `unittest` module to help verify that different parts of your code work as expected. This prevents regressions when you add new features or refactor existing code.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-amber-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Why Test? --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Why Write Tests?</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+               <ul>
+                   <li><strong>Catch Bugs Early:</strong> Tests identify problems during development, before they reach users.</li>
+                   <li><strong>Prevent Regressions:</strong> When you change code, running tests confirms you haven't broken existing functionality.</li>
+                   <li><strong>Improve Design:</strong> Writing testable code often leads to better, more modular designs.</li>
+                   <li><strong>Documentation:</strong> Tests serve as executable documentation, showing how components are intended to be used.</li>
+                   <li><strong>Confidence in Refactoring:</strong> Tests give you the confidence to improve your code knowing you can verify its correctness.</li>
+               </ul>
+            </div>
+        </section>
+
+        {# --- Testing Models --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Testing Models</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>Model tests verify field defaults, custom methods, string representations (`__str__`), and relationships.</p>
+            </div>
+             <div class="mt-4">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example (`portfolio/tests.py`):</h4>
+                <pre><code class="language-python">
+from django.test import TestCase
+from .models import Project # Assuming Project model is in the same app
+
+class ProjectModelTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        # Create objects needed for tests once per class
+        cls.project = Project.objects.create(
+            title="My Test Project",
+            description="Test description."
+        )
+
+    def test_str_representation(self):
+        """Test the __str__ method."""
+        self.assertEqual(str(self.project), "My Test Project")
+
+    def test_slug_generation_on_save(self):
+        """Test if slug is auto-generated correctly."""
+        # Assuming your model's save() method creates a slug
+        self.assertEqual(self.project.slug, "my-test-project")
+
+    def test_default_order(self):
+        """Test the default value of the order field."""
+        self.assertEqual(self.project.order, 0)
+                </code></pre>
+            </div>
+        </section>
+
+        {# --- Testing Views --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Testing Views</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>View tests use Django's test `Client` to simulate browser requests (GET, POST). They check if the view returns the correct HTTP status code, uses the right template(s), and passes the expected data (context) to the template.</p>
+            </div>
+             <div class="mt-4">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example (`portfolio/tests.py`):</h4>
+                <pre><code class="language-python">
+from django.test import TestCase, Client
+from django.urls import reverse
+from .models import Project
+
+class PortfolioViewTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.project1 = Project.objects.create(title="View Test", slug="view-test")
+
+    def setUp(self):
+        self.client = Client() # Create a test client instance
+
+    def test_all_projects_view_status_code(self):
+        """Test the all_projects page returns HTTP 200 OK."""
+        url = reverse('portfolio:all_projects') # Get URL by name
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_all_projects_view_template(self):
+        """Test the all_projects page uses the correct template."""
+        url = reverse('portfolio:all_projects')
+        response = self.client.get(url)
+        self.assertTemplateUsed(response, 'portfolio/all_projects.html')
+
+    def test_project_detail_view_context(self):
+        """Test the project_detail view passes the correct project."""
+        url = reverse('portfolio:project_detail', kwargs={'slug': self.project1.slug})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['project'], self.project1)
+                </code></pre>
+            </div>
+        </section>
+
+        {# --- Testing Forms --- #}
+         <section>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Testing Forms</h2>
+            <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>Form tests verify that the form correctly validates data (accepts valid input, rejects invalid input) and reports appropriate errors.</p>
+            </div>
+             <div class="mt-4">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example (`portfolio/tests.py`):</h4>
+                <pre><code class="language-python">
+from django.test import TestCase
+from .forms import ContactForm # Assuming ContactForm is in portfolio/forms.py
+
+class ContactFormTests(TestCase):
+
+    def test_valid_contact_form(self):
+        """Test the form with valid data."""
+        form_data = {
+            'name': 'Test', 'email': 'test@example.com',
+            'subject': 'Subject', 'message': 'Message'
+        }
+        form = ContactForm(data=form_data)
+        self.assertTrue(form.is_valid()) # Check if form validation passes
+
+    def test_invalid_contact_form_missing_email(self):
+        """Test the form with a missing required field."""
+        form_data = {
+            'name': 'Test', 'subject': 'Subject', 'message': 'Message'
+        }
+        form = ContactForm(data=form_data)
+        self.assertFalse(form.is_valid()) # Expect validation to fail
+        self.assertIn('email', form.errors) # Check 'email' field has an error
+        self.assertEqual(form.errors['email'][0], 'This field is required.')
+
+                </code></pre>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

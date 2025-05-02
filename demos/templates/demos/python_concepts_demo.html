@@ -1,0 +1,241 @@
+{# demos/templates/demos/python_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Interactive examples of core Python concepts." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Python, list, dictionary, function, loop, demo" }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-yellow-500 via-lime-500 to-green-500 dark:from-yellow-400 dark:via-lime-400 dark:to-green-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-12">
+        Python's fundamental concepts are the building blocks for everything in data science and machine learning. This demo interactively showcases a few key ideas.
+    </p>
+
+    {# Main content area - Using grid for layout #}
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+
+        {# --- Section 1: Lists --- #}
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-lime-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Lists: Ordered, Mutable Sequences</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>Lists store ordered collections of items. They are essential for holding sequences of feature values, model results, file paths, etc. Being mutable means you can change them after creation.</p>
+                <p><strong>Relevance:</strong> Storing feature vectors, batch data, experiment results, temporary data structures before converting to NumPy/Pandas.</p>
+            </div>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example Code:</h4>
+            <pre class="mb-4"><code class="language-python">
+# Creating and modifying a list
+my_list = [10, 20, 30]
+my_list.append(40)      # Add item to end
+my_list[0] = 5          # Change first item
+print(my_list)          # Output: [5, 20, 30, 40]
+print(my_list[1])       # Access item by index (Output: 20)
+print(len(my_list))     # Get length (Output: 4)
+            </code></pre>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Try it:</h4>
+            <div class="flex items-center gap-2 mb-2">
+                <input type="text" id="list-item-input" placeholder="Enter item to add" class="flex-grow px-3 py-1.5 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-lime-500 text-sm">
+                <button id="add-list-item-btn" class="px-4 py-1.5 bg-lime-600 hover:bg-lime-700 text-white rounded-md text-sm font-medium transition duration-200">Add</button>
+            </div>
+            <ul id="interactive-list" class="list-disc list-inside text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-3 rounded min-h-[5rem]">
+                {# JavaScript will add items here #}
+            </ul>
+        </section>
+
+        {# --- Section 2: Dictionaries --- #}
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-lime-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Dictionaries: Key-Value Pairs</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>Dictionaries store data as key-value pairs, allowing efficient lookup by key. Keys must be unique and immutable (like strings or numbers).</p>
+                <p><strong>Relevance:</strong> Storing hyperparameters, mapping labels to indices, storing evaluation metrics, representing JSON data, feature dictionaries.</p>
+            </div>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example Code:</h4>
+            <pre class="mb-4"><code class="language-python">
+# Creating and using a dictionary
+params = {'learning_rate': 0.01, 'epochs': 10}
+params['batch_size'] = 64 # Add new key-value
+print(params['learning_rate']) # Access value by key (Output: 0.01)
+print(params.get('optimizer', 'Adam')) # Get value, provide default
+print('epochs' in params) # Check if key exists (Output: True)
+            </code></pre>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Try it (Check Hyperparameter):</h4>
+            <div class="flex items-center gap-2 mb-2">
+                <input type="text" id="dict-key-input" placeholder="Enter key (e.g., epochs)" class="flex-grow px-3 py-1.5 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-lime-500 text-sm">
+                <button id="check-dict-key-btn" class="px-4 py-1.5 bg-lime-600 hover:bg-lime-700 text-white rounded-md text-sm font-medium transition duration-200">Check</button>
+            </div>
+            <div id="dict-output" class="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-3 rounded min-h-[3rem]">
+                 Value will appear here...
+            </div>
+        </section>
+
+        {# --- Section 3: Loops --- #}
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-lime-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Loops: Iteration</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>`for` loops iterate over items in a sequence (like a list). `while` loops repeat as long as a condition is true.</p>
+                <p><strong>Relevance:</strong> Processing data batches, running training epochs, cross-validation, iterating through files or parameters.</p>
+            </div>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example Code (`for` loop):</h4>
+            <pre class="mb-4"><code class="language-python">
+results = [0.8, 0.9, 0.85]
+processed_results = []
+for r in results:
+    # Example: Scale result by 100
+    processed_results.append(r * 100)
+print(processed_results) # Output: [80.0, 90.0, 85.0]
+            </code></pre>
+             <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Try it (Simulate Epochs):</h4>
+            <div class="flex items-center gap-2 mb-2">
+                 <label for="epoch-count" class="text-sm text-gray-700 dark:text-gray-300">Epochs:</label>
+                 <input type="number" id="epoch-count" value="3" min="1" max="10" class="w-20 px-3 py-1.5 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-lime-500 text-sm">
+                <button id="run-epochs-btn" class="px-4 py-1.5 bg-lime-600 hover:bg-lime-700 text-white rounded-md text-sm font-medium transition duration-200">Run</button>
+            </div>
+             <div id="loop-output" class="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-3 rounded min-h-[5rem]">
+                 Epoch logs will appear here...
+            </div>
+        </section>
+
+        {# --- Section 4: Functions --- #}
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-lime-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">4. Functions: Reusable Code Blocks</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>Functions (`def`) group code to perform a specific task, making code modular, reusable, and easier to read/debug. They take inputs (arguments) and can return outputs.</p>
+                <p><strong>Relevance:</strong> Defining preprocessing steps, evaluation metrics, model building blocks, data loading logic, API endpoints.</p>
+            </div>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example Code:</h4>
+            <pre class="mb-4"><code class="language-python">
+def calculate_accuracy(correct, total):
+    if total == 0:
+        return 0.0
+    return (correct / total) * 100
+
+acc = calculate_accuracy(correct=85, total=100)
+print(f"Accuracy: {acc:.1f}%") # Output: Accuracy: 85.0%
+            </code></pre>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Try it (Calculate Accuracy):</h4>
+            <div class="grid grid-cols-2 gap-4 mb-2 text-sm">
+                 <div>
+                     <label for="correct-preds" class="block text-gray-700 dark:text-gray-300 mb-1">Correct Predictions:</label>
+                     <input type="number" id="correct-preds" value="92" min="0" class="w-full px-3 py-1.5 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-lime-500">
+                 </div>
+                  <div>
+                     <label for="total-preds" class="block text-gray-700 dark:text-gray-300 mb-1">Total Predictions:</label>
+                     <input type="number" id="total-preds" value="100" min="1" class="w-full px-3 py-1.5 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-lime-500">
+                 </div>
+            </div>
+             <button id="calculate-acc-btn" class="w-full mt-1 px-4 py-1.5 bg-lime-600 hover:bg-lime-700 text-white rounded-md text-sm font-medium transition duration-200">Calculate</button>
+             <div id="function-output" class="mt-3 text-center text-lg font-semibold text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-700 p-3 rounded min-h-[3rem]">
+                 Accuracy: --%
+            </div>
+        </section>
+
+    </div> {# End Grid #}
+
+     <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{# Add JavaScript for interactivity #}
+<script>
+    // --- List Demo ---
+    const listInput = document.getElementById('list-item-input');
+    const addListBtn = document.getElementById('add-list-item-btn');
+    const interactiveList = document.getElementById('interactive-list');
+
+    addListBtn.addEventListener('click', () => {
+        const newItemText = listInput.value.trim();
+        if (newItemText) {
+            const listItem = document.createElement('li');
+            listItem.textContent = newItemText;
+            interactiveList.appendChild(listItem);
+            listInput.value = ''; // Clear input
+        }
+    });
+    // Optional: Allow adding on Enter key press
+    listInput.addEventListener('keypress', (e) => {
+         if (e.key === 'Enter') {
+             addListBtn.click();
+         }
+    });
+
+    // --- Dictionary Demo ---
+    const dictKeyInput = document.getElementById('dict-key-input');
+    const checkDictBtn = document.getElementById('check-dict-key-btn');
+    const dictOutput = document.getElementById('dict-output');
+    const sampleDict = {'learning_rate': 0.01, 'epochs': 10, 'batch_size': 64, 'optimizer': 'Adam'};
+
+    checkDictBtn.addEventListener('click', () => {
+        const keyToCheck = dictKeyInput.value.trim().toLowerCase(); // Case-insensitive check
+        if (keyToCheck) {
+            if (sampleDict.hasOwnProperty(keyToCheck)) {
+                dictOutput.textContent = `Value for '${keyToCheck}': ${sampleDict[keyToCheck]}`;
+            } else {
+                dictOutput.textContent = `Key '${keyToCheck}' not found in example dictionary.`;
+            }
+        } else {
+             dictOutput.textContent = 'Please enter a key to check.';
+        }
+    });
+     dictKeyInput.addEventListener('keypress', (e) => {
+         if (e.key === 'Enter') {
+             checkDictBtn.click();
+         }
+    });
+
+
+    // --- Loop Demo ---
+    const epochCountInput = document.getElementById('epoch-count');
+    const runEpochsBtn = document.getElementById('run-epochs-btn');
+    const loopOutput = document.getElementById('loop-output');
+
+    runEpochsBtn.addEventListener('click', () => {
+        const numEpochs = parseInt(epochCountInput.value, 10);
+        loopOutput.innerHTML = ''; // Clear previous output
+        if (isNaN(numEpochs) || numEpochs < 1 || numEpochs > 10) {
+             loopOutput.textContent = 'Please enter a number between 1 and 10.';
+             return;
+        }
+        for (let i = 1; i <= numEpochs; i++) {
+            const logLine = document.createElement('p');
+            logLine.textContent = `Epoch ${i}/${numEpochs}: Training... Loss: ${(Math.random() * 0.5 + 0.1 / i).toFixed(4)}`; // Simulate decreasing loss
+            loopOutput.appendChild(logLine);
+        }
+         const finalLine = document.createElement('p');
+         finalLine.textContent = `Finished ${numEpochs} epochs.`;
+         finalLine.classList.add('font-semibold', 'mt-1');
+         loopOutput.appendChild(finalLine);
+    });
+
+    // --- Function Demo ---
+    const correctInput = document.getElementById('correct-preds');
+    const totalInput = document.getElementById('total-preds');
+    const calculateAccBtn = document.getElementById('calculate-acc-btn');
+    const functionOutput = document.getElementById('function-output');
+
+    calculateAccBtn.addEventListener('click', () => {
+        const correct = parseFloat(correctInput.value);
+        const total = parseFloat(totalInput.value);
+        let accuracy = 0.0;
+
+        if (isNaN(correct) || isNaN(total)) {
+            functionOutput.textContent = 'Invalid input';
+        } else if (total <= 0) {
+            functionOutput.textContent = 'Total must be > 0';
+        } else if (correct < 0 || correct > total) {
+             functionOutput.textContent = 'Correct must be 0 <= correct <= total';
+        } else {
+            accuracy = (correct / total) * 100;
+            functionOutput.textContent = `Accuracy: ${accuracy.toFixed(1)}%`;
+        }
+    });
+
+</script>
+{% endblock %}

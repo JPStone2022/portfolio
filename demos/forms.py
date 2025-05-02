@@ -56,3 +56,17 @@ class ExplainableAIDemoForm(forms.Form):
         label='Petal Width (cm)', min_value=0.1, max_value=10.0, decimal_places=1, initial=0.2,
         widget=forms.NumberInput(attrs={'step': '0.1', 'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-purple-500'})
     )
+
+
+# # New Form for NLTK Demo
+# class NltkDemoForm(forms.Form):
+#     text_input = forms.CharField(
+#         label='Enter a Sentence',
+#         widget=forms.Textarea(attrs={
+#             'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 transition-colors duration-300 ease-in-out',
+#             'rows': 3,
+#             'placeholder': 'e.g., The quick brown fox jumps over the lazy dog.'
+#         }),
+#         max_length=500, # Limit input length
+#         required=True
+#     )

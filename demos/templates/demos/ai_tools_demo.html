@@ -1,0 +1,103 @@
+{# demos/templates/demos/ai_tools_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Exploring AI tools in ML/DS development." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"AI tools, LLM, machine learning, data science" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 dark:from-purple-400 dark:via-pink-400 dark:to-red-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        AI tools like Large Language Models (LLMs) and code assistants (e.g., GitHub Copilot, ChatGPT) are rapidly changing development workflows. They offer huge potential but also introduce risks, especially depending on the user's experience level.
+    </p>
+
+    {# Main content area - Two Columns #}
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+
+        {# Column 1: Benefits for Experienced Users #}
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-green-900/20 border-t-4 border-green-500 dark:border-green-400 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+                <svg class="w-6 h-6 text-green-500 dark:text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                Productivity Boost for the Experienced
+            </h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+                <p>For experienced data scientists, ML engineers, and developers, AI tools act as powerful <strong>accelerators</strong>: </p>
+                <ul>
+                    <li><strong>Boilerplate Code Generation:</strong> Quickly generate setup code, standard functions (e.g., data loading, plotting), or class structures, saving significant time.</li>
+                    <li><strong>Debugging Assistance:</strong> Explain error messages, suggest potential fixes for tricky bugs, or refactor complex code sections.</li>
+                    <li><strong>Learning & Exploration:</strong> Quickly grasp new libraries or concepts by asking for explanations or example implementations. Explore alternative approaches to a problem.</li>
+                    <li><strong>Documentation & Comments:</strong> Generate docstrings, comments, or even basic README files, improving code maintainability.</li>
+                    <li><strong>Unit Test Generation:</strong> Suggest test cases or generate basic unit test structures.</li>
+                    <li><strong>Code Translation/Modernization:</strong> Help translate code between languages (e.g., R to Python) or update older code to use modern library features.</li>
+                </ul>
+                 <p class="font-semibold">Key: The experienced user can quickly <strong>verify</strong>, <strong>debug</strong>, and <strong>adapt</strong> the AI's output, leveraging their foundational knowledge to ensure correctness and integrate it effectively.</p>
+                 <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mt-4 mb-1">Illustrative Scenario:</h4>
+                 <pre><code class="language-text">
+# User Prompt (Experienced Dev):
+# "Write a Python function using Pandas to load a CSV,
+# fill missing 'age' values with the median,
+# and one-hot encode the 'category' column."
+
+# AI Output (Example):
+import pandas as pd
+
+def preprocess_data(df):
+    if 'age' in df.columns and df['age'].isnull().any():
+        median_age = df['age'].median()
+        df['age'].fillna(median_age, inplace=True)
+    if 'category' in df.columns:
+        df = pd.get_dummies(df, columns=['category'], prefix='cat', drop_first=True)
+    return df
+
+# Experienced Dev Review: Looks reasonable, checks edge cases
+# (e.g., what if 'age' isn't numeric?), adapts column names if needed.
+                 </code></pre>
+            </div>
+        </div>
+
+        {# Column 2: Dangers for the Unskilled #}
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-red-900/20 border-t-4 border-red-500 dark:border-red-400 transition-colors duration-300 ease-in-out">
+             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+                <svg class="w-6 h-6 text-red-500 dark:text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                Potential Pitfalls for the Inexperienced
+            </h2>
+             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+                 <p>Without a solid understanding of the underlying concepts, relying heavily on AI tools can be dangerous:</p>
+                 <ul>
+                     <li><strong>Subtle Bugs & "Hallucinations":</strong> AI can generate code that looks plausible but is logically flawed, statistically incorrect, or introduces subtle bugs that are hard to spot without expertise.</li>
+                     <li><strong>Security Vulnerabilities:</strong> Generated code might inadvertently include security flaws (e.g., improper input validation, susceptibility to injection attacks) if the user doesn't know what to look for.</li>
+                     <li><strong>Lack of Understanding:</strong> Copy-pasting code without understanding *why* it works prevents true learning and makes debugging or modification extremely difficult.</li>
+                     <li><strong>Reinforcing Bad Practices:</strong> The AI might generate inefficient, unidiomatic, or outdated code based on its training data, which the user might adopt without realizing better alternatives exist.</li>
+                     <li><strong>Over-Reliance / Skill Atrophy:</strong> Depending too much on AI for core tasks can hinder the development of fundamental problem-solving and coding skills.</li>
+                     <li><strong>Data Privacy/Leakage:</strong> Pasting sensitive data or proprietary code into external AI tools carries significant privacy and intellectual property risks.</li>
+                 </ul>
+                  <p class="font-semibold">Key: The inexperienced user may <strong>lack the ability to critically evaluate</strong> the AI's output, potentially introducing errors, security holes, or technical debt without realizing it.</p>
+                  <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mt-4 mb-1">Illustrative Scenario:</h4>
+                  <pre><code class="language-text">
+# User Prompt (Beginner):
+# "Make my website get data from user input"
+
+# AI Output (Potential Bad Example):
+# (Might generate code using raw SQL with string formatting - vulnerable to SQL injection)
+cursor.execute(f"SELECT * FROM users WHERE name = '{user_input}'")
+
+# Beginner Review: "It works!" - doesn't recognize the huge security risk.
+# Experienced Dev Review: Immediately flags the SQL injection vulnerability.
+                  </code></pre>
+             </div>
+        </div>
+
+    </div> {# End Grid #}
+
+     <div class="text-center mt-16">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}
