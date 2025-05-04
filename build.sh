@@ -18,8 +18,7 @@ echo "Collectstatic finished."
 
 # Apply any outstanding database migrations
 echo "Running database migrations..."
-python manage.py migrate --no-input && python manage.py import_data data/skills.csv --model_type python manage.py migrate --no-input && python import_data import_data data/skills.csv --model_type topics --update
- --update
+python manage.py migrate --no-input && python manage.py import_data data/skills.csv --model_type skills --update
 echo "Migrations finished."
 
 # --- Add Data Import/Update Commands Here ---
