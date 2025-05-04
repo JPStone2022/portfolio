@@ -1,0 +1,110 @@
+{# demos/templates/demos/data_security_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Understanding security in ML/DS/AI." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"security, data privacy, model security, adversarial attacks" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-red-500 via-rose-500 to-pink-600 dark:from-red-400 dark:via-rose-400 dark:to-pink-500 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        As Machine Learning, AI, and Data Science systems become more powerful and handle sensitive information, <strong>security</strong> becomes paramount. It's not just about protecting the code, but also the data, the models themselves, and the infrastructure they run on. Ignoring security can lead to data breaches, biased or manipulated outcomes, and loss of trust.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-rose-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Data Privacy & Security --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Data Privacy & Security</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>ML models are trained on data, which often contains sensitive or personal information (PII).</p>
+                <ul>
+                    <li><strong>Risks:</strong> Data breaches during storage or transit, unauthorized access, models inadvertently memorizing and leaking sensitive training data points.</li>
+                    <li><strong>Mitigation Techniques:</strong>
+                        <ul>
+                            <li><strong>Anonymization/Pseudonymization:</strong> Removing or replacing direct identifiers.</li>
+                            <li><strong>Access Control:</strong> Strict permissions on who can access raw data.</li>
+                            <li><strong>Encryption:</strong> Protecting data at rest and in transit.</li>
+                            <li><strong>Differential Privacy:</strong> Adding mathematical noise during training or analysis to make it difficult to identify individuals in the dataset while preserving overall patterns.</li>
+                            <li><strong>Compliance:</strong> Adhering to regulations like GDPR, CCPA, HIPAA.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p><strong>Importance:</strong> Protecting user privacy is often a legal and ethical requirement, crucial for maintaining user trust.</p>
+            </div>
+        </section>
+
+        {# --- Section 2: Model Security --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Model Security & Robustness</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>Machine learning models themselves can be targets of attack.</p>
+                <ul>
+                    <li><strong>Risks:</strong>
+                        <ul>
+                            <li><strong>Adversarial Attacks:</strong> Crafting specific, often subtle, inputs designed to fool a model into making incorrect predictions (e.g., slightly modifying an image to be misclassified).</li>
+                            <li><strong>Model Evasion:</strong> Similar to adversarial attacks, aiming to bypass detection systems (e.g., malware designed to evade ML-based detection).</li>
+                            <li><strong>Data Poisoning:</strong> Injecting malicious data into the training set to compromise the resulting model's performance or introduce backdoors.</li>
+                            <li><strong>Model Inversion/Extraction:</strong> Trying to reconstruct sensitive training data or steal the model's parameters by repeatedly querying it.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Mitigation Techniques:</strong>
+                        <ul>
+                            <li><strong>Adversarial Training:</strong> Including adversarial examples during the training process to make the model more robust.</li>
+                            <li><strong>Input Validation/Sanitization:</strong> Checking and cleaning inputs before feeding them to the model.</li>
+                            <li><strong>Defensive Distillation:</strong> Training a model on the probabilities predicted by another model.</li>
+                            <li><strong>Robust Architecture Design:</strong> Choosing models less susceptible to certain attacks.</li>
+                            <li><strong>Monitoring & Anomaly Detection:</strong> Detecting unusual input patterns or prediction behavior.</li>
+                            <li><strong>Access Control to Model API:</strong> Limiting who can query the model.</li>
+                        </ul>
+                    </li>
+                </ul>
+                 <p><strong>Importance:</strong> Ensures the reliability, integrity, and trustworthiness of the AI system's predictions and decisions.</p>
+            </div>
+        </section>
+
+        {# --- Section 3: Infrastructure & Deployment Security --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Infrastructure & Deployment Security</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>The systems supporting ML models need standard security practices.</p>
+                 <ul>
+                    <li><strong>Risks:</strong> Unauthorized access to servers or cloud accounts, insecure API endpoints, vulnerabilities in dependencies or operating systems, denial-of-service attacks against model APIs.</li>
+                    <li><strong>Mitigation Techniques:</strong>
+                        <ul>
+                            <li><strong>Secure Coding Practices:</strong> Applying general web security principles (like those covered in the Django Security demo - input validation, authentication, authorization).</li>
+                            <li><strong>Infrastructure Security:</strong> Using firewalls, secure network configurations, regular patching, vulnerability scanning.</li>
+                            <li><strong>API Security:</strong> Implementing authentication, authorization, rate limiting, and input validation for model APIs.</li>
+                            <li><strong>Dependency Management:</strong> Keeping libraries (Python packages, OS packages) up-to-date to patch known vulnerabilities.</li>
+                            <li><strong>Secrets Management:</strong> Securely storing API keys, database passwords, and other credentials (using environment variables, secrets managers like Google Secret Manager or AWS Secrets Manager).</li>
+                        </ul>
+                    </li>
+                </ul>
+                 <p><strong>Importance:</strong> Protects the entire system surrounding the model, ensuring its availability and preventing unauthorized access or disruption.</p>
+        </section>
+
+         {# --- Conclusion --- #}
+         <section>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Conclusion</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>Security in ML/AI/DS is a multi-faceted challenge involving data privacy, model robustness against specific attacks, and standard infrastructure security. As these systems become more integrated into critical applications, adopting a security-conscious mindset throughout the entire lifecycle – from data collection to deployment and monitoring – is essential for building trustworthy and reliable AI.</p>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

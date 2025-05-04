@@ -1,0 +1,149 @@
+{# demos/templates/demos/jupyter_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn about Jupyter Notebooks for ML/DS." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Jupyter, notebook, data science, machine learning, Python" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-orange-500 to-amber-600 dark:from-orange-400 dark:to-amber-500 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        <strong>Jupyter Notebooks</strong> (and related environments like JupyterLab, Google Colab, VS Code Notebooks) are indispensable tools for data scientists and ML practitioners. They provide an <strong>interactive, web-based environment</strong> for writing and executing code (primarily Python, R, Julia), visualizing data, and documenting workflows all in one place.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-amber-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: What are Notebooks? --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. What is a Jupyter Notebook?</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>A notebook document consists of a sequence of <strong>cells</strong>: </p>
+                <ul>
+                    <li><strong>Code Cells:</strong> Contain code (e.g., Python) that can be executed individually. The output (text, plots, tables) is displayed directly below the cell.</li>
+                    <li><strong>Markdown Cells:</strong> Contain explanatory text, headings, images, links, and mathematical formulas (using LaTeX) formatted using Markdown syntax.</li>
+                </ul>
+                <p>This combination allows for a literate programming approach, where code, results, and narrative explanations are interwoven.</p>
+                <p><strong>Relevance:</strong> Ideal for exploratory data analysis (EDA), model prototyping, data visualization, and sharing results or tutorials where the process and explanation are as important as the final code.</p>
+            </div>
+        </section>
+
+        {# --- Section 2: Key Benefits --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Key Benefits for ML/DS</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <ul>
+                    <li><strong>Interactivity:</strong> Execute code cell by cell, inspect intermediate results (variables, dataframes), and quickly iterate on ideas.</li>
+                    <li><strong>Inline Visualization:</strong> Display plots and charts (Matplotlib, Seaborn, Plotly) directly within the notebook, alongside the code that generated them.</li>
+                    <li><strong>Documentation & Storytelling:</strong> Combine code, output, and explanatory text (Markdown) to create comprehensive reports or tutorials that tell a data story.</li>
+                    <li><strong>Reproducibility (with care):</strong> Notebooks capture the workflow, making it easier (though not always perfectly) for others to understand and potentially reproduce the analysis.</li>
+                    <li><strong>Sharing:</strong> Notebook files (`.ipynb`) can be easily shared (e.g., via GitHub, NBViewer) allowing others to see the code, output, and narrative.</li>
+                </ul>
+            </div>
+        </section>
+
+        {# --- Section 3: Example Workflow Snippets --- #}
+        <section>
+             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Illustrative Notebook Cells</h2>
+             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                 <p>Imagine a typical data analysis workflow within a notebook:</p>
+             </div>
+
+             {# Cell 1: Imports & Data Loading #}
+             <div class="mb-6">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Cell 1: Imports & Load Data</h4>
+                <pre><code class="language-python">
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load data from a CSV file
+df = pd.read_csv('sales_data.csv')
+
+# Display the first few rows
+df.head()
+                </code></pre>
+                <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">Output below cell: (A rendered HTML table of the DataFrame's head)</p>
+             </div>
+
+             {# Cell 2: Data Exploration/Visualization #}
+             <div class="mb-6">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Cell 2: Explore Data & Visualize</h4>
+                <pre><code class="language-python">
+# Check basic info
+df.info()
+
+# Plot distribution of 'SalesAmount'
+plt.figure(figsize=(8, 4))
+sns.histplot(df['SalesAmount'], kde=True)
+plt.title('Distribution of Sales Amount')
+plt.show() # Display plot inline
+                </code></pre>
+                <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">Output below cell: (Text output from `df.info()` followed by the generated histogram plot)</p>
+             </div>
+
+             {# Cell 3: Markdown Explanation #}
+             <div class="mb-6">
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Cell 3: Markdown Explanation</h4>
+                <pre><code class="language-markdown">
+### Data Cleaning Steps
+
+The sales amount appears slightly right-skewed. Next, we will handle missing values in the `Region` column by filling them with the mode ('Unknown').
+
+* Check missing counts: `df.isnull().sum()`
+* Fill missing `Region`: `df['Region'].fillna('Unknown', inplace=True)`
+                </code></pre>
+                <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">Output below cell: (Formatted text with heading and bullet points)</p>
+             </div>
+
+             {# Cell 4: Model Training #}
+             <div>
+                <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Cell 4: Train a Simple Model</h4>
+                <pre><code class="language-python">
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# Prepare features and target (example)
+X = df[['FeatureA', 'FeatureB']]
+y = df['SalesAmount']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Train model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+print(f"Model R-squared on test set: {model.score(X_test, y_test):.3f}")
+                </code></pre>
+                <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">Output below cell: (Text output showing the R-squared score)</p>
+             </div>
+        </section>
+
+        {# --- Limitations --- #}
+        <section class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
+             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">4. Considerations & Limitations</h2>
+             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <ul>
+                    <li><strong>Production Code:</strong> Notebooks are excellent for exploration but less ideal for production pipelines due to potential issues with hidden state, out-of-order execution, and difficulty with version control diffs. Code is often refactored into `.py` scripts for production.</li>
+                    <li><strong>Version Control:</strong> While notebooks can be stored in Git, comparing changes (diffs) can be difficult due to the JSON structure containing output. Tools exist to mitigate this.</li>
+                    <li><strong>Environment Management:</strong> Ensuring consistent environments between notebook execution and production deployment is crucial.</li>
+                </ul>
+             </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

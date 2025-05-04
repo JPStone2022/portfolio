@@ -1,0 +1,104 @@
+{# demos/templates/demos/scala_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn about Scala for big data and ML." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Scala, Spark, big data, JVM, functional programming" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-red-500 to-pink-600 dark:from-red-400 dark:to-pink-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        While Python is the primary language for most ML/DS model development, <strong>Scala</strong> plays a significant role in the <strong>Big Data</strong> ecosystem, particularly as the native language of <strong>Apache Spark</strong>. It combines functional and object-oriented programming paradigms on the Java Virtual Machine (JVM).
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-pink-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Key Scala Features --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Key Scala Features</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <ul>
+                    <li><strong>JVM Language:</strong> Runs on the Java Virtual Machine, allowing seamless interoperability with Java libraries and benefiting from the mature JVM ecosystem.</li>
+                    <li><strong>Statically Typed:</strong> Catches type errors at compile time, often leading to more robust code for large systems compared to dynamically typed languages like Python (though Python now has type hints).</li>
+                    <li><strong>Functional Programming (FP) Emphasis:</strong> Treats functions as first-class citizens, encourages immutability, and provides powerful features like pattern matching, higher-order functions, and lazy evaluation. This often leads to concise and parallelizable code.</li>
+                    <li><strong>Object-Oriented Programming (OOP):</strong> Also fully supports OOP concepts like classes, objects, inheritance, and traits (similar to interfaces with implementation).</li>
+                    <li><strong>Conciseness:</strong> Often allows expressing complex ideas with less boilerplate code than Java.</li>
+                </ul>
+                <p><strong>Relevance:</strong> Its blend of FP and OOP, static typing, and JVM integration made it a strong choice for building complex, distributed systems like Apache Spark.</p>
+            </div>
+        </section>
+
+        {# --- Section 2: Scala & Apache Spark --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Scala and Apache Spark</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>Scala's primary relevance in the ML/DS world comes from <strong>Apache Spark</strong>. Spark itself is written in Scala, and its native API is Scala-based.</p>
+                <ul>
+                    <li><strong>Performance:</strong> While PySpark (Python API for Spark) is extremely popular and convenient, Spark jobs written directly in Scala can sometimes offer better performance due to avoiding Python-to-JVM overhead, especially for User-Defined Functions (UDFs).</li>
+                    <li><strong>Full API Access:</strong> New Spark features often appear in the Scala API first before being ported to PySpark.</li>
+                    <li><strong>Big Data Pipelines:</strong> Data engineers often use Scala with Spark to build robust, large-scale ETL/ELT pipelines and data processing jobs.</li>
+                    <li><strong>Spark MLlib:</strong> Spark's machine learning library can be used directly from Scala for distributed model training, although using it via PySpark is also very common.</li>
+                </ul>
+                <p><strong>Relevance:</strong> Understanding Scala is highly valuable for Data Engineers working heavily with Spark or for ML Engineers needing maximum performance or access to the latest Spark features.</p>
+            </div>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Example Code (Conceptual Spark with Scala):</h4>
+            <pre><code class="language-scala">
+// Example: Word Count using Spark's Scala API
+
+// Assuming 'spark' is an existing SparkSession instance
+// val lines = spark.sparkContext.textFile("path/to/your/textfile.txt")
+val lines: RDD[String] = ??? // Placeholder for RDD loaded from text file
+
+// Transformation: Split lines into words, map each word to (word, 1)
+val wordCounts = lines
+  .flatMap(line => line.split(" ")) // Split line into words
+  .map(word => (word.toLowerCase, 1)) // Map to (word, 1) pairs
+  .reduceByKey(_ + _) // Aggregate counts for each word
+
+// Action: Collect results (use take() or saveAsTextFile() for large data)
+wordCounts.take(10).foreach(println)
+// Output might be: (the, 50), (quick, 5), (brown, 5), ...
+
+// Example: Using Spark SQL with DataFrames
+// val df = spark.read.json("path/to/data.json")
+val df: DataFrame = ??? // Placeholder for DataFrame loaded from source
+
+// DataFrame operations (similar to PySpark but with Scala syntax)
+val filteredDF = df.filter($"age" > 30) // Use $ notation or col() function
+  .select("name", "age")
+
+filteredDF.show()
+
+            </code></pre>
+             <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">The syntax leverages Scala's functional features for concise data transformations on distributed datasets (RDDs or DataFrames).</p>
+        </section>
+
+        {# --- Section 3: Other Uses --- #}
+        <section>
+             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Other Niche Uses</h2>
+             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                 <ul>
+                     <li><strong>Akka:</strong> Scala is often used with the Akka framework for building highly concurrent and distributed actor-based systems, which could form the backend for certain real-time AI applications.</li>
+                     <li><strong>Specialized Libraries:</strong> Some niche ML/DS libraries might be primarily developed in Scala, leveraging the JVM ecosystem.</li>
+                     <li><strong>Interoperability:</strong> Used to create libraries or components that need to seamlessly interact with existing Java-based systems.</li>
+                 </ul>
+                 <p>However, for general-purpose data analysis, model prototyping, and development outside the Spark/Big Data ecosystem, Python remains the more common choice due to its extensive library support and larger community focus in those areas.</p>
+             </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+{% endblock %}

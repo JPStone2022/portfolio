@@ -1,0 +1,293 @@
+{# demos/templates/demos/deploying_django_app_to_heroku.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deploying Django to Heroku Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for code blocks */
+        pre {
+            background-color: #1f2937; /* bg-gray-800 */
+            color: #f3f4f6; /* text-gray-100 */
+            padding: 1rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.875rem; /* text-sm */
+        }
+        code {
+             font-family: 'Courier New', Courier, monospace;
+             background-color: #e5e7eb; /* bg-gray-200 */
+             padding: 0.1rem 0.3rem;
+             border-radius: 0.25rem; /* rounded */
+             font-size: 0.875rem; /* text-sm */
+             color: #1f2937; /* text-gray-800 */
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            color: inherit;
+        }
+        /* Style for headings */
+        h1, h2, h3 {
+            font-weight: 600; /* font-semibold */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 leading-relaxed">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-indigo-700 mb-2">Deploying Your Django Project to Heroku</h1>
+            <p class="text-lg text-gray-600">A step-by-step guide to get your Django app live.</p>
+        </header>
+
+        <main class="bg-white p-6 md:p-8 rounded-lg shadow-md space-y-8">
+
+            <section id="prerequisites">
+                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-indigo-600">1. Prerequisites</h2>
+                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
+                    <li>A working Django project committed to a Git repository.</li>
+                    <li>Python and Pip installed locally.</li>
+                    <li>A <a href="https://signup.heroku.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Heroku account</a> (Free tier available).</li>
+                    <li>The <a href="https://devcenter.heroku.com/articles/heroku-cli" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Heroku CLI</a> installed and logged in (`heroku login`).</li>
+                    <li>Git installed locally.</li>
+                </ul>
+            </section>
+
+            <section id="config-files">
+                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-indigo-600">2. Configuration Files</h2>
+                <p class="mb-4 text-gray-700">Create these files in the root directory of your Django project (where `manage.py` is located).</p>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-2">Procfile</h3>
+                    <p class="mb-2 text-gray-700">Tells Heroku how to run your web process. Typically uses Gunicorn as the web server.</p>
+                    <pre><code class="language-yaml">web: gunicorn your_project_name.wsgi --log-file -</code></pre>
+                    <p class="mt-2 text-sm text-gray-600">Replace `your_project_name` with the actual name of your Django project directory (the one containing `wsgi.py`).</p>
+                    <p class="mt-1 text-sm text-gray-600">Make sure to install Gunicorn: <code>pip install gunicorn</code></p>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-2">requirements.txt</h3>
+                    <p class="mb-2 text-gray-700">Lists all Python dependencies Heroku needs to install.</p>
+                    <p class="mb-2 text-gray-700">Generate it using pip:</p>
+                    <pre><code class="language-bash">pip freeze > requirements.txt</code></pre>
+                    <p class="mt-2 text-sm text-gray-600">Ensure your `requirements.txt` includes:</p>
+                    <ul class="list-disc list-inside space-y-1 pl-4 text-sm text-gray-600">
+                        <li><code>Django</code></li>
+                        <li><code>gunicorn</code></li>
+                        <li><code>django-heroku</code> (optional but recommended for simplifying settings)</li>
+                        <li><code>psycopg2-binary</code> (if using Heroku Postgres)</li>
+                        <li>Any other libraries your project uses.</li>
+                    </ul>
+                    <p class="mt-1 text-sm text-gray-600">If using `django-heroku`, install it: <code>pip install django-heroku</code></p>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-2">runtime.txt</h3>
+                    <p class="mb-2 text-gray-700">Specifies the Python version Heroku should use.</p>
+                    <pre><code class="language-text">python-3.10.4</code></pre>
+                    <p class="mt-2 text-sm text-gray-600">Replace `3.10.4` with the specific Python version you are using (check with <code>python --version</code>). Match the version Heroku supports.</p>
+                </div>
+            </section>
+
+            <section id="django-settings">
+                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-indigo-600">3. Django Settings (`settings.py`)</h2>
+                <p class="mb-4 text-gray-700">Modify your project's `settings.py` file for Heroku compatibility.</p>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-2">Using `django-heroku` (Recommended)</h3>
+                    <p class="mb-2 text-gray-700">If you installed `django-heroku`, add this line at the very bottom of your `settings.py`:</p>
+                    <pre><code class="language-python">
+# settings.py (at the bottom)
+import django_heroku
+django_heroku.settings(locals())
+                    </code></pre>
+                    <p class="mt-2 text-sm text-gray-600">This automatically configures database URLs, `ALLOWED_HOSTS`, static files, logging, and more based on Heroku environment variables.</p>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-2">Manual Configuration (If not using `django-heroku`)</h3>
+                    <p class="mb-2 text-gray-700">If configuring manually:</p>
+                    <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
+                        <li>
+                            <strong>ALLOWED_HOSTS:</strong> Allow your Heroku app domain.
+                            <pre><code class="language-python">ALLOWED_HOSTS = ['your-app-name.herokuapp.com', '127.0.0.1', 'localhost']</code></pre>
+                            Replace `your-app-name` with your Heroku app's name.
+                        </li>
+                        <li>
+                            <strong>Database:</strong> Use `dj-database-url` to parse the `DATABASE_URL` environment variable.
+                            <pre><code class="language-bash">pip install dj-database-url</code></pre>
+                            <pre><code class="language-python">
+# settings.py
+import dj_database_url
+import os
+
+DATABASES = {
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=600, ssl_require=True)
+    # Add fallback for local development if needed
+    # 'default': dj_database_url.config(default='postgres://user:pass@host:port/dbname', conn_max_age=600)
+}
+# Ensure ssl_require=True for Heroku Postgres
+                            </code></pre>
+                        </li>
+                         <li>
+                            <strong>SECRET_KEY:</strong> Do not hardcode! Use environment variables.
+                            <pre><code class="language-python">
+# settings.py
+import os
+SECRET_KEY = os.environ.get('SECRET_KEY', 'your-default-development-secret-key') # Provide a fallback for local dev
+                            </code></pre>
+                            You'll set `SECRET_KEY` in Heroku's config vars later.
+                        </li>
+                         <li>
+                            <strong>DEBUG:</strong> Should be `False` in production.
+                            <pre><code class="language-python">
+# settings.py
+DEBUG = os.environ.get('DEBUG', 'False') == 'True' # Defaults to False unless DEBUG=True is set
+                            </code></pre>
+                         </li>
+                    </ul>
+                </div>
+            </section>
+
+             <section id="static-files">
+                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-indigo-600">4. Static Files Handling</h2>
+                 <p class="mb-4 text-gray-700">Configure Django to serve static files correctly in production using WhiteNoise.</p>
+                 <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700">
+                     <li>Install WhiteNoise: <code>pip install whitenoise</code></li>
+                     <li>Add WhiteNoise to `requirements.txt` (run `pip freeze > requirements.txt` again).</li>
+                     <li>
+                         Modify `settings.py`:
+                         <pre><code class="language-python">
+# settings.py
+
+MIDDLEWARE = [
+    # Add WhiteNoiseMiddleware after SecurityMiddleware and before SessionMiddleware
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Add this line
+    # ... other middleware ...
+]
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/stable/howto/static-files/
+STATIC_URL = '/static/'
+# The absolute path to the directory where collectstatic will collect static files for deployment.
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Important for collectstatic
+
+# Optional: Add directories where Django should look for static files in addition to app 'static/' directories
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'your_project_static_dir')]
+
+# Whitenoise storage setting (optional but recommended for compression/caching)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+                         </code></pre>
+                     </li>
+                      <li>Run `collectstatic` locally to test (optional): <code>python manage.py collectstatic --noinput</code></li>
+                 </ol>
+                 <p class="mt-2 text-sm text-gray-600">Heroku runs `collectstatic` automatically during deployment if it detects a `manage.py` file.</p>
+            </section>
+
+            <section id="deployment">
+                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-indigo-600">5. Deployment Steps</h2>
+                <ol class="list-decimal list-inside space-y-4 pl-4 text-gray-700">
+                    <li>
+                        <strong>Commit changes to Git:</strong>
+                        <pre><code class="language-bash">
+git add .
+git commit -m "Configure project for Heroku deployment"
+                        </code></pre>
+                    </li>
+                    <li>
+                        <strong>Create Heroku app:</strong>
+                        <pre><code class="language-bash">heroku create your-app-name</code></pre>
+                        <p class="text-sm text-gray-600">Replace `your-app-name` with a unique name. If omitted, Heroku generates one.</p>
+                    </li>
+                    <li>
+                        <strong>Add Heroku Postgres (if needed):</strong>
+                        <pre><code class="language-bash">heroku addons:create heroku-postgresql:hobby-dev</code></pre>
+                        <p class="text-sm text-gray-600">This adds the free tier database and sets the `DATABASE_URL` config var.</p>
+                    </li>
+                     <li>
+                        <strong>Set Config Vars (Environment Variables):</strong>
+                        <p class="text-sm text-gray-600 mb-1">Set your `SECRET_KEY` and any other required environment variables.</p>
+                        <pre><code class="language-bash">
+heroku config:set SECRET_KEY='your_production_secret_key'
+heroku config:set DJANGO_SETTINGS_MODULE='your_project_name.settings' # Usually needed
+# Set other variables like email passwords, API keys, etc.
+# heroku config:set EMAIL_HOST_PASSWORD='your_email_password'
+                        </code></pre>
+                        <p class="text-sm text-gray-600 mt-1">Generate a strong secret key for production!</p>
+                    </li>
+                     <li>
+                        <strong>Disable `collectstatic` during build (if using `django-heroku` or manual Whitenoise):</strong>
+                        <p class="text-sm text-gray-600 mb-1">Since `django-heroku` or manual Whitenoise setup handles static files, you can prevent Heroku's default `collectstatic` run.</p>
+                        <pre><code class="language-bash">heroku config:set DISABLE_COLLECTSTATIC=1</code></pre>
+                    </li>
+                    <li>
+                        <strong>Push to Heroku:</strong>
+                        <pre><code class="language-bash">git push heroku main</code></pre>
+                        <p class="text-sm text-gray-600">Or `git push heroku master` if using the master branch.</p>
+                    </li>
+                    <li>
+                        <strong>Run Migrations:</strong>
+                        <p class="text-sm text-gray-600 mb-1">Apply database migrations on the Heroku server.</p>
+                        <pre><code class="language-bash">heroku run python manage.py migrate</code></pre>
+                    </li>
+                     <li>
+                        <strong>Create Superuser (Optional):</strong>
+                        <pre><code class="language-bash">heroku run python manage.py createsuperuser</code></pre>
+                    </li>
+                    <li>
+                        <strong>Open your app:</strong>
+                        <pre><code class="language-bash">heroku open</code></pre>
+                    </li>
+                </ol>
+            </section>
+
+            <section id="troubleshooting">
+                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-indigo-600">6. Troubleshooting</h2>
+                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
+                    <li>
+                        <strong>Check logs:</strong> View real-time logs or past logs.
+                        <pre><code class="language-bash">
+heroku logs --tail # Real-time logs
+heroku logs # Recent logs
+                        </code></pre>
+                    </li>
+                    <li><strong>Application Error:</strong> Often related to failed migrations, missing config vars, or issues in `Procfile` or `settings.py`. Check the logs!</li>
+                    <li><strong>Static files not loading:</strong> Ensure WhiteNoise is configured correctly, `collectstatic` ran (or `DISABLE_COLLECTSTATIC=1` is set if handled manually), and `DEBUG` is `False`.</li>
+                    <li><strong>Database connection issues:</strong> Verify `DATABASE_URL` is set correctly and `psycopg2-binary` is installed.</li>
+                    <li><strong>H10 App Crashed:</strong> Indicates the web process failed to start. Check logs for specific errors (e.g., Gunicorn issues, missing dependencies, `wsgi.py` errors).</li>
+                    <li>Consult the <a href="https://devcenter.heroku.com/articles/deploying-python" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Heroku Dev Center</a> for detailed guides.</li>
+                </ul>
+            </section>
+
+        </main>
+
+        <footer class="text-center text-gray-500 mt-8 text-sm">
+            <p>Happy Deploying!</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
+{% endblock %}

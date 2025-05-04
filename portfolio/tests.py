@@ -9,7 +9,7 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile # For image field testing
 from django.db.models import Q
 
-from .models import Project, Certificate, ProjectTopic # Import new model
+from .models import Project, Certificate # Import new model
 from .forms import ContactForm
 
 # Import models from other apps safely
@@ -19,6 +19,13 @@ try:
 except ImportError:
     Skill = None
     SKILL_APP_EXISTS = False
+
+try:
+    from topics.models import ProjectTopic # Import from topics app now
+    TOPICS_APP_EXISTS = True
+except ImportError:
+    ProjectTopic = None
+    TOPICS_APP_EXISTS = False
 
 try:
     from blog.models import BlogPost
@@ -43,26 +50,6 @@ except ImportError:
 
 
 # --- Model Tests ---
-
-class ProjectTopicModelTests(TestCase):
-
-    def test_topic_creation(self):
-        """ Test basic ProjectTopic creation and defaults. """
-        topic = ProjectTopic.objects.create(name="Computer Vision Test")
-        self.assertEqual(str(topic), "Computer Vision Test")
-        self.assertEqual(topic.order, 0)
-        self.assertTrue(isinstance(topic, ProjectTopic))
-
-    def test_topic_slug_generation(self):
-        """ Test slug generation for topics. """
-        topic = ProjectTopic.objects.create(name="Natural Language Processing")
-        self.assertEqual(topic.slug, "natural-language-processing")
-
-    def test_topic_get_absolute_url(self):
-        """ Test get_absolute_url method for topics. """
-        topic = ProjectTopic.objects.create(name="Web App Test")
-        expected_url = reverse('portfolio:topic_detail', kwargs={'topic_slug': topic.slug})
-        self.assertEqual(topic.get_absolute_url(), expected_url)
 
 class CertificateModelTests(TestCase):
 
@@ -93,9 +80,8 @@ class ProjectModelTests(TestCase):
     def setUpTestData(cls):
         if SKILL_APP_EXISTS:
             cls.skill_py = Skill.objects.create(name="Python Test")
-            cls.skill_dj = Skill.objects.create(name="Django Test")
-        cls.topic_cv = ProjectTopic.objects.create(name="CV Test Topic")
-        cls.topic_nlp = ProjectTopic.objects.create(name="NLP Test Topic")
+        if TOPICS_APP_EXISTS:
+            cls.topic_cv = ProjectTopic.objects.create(name="CV Test Topic") # Create topic here
 
         cls.project = Project.objects.create(
             title="Test Project One",
@@ -107,8 +93,9 @@ class ProjectModelTests(TestCase):
             code_language="python"
         )
         if SKILL_APP_EXISTS:
-            cls.project.skills.add(cls.skill_py, cls.skill_dj)
-        cls.project.topics.add(cls.topic_cv, cls.topic_nlp) # Add topics
+            cls.project.skills.add(cls.skill_py)
+        if TOPICS_APP_EXISTS:
+            cls.project.topics.add(cls.topic_cv)
 
     # --- Previous tests (keep them) ---
     def test_project_creation_and_defaults(self):
@@ -125,20 +112,22 @@ class ProjectModelTests(TestCase):
     def test_slug_generation_on_save(self): self.assertEqual(self.project.slug, "test-project-one")
     def test_get_absolute_url(self): self.assertEqual(self.project.get_absolute_url(), f'/project/{self.project.slug}/')
     def test_skills_relationship(self):
-        if SKILL_APP_EXISTS: self.assertEqual(self.project.skills.count(), 2)
+        if SKILL_APP_EXISTS: self.assertEqual(self.project.skills.count(), 1)
         else: self.skipTest("Skills app not found.")
     def test_get_technologies_list_from_skills(self):
-        if SKILL_APP_EXISTS: self.assertListEqual(sorted(self.project.get_technologies_list()), sorted(["Python Test", "Django Test"]))
+        if SKILL_APP_EXISTS: self.assertListEqual(sorted(self.project.get_technologies_list()), sorted(["Python Test"]))
         else: self.skipTest("Skills app not found.")
     # --- End Previous tests ---
 
     def test_topics_relationship(self):
-        """ Test the ManyToMany relationship with ProjectTopics. """
-        self.assertEqual(self.project.topics.count(), 2)
-        self.assertIn(self.topic_cv, self.project.topics.all())
-        self.assertIn(self.topic_nlp, self.project.topics.all())
-        # Test reverse relationship
-        self.assertIn(self.project, self.topic_cv.projects.all())
+        """ Test the ManyToMany relationship with ProjectTopics (in topics app). """
+        if TOPICS_APP_EXISTS:
+            self.assertEqual(self.project.topics.count(), 1)
+            self.assertIn(self.topic_cv, self.project.topics.all())
+            # Test reverse relationship
+            self.assertIn(self.project, self.topic_cv.projects.all())
+        else:
+            self.skipTest("Topics app not found or ProjectTopic model import failed.")
 
 
 # --- Form Tests ---
@@ -170,7 +159,7 @@ class PortfolioViewTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.topic1 = ProjectTopic.objects.create(name="Test Topic 1", slug="test-topic-1")
+        cls.topic1 = ProjectTopic.objects.create(name="Test Topic 1", slug="test-topic-1")  
         cls.topic2 = ProjectTopic.objects.create(name="Test Topic 2", slug="test-topic-2")
         if SKILL_APP_EXISTS:
             cls.skill1 = Skill.objects.create(name="Test Skill 1", slug="test-skill-1")
@@ -284,17 +273,17 @@ class PortfolioViewTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_topic_detail_view(self):
-        url = reverse('portfolio:topic_detail', kwargs={'topic_slug': self.topic1.slug})
+        url = reverse('topics:topic_detail', kwargs={'topic_slug': self.topic1.slug})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'portfolio/topic_detail.html')
+        self.assertTemplateUsed(response, 'topics/topic_detail.html')
         self.assertEqual(response.context['topic'], self.topic1)
         self.assertEqual(len(response.context['projects']), 1)
         self.assertIn(self.project1, response.context['projects'])
         self.assertContains(response, self.topic1.name)
 
     def test_topic_detail_view_404(self):
-        url = reverse('portfolio:topic_detail', kwargs={'topic_slug': 'invalid-topic'})
+        url = reverse('topics:topic_detail', kwargs={'topic_slug': 'invalid-topic'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 

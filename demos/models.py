@@ -19,6 +19,16 @@ class Demo(models.Model):
     order = models.PositiveIntegerField(default=0, help_text="Order for display on feature lists.")
     is_featured = models.BooleanField(default=True, help_text="Feature this demo on the homepage?")
 
+    # --- Add ManyToManyField to Skill ---
+    # Use string 'skills.Skill' to avoid potential circular import errors
+    skills = models.ManyToManyField(
+        'skills.Skill',
+        blank=True,
+        related_name="demos", # Allows accessing demos from a skill: skill.demos.all()
+        verbose_name="Related Skills Showcased"
+    )
+    # --- End Skill Field ---
+
     class Meta:
         ordering = ['order', 'title']
 

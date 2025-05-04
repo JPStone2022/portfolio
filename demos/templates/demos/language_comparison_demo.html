@@ -1,0 +1,211 @@
+{# demos/templates/demos/language_comparison_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Comparing languages for ML, AI, and Data Science." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Python, R, Scala, Java, C++, machine learning, comparison" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        While Python is the undisputed leader, the ecosystem for Machine Learning, AI, and Data Science involves several programming languages, each with its own strengths and typical use cases. Understanding their roles provides a broader perspective.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-5xl mx-auto space-y-8">
+
+        {# --- Python --- #}
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-purple-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">1. Python (The Dominant Force)</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p><strong>Role:</strong> Primary language for almost the entire ML/DS workflow.</p>
+                <p><strong>Strengths:</strong></p>
+                <ul>
+                    <li>Vast ecosystem of mature libraries (NumPy, Pandas, Scikit-learn, TensorFlow, PyTorch, Matplotlib, Seaborn, spaCy, Hugging Face, etc.).</li>
+                    <li>Easy-to-learn syntax and high readability.</li>
+                    <li>Large, active community providing extensive support and resources.</li>
+                    <li>Versatile: Used for data analysis, model building, web development (Django/Flask), scripting, and more.</li>
+                </ul>
+                <p><strong>Weaknesses:</strong> Can be slower than compiled languages for CPU-intensive tasks (though libraries often use C/C++ backends); Global Interpreter Lock (GIL) limits true CPU parallelism for some tasks.</p>
+                <p><strong>Typical Use:</strong> Data cleaning, EDA, model prototyping, training deep learning models, building ML pipelines, deploying models via APIs.</p>
+            </div>
+            <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet (Pandas + Scikit-learn):</h4>
+            <pre><code class="language-python">
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+# Load data
+df = pd.read_csv("data.csv")
+# Basic preprocessing
+df.dropna(inplace=True)
+X = df[['feature1', 'feature2']]
+y = df['target']
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+# Train model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+# Evaluate
+accuracy = model.score(X_test, y_test)
+print(f"Model Accuracy: {accuracy}")
+            </code></pre>
+        </section>
+
+        {# --- R Language --- #}
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-purple-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">2. R Language (The Statistician's Choice)</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                 <p><strong>Role:</strong> Primarily focused on statistical analysis and visualization.</p>
+                 <p><strong>Strengths:</strong></p>
+                 <ul>
+                    <li>Unparalleled ecosystem for statistical modeling, hypothesis testing, and time series analysis (CRAN repository).</li>
+                    <li>Excellent data visualization capabilities, especially with the `ggplot2` package (Grammar of Graphics).</li>
+                    <li>Designed by statisticians, for statisticians; syntax often feels natural for statistical tasks.</li>
+                    <li>Strong community in academia and specific industries (bioinformatics, finance).</li>
+                 </ul>
+                 <p><strong>Weaknesses:</strong> Less commonly used for general-purpose programming or building production web applications compared to Python; can have a steeper learning curve for those without a stats background; performance can be an issue without careful coding.</p>
+                 <p><strong>Typical Use:</strong> Exploratory data analysis, advanced statistical modeling and inference, creating publication-quality visualizations, bioinformatics.</p>
+            </div>
+            <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet (dplyr + ggplot2):</h4>
+            <pre><code class="language-r">
+# Load libraries
+library(dplyr)
+library(ggplot2)
+
+# Load built-in iris data
+data(iris)
+
+# Analyze and plot
+iris %>%
+filter(Species != "setosa") %>% # Filter data
+group_by(Species) %>%
+summarise(Avg.Petal.Width = mean(Petal.Width)) # Calculate mean
+
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+geom_point() + # Create scatter plot
+facet_wrap(~Species) + # Separate plots by species
+labs(title = "Iris Sepal Dimensions") +
+theme_bw() # Apply theme
+            </code></pre>
+        </section>
+
+        {# --- SQL --- #}
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-purple-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">3. SQL (The Data Language)</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p><strong>Role:</strong> Essential for interacting with relational databases.</p>
+                <p><strong>Strengths:</strong></p>
+                <ul>
+                    <li>Standard language for querying, manipulating, and defining data in relational databases (PostgreSQL, MySQL, SQLite, etc.).</li>
+                    <li>Declarative: You specify *what* data you want, not *how* to get it.</li>
+                    <li>Powerful for filtering, joining, aggregating large datasets directly within the database.</li>
+                </ul>
+                <p><strong>Weaknesses:</strong> Not a general-purpose programming language; limited capabilities for complex statistical modeling or advanced algorithms directly.</p>
+                <p><strong>Typical Use:</strong> Extracting data for analysis, joining data from multiple tables, filtering data before loading into Python/R, simple aggregations, data warehousing tasks.</p>
+            </div>
+            <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet:</h4>
+            <pre><code class="language-sql">
+SELECT
+category,
+AVG(price) as average_price,
+COUNT(*) as number_of_products
+FROM
+products
+WHERE
+stock_quantity > 0
+GROUP BY
+category
+HAVING
+COUNT(*) >= 5
+ORDER BY
+average_price DESC;
+            </code></pre>
+        </section>
+
+        {# --- Scala / Java --- #}
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-purple-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">4. Scala & Java (Big Data & Enterprise)</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p><strong>Role:</strong> Primarily used in the Big Data ecosystem and for integration into large enterprise systems.</p>
+                <p><strong>Strengths (Shared via JVM):</strong> Robustness, strong typing, vast ecosystem (libraries, tools), platform independence, mature concurrency handling.</p>
+                <p><strong>Scala Specific:</strong> Combines functional and object-oriented paradigms, often more concise than Java, native language of Apache Spark.</li>
+                <p><strong>Java Specific:</strong> Extremely widespread in enterprise applications, huge developer base, very stable.</p>
+                <p><strong>Weaknesses:</strong> Generally more verbose and have a steeper learning curve than Python for typical DS/ML tasks; less rich ecosystem *specifically* for cutting-edge ML research compared to Python.</p>
+                <p><strong>Typical Use:</strong> Building/maintaining core big data infrastructure (Hadoop, Spark jobs), deploying ML models within existing large Java/Scala applications, building high-performance backend systems supporting AI features.</p>
+            </div>
+             <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet (Conceptual Scala Spark):</h4>
+             <pre><code class="language-scala">
+// Conceptual: Filter and count data using Spark Scala API
+// val df = spark.read.parquet("data.parquet") // Load data
+// val count = df.filter($"country" === "UK")
+//               .filter($"value" > 100)
+//               .count()
+// println(s"Number of UK records with value > 100: $count")
+             </code></pre>
+        </section>
+
+        {# --- C++ / C# --- #}
+        <section class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-purple-900/20 transition-colors duration-300 ease-in-out">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3 border-b border-gray-200 dark:border-gray-700 pb-2">5. C++ & C# (Performance & Niche Integration)</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p><strong>Role:</strong> Used when maximum performance or specific platform integration is required.</p>
+                <p><strong>Strengths:</strong></p>
+                <ul>
+                    <li><strong>C++:</strong> Extremely high performance, low-level memory control, used for the core engines of many ML libraries (TensorFlow, PyTorch) and in performance-critical areas like robotics, game AI, high-frequency trading.</li>
+                    <li><strong>C#:</strong> Strong integration within the Windows/.NET ecosystem, used in game development (Unity), enterprise applications. Has ML libraries like ML.NET.</li>
+                </ul>
+                <p><strong>Weaknesses:</strong> Significantly steeper learning curve and longer development time compared to Python; less convenient for rapid prototyping and data exploration; smaller dedicated ML/DS communities compared to Python/R.</p>
+                <p><strong>Typical Use:</strong> Developing core ML library components, high-performance inference engines, real-time systems, integrating ML into existing C++/C# applications or game engines.</p>
+            </div>
+             <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet (Conceptual C++):</h4>
+             <pre><code class="language-cpp">
+// Conceptual: Loading a pre-trained model and predicting
+// (Requires specific ML library bindings for C++)
+
+// #include <some_ml_library.h> // e.g., TensorFlow C++ API, ONNX Runtime
+
+// // Load model
+// auto model = SomeMLLibrary::LoadModel("path/to/model");
+
+// // Prepare input tensor (e.g., from image data)
+// auto inputTensor = prepareInput(imageData);
+
+// // Run inference
+// auto outputTensor = model.predict(inputTensor);
+
+// // Process output
+// auto results = processOutput(outputTensor);
+// std::cout << "Prediction: " << results << std::endl;
+             </code></pre>
+        </section>
+
+         {# --- Others (JavaScript, Julia, Ruby etc.) --- #}
+         <section>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">6. Other Languages</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <ul>
+                    <li><strong>JavaScript:</strong> Primarily for front-end visualization (D3.js, Plotly.js) and in-browser ML (TensorFlow.js).</li>
+                    <li><strong>Julia:</strong> Designed for high-performance technical computing, gaining traction in scientific ML and specific research areas.</li>
+                    <li><strong>Ruby/PHP:</strong> Generally used for web development; ML integration typically involves calling Python-based APIs.</li>
+                </ul>
+                <p>While Python and R are the main languages for day-to-day data science and ML development, understanding the roles of SQL, Scala/Java, and occasionally C++/Go is important for working within larger systems, big data environments, or performance-critical applications.</p>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

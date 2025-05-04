@@ -1,0 +1,58 @@
+{# portfolio/templates/portfolio/accessibility_statement.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}Accessibility Statement - Portfolio{% endblock %}
+{% block meta_description %}Accessibility statement for [Your Name]'s portfolio website.{% endblock %}
+{% block meta_keywords %}accessibility, WCAG, web standards, portfolio{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-10">Accessibility Statement</h1>
+
+    <div class="max-w-3xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-gray-900/20 transition-colors duration-300 ease-in-out">
+        {# Use prose for nice typography #}
+        <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+
+            <p>I am committed to ensuring digital accessibility for people with disabilities. I am continually improving the user experience for everyone and applying relevant accessibility standards.</p>
+
+            <h2 class="!mb-3 dark:text-gray-100">Conformance Status</h2>
+            <p>The <a href="https://www.w3.org/WAI/standards-guidelines/wcag/" target="_blank" rel="noopener noreferrer">Web Content Accessibility Guidelines (WCAG)</a> defines requirements for designers and developers to improve accessibility for people with disabilities. This website aims to conform substantially with WCAG 2.1 level AA.</p>
+            <p>While I strive to adhere to the accepted guidelines and standards for accessibility and usability, it is not always possible to do so in all areas of the website, particularly with some embedded third-party content or complex interactive demos.</p>
+
+            <h2 class="!mb-3 !mt-8 dark:text-gray-100">Technical Specifications</h2>
+            <p>Accessibility of this website relies on the following technologies to work with the particular combination of web browser and any assistive technologies or plugins installed on your computer:</p>
+            <ul>
+                <li>HTML</li>
+                <li>CSS (Tailwind CSS)</li>
+                <li>JavaScript</li>
+            </ul>
+            <p>These technologies are relied upon for conformance with the accessibility standards used.</p>
+
+            <h2 class="!mb-3 !mt-8 dark:text-gray-100">Accessibility Features Implemented</h2>
+            <ul>
+                <li><strong>Semantic HTML:</strong> Using appropriate HTML5 tags (nav, main, section, article, etc.) to define page structure.</li>
+                <li><strong>Keyboard Navigation:</strong> Efforts have been made to ensure interactive elements are navigable using a keyboard.</li>
+                <li><strong>Focus Indicators:</strong> Visible focus rings are applied to interactive elements.</li>
+                <li><strong>Alt Text:</strong> Alternative text descriptions are provided for meaningful images.</li>
+                <li><strong>Responsive Design:</strong> The layout adapts to different screen sizes and orientations.</li>
+                <li><strong>Color Contrast (Ongoing):</strong> Aiming for sufficient contrast between text and background elements, including in dark mode.</li>
+            </ul>
+
+            <h2 class="!mb-3 !mt-8 dark:text-gray-100">Feedback & Contact Information</h2>
+            <p>I welcome your feedback on the accessibility of this portfolio website. If you encounter accessibility barriers or have suggestions for improvement, please let me know:</p>
+            <ul>
+                <li><strong>Contact Form:</strong> <a href="{% url 'portfolio:contact' %}">Use the Contact Form</a></li>
+            </ul>
+            <p>I try to respond to feedback within a reasonable timeframe.</p>
+
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-6">This statement was created on [Date - e.g., May 3, 2025].</p>
+
+        </div>
+    </div>
+
+     <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

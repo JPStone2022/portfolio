@@ -6,6 +6,9 @@ from . import views
 app_name = 'demos' # Namespace
 
 urlpatterns = [
+    # Add path for the list view (at the root of /demos/)
+    path('', views.all_demos_view, name='all_demos_list'),
+    
     path('image-classifier/', views.image_classification_view, name='image_classifier'),
     # Add paths for other demos here later
     # Add path for sentiment analysis demo
@@ -36,4 +39,40 @@ urlpatterns = [
     path('r-concepts/', views.r_concepts_demo_view, name='r_concepts_demo'),
     # Add path for Go concepts demo explanation page
     path('go-concepts/', views.go_concepts_demo_view, name='go_concepts_demo'),
+    # Add path for Scala concepts demo explanation page
+    path('scala-concepts/', views.scala_concepts_demo_view, name='scala_concepts_demo'),
+    # Add path for Java concepts demo explanation page
+    path('java-concepts/', views.java_concepts_demo_view, name='java_concepts_demo'),
+    # Add path for language comparison demo page
+    path('language-comparison/', views.language_comparison_demo_view, name='language_comparison_demo'),
+    # Add path for Ruby concepts demo explanation page
+    path('ruby-concepts/', views.ruby_concepts_demo_view, name='ruby_concepts_demo'),
+    # Add path for OOP concepts demo explanation page
+    path('oop-concepts/', views.oop_concepts_demo_view, name='oop_concepts_demo'),
+    # Add path for Kotlin concepts demo explanation page
+    path('kotlin-concepts/', views.kotlin_concepts_demo_view, name='kotlin_concepts_demo'),
+    # Add path for Jupyter demo explanation page
+    path('jupyter-notebooks/', views.jupyter_demo_view, name='jupyter_demo'),
+    # Add path for PySpark concepts demo explanation page
+    path('pyspark-concepts/', views.pyspark_concepts_demo_view, name='pyspark_concepts_demo'),
+    # Add path for PyTorch concepts demo explanation page
+    path('pytorch-concepts/', views.pytorch_concepts_demo_view, name='pytorch_concepts_demo'),
+    # Add path for Data Security demo explanation page
+    path('data-security/', views.data_security_demo_view, name='data_security_demo'),
+    # Add path for Ethical Hacking concepts demo explanation page
+    path('ethical-hacking-ml/', views.ethical_hacking_demo_view, name='ethical_hacking_demo'),
+    # Add path for Ethical Hacking concepts demo explanation page
+    path('deploy-to-heroku/', views.deploying_to_heroku_view, name='deploying_django_app_to_heroku'),
+    # Add path for Ethical Hacking concepts demo explanation page
+    path('deploy-to-render/', views.deploying_to_render_view, name='deploying_django_app_to_render'),
+    # Add path for Ethical Hacking concepts demo explanation page
+    path('deploy-to-python-anywhere/', views.deploying_to_python_anywhere_view, name='deploying_django_app_to_pythonanywhere'),
+    # Add path for Ethical Hacking concepts demo explanation page
+    path('deploy-to-google-app-engine/', views.deploying_to_google_app_engine_view, name='deploying_django_app_to_google_app_engine'),
+    # Add path for Ethical Hacking concepts demo explanation page
+    path('deploy-to-aws-elastic-beanstalk/', views.deploying_to_aws_elastic_beanstalk_view, name='deploying_django_app_to_aws_elastic_beanstalk'),
+    # Add path for Ethical Hacking concepts demo explanation page
+    path('django-deployment-options/', views.deploying_options_view, name='deploying_django_options'),
+    # Add path for Ethical Hacking concepts demo explanation page
+    path('django-deployment-comparisons/', views.deploying_comparisons_view, name='deploying_django_comparisons'),
 ]

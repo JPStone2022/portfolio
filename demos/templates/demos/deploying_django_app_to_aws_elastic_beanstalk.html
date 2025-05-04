@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deploying Django to AWS Elastic Beanstalk Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for code blocks */
+        pre {
+            background-color: #1f2937; /* bg-gray-800 */
+            color: #f3f4f6; /* text-gray-100 */
+            padding: 1rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.875rem; /* text-sm */
+        }
+        code {
+             font-family: 'Courier New', Courier, monospace;
+             background-color: #e5e7eb; /* bg-gray-200 */
+             padding: 0.1rem 0.3rem;
+             border-radius: 0.25rem; /* rounded */
+             font-size: 0.875rem; /* text-sm */
+             color: #1f2937; /* text-gray-800 */
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            color: inherit;
+        }
+        /* Style for headings */
+        h1, h2, h3 {
+            font-weight: 600; /* font-semibold */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 leading-relaxed">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-orange-700 mb-2">Deploying Your Django Project to AWS Elastic Beanstalk</h1>
+            <p class="text-lg text-gray-600">A step-by-step guide using the EB CLI.</p>
+        </header>
+
+        <main class="bg-white p-6 md:p-8 rounded-lg shadow-md space-y-8">
+
+            <section id="prerequisites">
+                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-orange-600">1. Prerequisites</h2>
+                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
+                    <li>A working Django project committed to a Git repository (EB CLI uses Git).</li>
+                    <li>Python and Pip installed locally.</li>
+                    <li>An <a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">AWS Account</a>.</li>
+                    <li>An <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-started_create-admin-group.html" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">IAM User</a> with appropriate permissions for Elastic Beanstalk, EC2, S3, RDS, etc. (Configure AWS credentials locally).</li>
+                    <li>The <a href="https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">AWS Elastic Beanstalk CLI (EB CLI)</a> installed and configured.</li>
+                    <li>Git installed locally.</li>
+                </ul>
+            </section>
+
+            <section id="config-files">
+                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-orange-600">2. Project Configuration</h2>
+                <p class="mb-4 text-gray-700">Configure your project for Elastic Beanstalk deployment.</p>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-2">requirements.txt</h3>
+                    <p class="mb-2 text-gray-700">Lists Python dependencies.</p>
+                    <pre><code class="language-bash">pip freeze > requirements.txt</code></pre>
+                    <p class="mt-2 text-sm text-gray-600">Ensure it includes:</p>
+                    <ul class="list-disc list-inside space-y-1 pl-4 text-sm text-gray-600">
+                        <li><code>Django</code></li>
+                        <li><code>gunicorn</code> (Often used by default EB Python platforms)</li>
+                        <li><code>psycopg2-binary</code> (If using AWS RDS PostgreSQL)</li>
+                        <li><code>mysqlclient</code> (If using AWS RDS MySQL/MariaDB)</li>
+                        <li><code>whitenoise</code> (If serving static files via Django/Gunicorn)</li>
+                        <li>Any other project dependencies.</li>
+                    </ul>
+                </div>
+
+                 <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-2">Platform Hooks (`.platform/`) (Recommended for Amazon Linux 2)</h3>
+                    <p class="mb-2 text-gray-700">For newer Amazon Linux 2 platforms, use the `.platform/hooks/` directory for configuration and commands during deployment phases (prebuild, predeploy, postdeploy).</p>
+                    <p class="mb-1 text-sm text-gray-600">Example: Running migrations and collecting static files during deployment.</p>
+                    <p class="mb-1 text-sm text-gray-600">Create file: `.platform/hooks/postdeploy/01_migrate.sh`</p>
+                    <pre><code class="language-bash">
+#!/bin/bash
+# Using source to load environment variables set by EB platform
+source /var/app/venv/staging-LQM1lest/bin/activate
+# Navigate to the app directory
+cd /var/app/current
+
+# Run database migrations
+# Ensure DJANGO_SETTINGS_MODULE is set as an environment variable in EB config
+python manage.py migrate --noinput
+
+# Optional: Create superuser (only run once or add conditional logic)
+# python manage.py createsuperuser --noinput --username=admin --email=admin@example.com || true
+
+# Optional: Collect static files if serving via Django/Whitenoise
+# python manage.py collectstatic --noinput
+                    </code></pre>
+                    <p class="mt-2 text-sm text-gray-600">Make the script executable: <code>chmod +x .platform/hooks/postdeploy/01_migrate.sh</code></p>
+                    <p class="mt-1 text-sm text-gray-600">Note: The virtualenv path (`/var/app/venv/...`) might vary slightly; check EB environment details if needed.</p>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold mb-2">EB Extensions (`.ebextensions/`) (Older Platforms)</h3>
+                    <p class="mb-2 text-gray-700">For older platforms (Amazon Linux AMI), use `.ebextensions/*.config` files (YAML format) to configure the environment, install packages, and run commands.</p>
+                    <p class="mb-1 text-sm text-gray-600">Example: `.ebextensions/django.config`</p>
+                    <pre><code class="language-yaml">
+option_settings:
+  aws:elasticbeanstalk:application:environment:
+    # Set environment variables here
+    DJANGO_SETTINGS_MODULE: "your_project_name.settings"
+    # SECRET_KEY: "your_secret_key" # Set via EB Console instead!
+  aws:elasticbeanstalk:container:python:
+    WSGIPath: your_project_name/wsgi.py # Path to your wsgi.py file
+
+container_commands:
+  01_migrate:
+    command: "source /var/app/venv/*/bin/activate && python manage.py migrate --noinput"
+    leader_only: true # Only run migrations on one instance
+  # Optional: Collect static if serving via Django/Whitenoise
+  # 02_collectstatic:
+  #   command: "source /var/app/venv/*/bin/activate && python manage.py collectstatic --noinput"
+
+packages:
+  yum:
+    # Install OS packages if needed (e.g., postgresql-devel for psycopg2)
+    postgresql-devel: []
+    # mysql-devel: [] # If using MySQL
+                    </code></pre>
+                     <p class="mt-2 text-sm text-gray-600">
+                        Replace `your_project_name` with your Django project's name.<br>
+                        Adjust `WSGIPath` if your `wsgi.py` is elsewhere.<br>
+                        Set environment variables like `SECRET_KEY` and database credentials via the Elastic Beanstalk Console (Configuration > Software > Environment properties) for security.
+                    </p>
+                </div>
+            </section>
+
+            <section id="django-settings">
+                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-orange-600">3. Django Settings (`settings.py`)</h2>
+                <p class="mb-4 text-gray-700">Modify your project's `settings.py` for Elastic Beanstalk compatibility.</p>
+
+                <ul class="list-disc list-inside space-y-4 pl-4 text-gray-700">
+                    <li>
+                        <strong>SECRET_KEY:</strong> Load from environment variables set in the EB Console.
+                        <pre><code class="language-python">
+# settings.py
+import os
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'your-local-dev-secret-key') # Fallback for local
+                        </code></pre>
+                    </li>
+                    <li>
+                        <strong>DEBUG:</strong> Should be `False` in production.
+                        <pre><code class="language-python">
+# settings.py
+# Check for an environment variable, default to False for production
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+                        </code></pre>
+                    </li>
+                    <li>
+                        <strong>ALLOWED_HOSTS:</strong> Allow the Elastic Beanstalk domain and your custom domain. EB provides the hostname via EC2 metadata or environment variables (less reliable). It's often safer to allow the `.elasticbeanstalk.com` domain or get the instance's public IP/DNS.
+                        <pre><code class="language-python">
+# settings.py
+ALLOWED_HOSTS = []
+
+# Option 1: Allow all EB hostnames (less secure, use with caution)
+# ALLOWED_HOSTS.append('.elasticbeanstalk.com')
+
+# Option 2: Get from environment variable if set (you might need to set this manually in EB config)
+EB_HOSTNAME = os.environ.get('EB_HOSTNAME')
+if EB_HOSTNAME:
+    ALLOWED_HOSTS.append(EB_HOSTNAME)
+
+# Option 3 (More Robust): Fetch EC2 instance metadata (requires requests library or boto3)
+# This is more complex and usually done outside basic settings.py
+
+# Add custom domain if configured
+# ALLOWED_HOSTS.append('www.yourdomain.com')
+
+# Add localhost for local development if needed
+if os.environ.get('DEBUG') == 'True':
+   ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+
+# If ALLOWED_HOSTS remains empty in production, Django will raise an error.
+# Ensure at least one production domain is added.
+# For initial setup, allowing '.elasticbeanstalk.com' might be easiest.
+if not DEBUG and not ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('.elasticbeanstalk.com') # Add this as a starting point
+
+                        </code></pre>
+                    </li>
+                    <li>
+                        <strong>Database (AWS RDS):</strong>
+                        <ul class="list-disc list-inside space-y-2 mt-2 pl-4 text-sm text-gray-600">
+                            <li>Create an RDS instance (PostgreSQL, MySQL, etc.) via the AWS Console or EB Console (EB can provision one for you). Ensure it's in the same VPC and security group as your EB environment allows access.</li>
+                            <li>Note the RDS endpoint, database name, username, and password.</li>
+                            <li>Set these as environment variables in the EB Console (Configuration > Software > Environment properties).
+                                <ul class="list-circle list-inside ml-4">
+                                    <li>`RDS_DB_NAME`</li>
+                                    <li>`RDS_USERNAME`</li>
+                                    <li>`RDS_PASSWORD`</li>
+                                    <li>`RDS_HOSTNAME` (the endpoint)</li>
+                                    <li>`RDS_PORT`</li>
+                                </ul>
+                            </li>
+                            <li>Configure `settings.py` to read these variables:
+                            <pre><code class="language-python">
+# settings.py
+import os
+
+if 'RDS_DB_NAME' in os.environ: # Check if RDS variables are set
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql', # Or mysql
+            'NAME': os.environ.get('RDS_DB_NAME'),
+            'USER': os.environ.get('RDS_USERNAME'),
+            'PASSWORD': os.environ.get('RDS_PASSWORD'),
+            'HOST': os.environ.get('RDS_HOSTNAME'),
+            'PORT': os.environ.get('RDS_PORT'),
+        }
+    }
+else:
+    # Local development settings
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+                            </code></pre>
+                            </li>
+                        </ul>
+                    </li>
+                     <li>
+                        <strong>Static Files (Option 1: WhiteNoise):</strong> Serve static files via Django/Gunicorn using WhiteNoise (simpler setup).
+                         <ul class="list-disc list-inside space-y-2 mt-2 pl-4 text-sm text-gray-600">
+                            <li>Install `whitenoise`.</li>
+                            <li>Configure `settings.py` (similar to Render/Heroku guides):
+                            <pre><code class="language-python">
+# settings.py
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Add WhiteNoise
+    # ... other middleware ...
+]
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+                            </code></pre>
+                            </li>
+                            <li>Ensure `collectstatic` runs during deployment (via `.platform/hooks/` or `.ebextensions/`).</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Static Files (Option 2: S3 + CloudFront - Recommended for performance):</strong> Serve static files from AWS S3, potentially via CloudFront CDN.
+                         <ul class="list-disc list-inside space-y-2 mt-2 pl-4 text-sm text-gray-600">
+                            <li>Install `django-storages[aws]` and `boto3`.</li>
+                            <li>Create an S3 bucket. Configure permissions (e.g., public read access or use CloudFront Origin Access Identity).</li>
+                            <li>Set up AWS credentials for Boto3 (best practice is to assign an IAM Role to the EB EC2 instances with S3 permissions).</li>
+                            <li>Configure `settings.py`:
+                            <pre><code class="language-python">
+# settings.py
+# Ensure AWS credentials are configured via IAM Role or environment variables
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID') # Not recommended - use IAM Role
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY') # Not recommended - use IAM Role
+AWS_STORAGE_BUCKET_NAME = 'your-s3-bucket-name'
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com' # Or your CloudFront domain
+AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+AWS_LOCATION = 'static' # Subdirectory within the bucket for static files
+AWS_DEFAULT_ACL = 'public-read' # Or None/private if using CloudFront OAI
+
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Similar setup for DEFAULT_FILE_STORAGE for media files if needed
+# DEFAULT_FILE_STORAGE = 'path.to.your.MediaStorage' # Custom storage class often needed
+# MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+                            </code></pre>
+                            </li>
+                             <li>Run `python manage.py collectstatic --noinput` locally before deploying or during deployment to upload files to S3.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section id="deployment">
+                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-orange-600">4. Deployment Steps (Using EB CLI)</h2>
+                <ol class="list-decimal list-inside space-y-4 pl-4 text-gray-700">
+                    <li>
+                        <strong>Initialize EB CLI:</strong> In your project root directory.
+                        <pre><code class="language-bash">eb init -p python-3.9 your-django-app-name --region us-east-1</code></pre>
+                        <p class="text-sm text-gray-600">Follow the prompts. Choose a Python version (e.g., `python-3.9`), provide an application name, select your AWS region. It will ask if you want SSH access (optional). This creates the `.elasticbeanstalk` directory.</p>
+                    </li>
+                     <li>
+                        <strong>Create Environment:</strong> This provisions the AWS resources (EC2 instances, Load Balancer, Security Group, etc.).
+                        <pre><code class="language-bash">eb create your-environment-name --instance-type t2.micro</code></pre>
+                         <p class="text-sm text-gray-600">Replace `your-environment-name` (e.g., `my-django-app-dev`). Choose an instance type (`t2.micro` is often free-tier eligible). You can add options like `--database` to provision an RDS instance simultaneously, or configure it later via the console.</p>
+                         <p class="text-sm text-gray-600">This step can take several minutes.</p>
+                    </li>
+                     <li>
+                        <strong>Set Environment Variables:</strong> Use the EB Console or CLI to set `SECRET_KEY`, database credentials, and other sensitive variables.
+                        <pre><code class="language-bash">
+eb setenv SECRET_KEY=your_production_secret_key RDS_USERNAME=your_db_user ...
+                        </code></pre>
+                         <p class="text-sm text-gray-600">It's generally more secure and manageable to set these via the AWS Console (Your Environment > Configuration > Software > Environment properties).</p>
+                    </li>
+                    <li>
+                        <strong>Commit Code Changes:</strong> Ensure all configuration files and code are committed to Git.
+                         <pre><code class="language-bash">
+git add .
+git commit -m "Configure for Elastic Beanstalk"
+                        </code></pre>
+                    </li>
+                    <li>
+                        <strong>Deploy Application Code:</strong>
+                        <pre><code class="language-bash">eb deploy your-environment-name</code></pre>
+                        <p class="text-sm text-gray-600">This bundles your application code (using `git archive`) and uploads it to Elastic Beanstalk, triggering an update. Migrations and collectstatic should run automatically if configured via `.platform` or `.ebextensions`.</p>
+                    </li>
+                    <li>
+                        <strong>Run Manual Commands (if needed):</strong> If migrations or other setup steps didn't run automatically, you might need to SSH into an instance.
+                        <pre><code class="language-bash">eb ssh your-environment-name</code></pre>
+                        <p class="text-sm text-gray-600">Then navigate to `/var/app/current`, activate the virtualenv, and run `python manage.py migrate`, etc. (This is less ideal than automating via hooks/extensions).</p>
+                    </li>
+                    <li>
+                        <strong>Open your application:</strong>
+                        <pre><code class="language-bash">eb open your-environment-name</code></pre>
+                    </li>
+                </ol>
+            </section>
+
+            <section id="troubleshooting">
+                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-orange-600">5. Troubleshooting</h2>
+                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
+                    <li>
+                        <strong>Check Health & Events:</strong> Use the EB Console dashboard for your environment to check health status (Ok, Warning, Degraded, Severe) and view recent events.
+                    </li>
+                     <li>
+                        <strong>Check Logs:</strong> Download or view logs via the EB Console (Logs section) or use the EB CLI.
+                        <pre><code class="language-bash">
+eb logs your-environment-name # Fetch recent logs
+eb logs your-environment-name --all # Fetch full logs bundle
+eb logs your-environment-name --stream # Stream live logs
+                        </code></pre>
+                        <p class="text-sm text-gray-600">Key logs include `/var/log/web.stdout.log` (Gunicorn/Django output), `/var/log/eb-engine.log` (EB platform logs), and Nginx logs.</p>
+                    </li>
+                    <li><strong>Deployment Failures:</strong> Check deployment events and `eb-engine.log`. Often caused by errors in `.platform` hooks or `.ebextensions` commands (permissions, syntax, missing packages), or failed health checks.</li>
+                    <li><strong>50x Errors:</strong> Check `web.stdout.log` for Django tracebacks. Common causes: database connection issues, incorrect environment variables, `ALLOWED_HOSTS` misconfiguration, WSGI path errors.</li>
+                    <li><strong>Static Files Not Loading:</strong> If using WhiteNoise, ensure `collectstatic` ran and `STATIC_ROOT` is correct. If using S3, check bucket permissions, IAM roles, `django-storages` config, and ensure `collectstatic` uploaded files.</li>
+                    <li><strong>Database Connection Issues:</strong> Verify RDS instance is running, security groups allow traffic from the EB environment's EC2 instances (EB usually manages this if RDS is linked), and credentials in environment variables are correct.</li>
+                    <li><strong>Permissions Errors:</strong> Ensure the EC2 Instance Profile (IAM Role) assigned to your EB environment has necessary permissions (e.g., S3 access, RDS access, etc.).</li>
+                    <li>Consult the <a href="https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create-deploy-python-django.html" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">AWS Elastic Beanstalk Developer Guide for Python</a>.</li>
+                </ul>
+            </section>
+
+        </main>
+
+        <footer class="text-center text-gray-500 mt-8 text-sm">
+            <p>Happy Deploying on AWS!</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

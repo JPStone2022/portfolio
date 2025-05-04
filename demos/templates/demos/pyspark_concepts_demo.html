@@ -1,0 +1,131 @@
+{# demos/templates/demos/pyspark_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn about PySpark for big data ML/DS." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"PySpark, Spark, big data, distributed computing, machine learning" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-orange-500 to-yellow-500 dark:from-orange-400 dark:to-yellow-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        When datasets become too large to fit into the memory of a single computer ("Big Data"), tools like <strong>Apache Spark</strong> become essential. <strong>PySpark</strong> is the official Python API for Spark, allowing data scientists and engineers to leverage Spark's powerful <strong>distributed processing</strong> capabilities using familiar Python syntax.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-yellow-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Why PySpark? --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Why Use PySpark?</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <ul>
+                    <li><strong>Scalability:</strong> Designed to run computations in parallel across a cluster of machines, handling terabytes or petabytes of data.</li>
+                    <li><strong>Speed:</strong> Performs many operations in memory across the cluster, often much faster than disk-based systems like Hadoop MapReduce for iterative algorithms used in ML.</li>
+                    <li><strong>Unified Engine:</strong> Provides APIs for SQL (Spark SQL), streaming data (Structured Streaming), machine learning (MLlib), and graph processing (GraphFrames) within one framework.</li>
+                    <li><strong>Python Interface:</strong> PySpark allows Python developers to leverage Spark's power without needing to learn Scala or Java (though understanding Spark's architecture is still important).</li>
+                </ul>
+                <p><strong>Relevance:</strong> Crucial for Data Engineers building large-scale ETL pipelines and Data Scientists/ML Engineers working with datasets that exceed single-machine capacity.</p>
+            </div>
+        </section>
+
+        {# --- Section 2: Core Concepts --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Core PySpark Concepts</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <ul>
+                    <li><strong>SparkSession:</strong> The entry point to Spark functionality. Used to create DataFrames, register UDFs, and execute Spark SQL queries.</li>
+                    <li><strong>DataFrame:</strong> The primary data structure (since Spark 2.0). Similar to a Pandas DataFrame or a database table, but distributed across the cluster. Supports SQL-like queries and a rich API for transformations.</li>
+                    <li><strong>RDD (Resilient Distributed Dataset):</strong> The older, lower-level abstraction representing a collection of items partitioned across the cluster. DataFrames are built on top of RDDs. Less commonly used directly now but important conceptually.</li>
+                    <li><strong>Transformations:</strong> Operations on DataFrames/RDDs that create *new* DataFrames/RDDs (e.g., `filter`, `select`, `map`, `groupBy`). Transformations are <strong>lazy</strong>, meaning they don't execute immediately.</li>
+                    <li><strong>Actions:</strong> Operations that trigger the actual computation on the cluster and return a result or write to storage (e.g., `count`, `show`, `collect`, `save`, `write`).</li>
+                    <li><strong>Lazy Evaluation:</strong> Spark builds up a plan (DAG - Directed Acyclic Graph) of transformations and only executes the computation when an action is called. This allows for significant optimization.</li>
+                </ul>
+            </div>
+            <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet (DataFrame Operations):</h4>
+            <pre><code class="language-python">
+# Assuming 'spark' is an existing SparkSession
+
+# Load data (conceptual - reads distributed source like HDFS/S3)
+# df = spark.read.csv("path/to/large/data.csv", header=True, inferSchema=True)
+# df = spark.read.parquet("path/to/data.parquet")
+df = spark.createDataFrame(...) # Placeholder for loaded DataFrame
+
+# Transformations (Lazy)
+filtered_df = df.filter(df["age"] > 30) \
+            .select("name", "city", "salary")
+
+grouped_df = filtered_df.groupBy("city") \
+                    .agg({"salary": "avg", "name": "count"}) \
+                    .withColumnRenamed("avg(salary)", "average_salary") \
+                    .withColumnRenamed("count(name)", "num_people")
+
+sorted_df = grouped_df.orderBy(grouped_df["average_salary"].desc())
+
+# Action (Triggers Computation)
+print("Average salary by city for people over 30:")
+sorted_df.show() # Display results
+
+# Action (Save results)
+# sorted_df.write.parquet("path/to/output/city_salary_summary.parquet")
+
+            </code></pre>
+             <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">Notice the chaining of transformations, similar to Pandas, but executed across a cluster when an action like `.show()` or `.write()` is called.</p>
+        </section>
+
+        {# --- Section 3: Spark MLlib --- #}
+        <section>
+             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Machine Learning with MLlib</h2>
+             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                 <p>Spark includes a machine learning library, <strong>MLlib</strong>, built on top of DataFrames. It provides distributed implementations of common algorithms and pipeline tools.</p>
+                 <ul>
+                    <li><strong>Feature Engineering:</strong> Includes transformers like `VectorAssembler` (combining columns into a feature vector), `StandardScaler`, `StringIndexer`, `OneHotEncoder`, etc.</li>
+                    <li><strong>Algorithms:</strong> Covers classification (Logistic Regression, Decision Trees, Random Forests, GBTs), regression, clustering (K-Means), and recommendation (ALS).</li>
+                    <li><strong>Pipelines:</strong> Uses an `Pipeline` API similar to Scikit-learn to chain feature transformers and estimators (models).</li>
+                    <li><strong>Evaluation:</strong> Provides evaluators for different ML tasks (e.g., `BinaryClassificationEvaluator`, `RegressionEvaluator`).</li>
+                 </ul>
+                 <p><strong>Relevance:</strong> Enables training ML models directly on large datasets stored within the Spark ecosystem without needing to downsample or move data to a single machine first.</p>
+             </div>
+             <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet (Conceptual ML Pipeline):</h4>
+             <pre><code class="language-python">
+from pyspark.ml import Pipeline
+from pyspark.ml.feature import VectorAssembler, StringIndexer
+from pyspark.ml.classification import LogisticRegression
+
+# Assume 'data' is a Spark DataFrame with features and a 'label' column
+
+# Stages for the pipeline
+indexer = StringIndexer(inputCol="category_feature", outputCol="category_index")
+assembler = VectorAssembler(inputCols=["numeric_feature1", "category_index"], outputCol="features")
+lr = LogisticRegression(featuresCol="features", labelCol="label")
+
+# Define the pipeline
+pipeline = Pipeline(stages=[indexer, assembler, lr])
+
+# Split data (conceptual)
+# train_data, test_data = data.randomSplit([0.8, 0.2])
+
+# Train the pipeline model
+# model = pipeline.fit(train_data)
+
+# Make predictions
+# predictions = model.transform(test_data)
+# predictions.select("prediction", "label", "features").show()
+             </code></pre>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

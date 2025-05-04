@@ -12,10 +12,10 @@ from django.utils import timezone # For date parsing
 # Import your models (adjust paths as needed)
 # It's safer to use try-except blocks in case apps aren't always present
 try:
-    from portfolio.models import Project, Certificate, ProjectTopic
+    from portfolio.models import Project, Certificate
     PORTFOLIO_APP_EXISTS = True
 except ImportError:
-    Project, Certificate, ProjectTopic = None, None, None
+    Project, Certificate = None, None
     PORTFOLIO_APP_EXISTS = False
 
 try:
@@ -31,6 +31,13 @@ try:
 except ImportError:
     Skill, SkillCategory = None, None
     SKILLS_APP_EXISTS = False
+
+try:
+    from topics.models import ProjectTopic
+    TOPICS_APP_EXISTS = True
+except ImportError:
+    ProjectTopic = None
+    TOPICS_APP_EXISTS = False
 
 try:
     from recommendations.models import RecommendedProduct
@@ -178,7 +185,7 @@ class Command(BaseCommand):
                                 data['category'] = category
 
                         elif model_type == 'topics':
-                             if not PORTFOLIO_APP_EXISTS: continue
+                             if not TOPICS_APP_EXISTS: continue
                              data['name'] = row.get('name', '').strip()
                              if not data['name']: raise ValueError("Missing required field: name")
                              data['description'] = row.get('description', '').strip()

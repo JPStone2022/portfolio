@@ -146,17 +146,19 @@
 
     </div> {# End Grid #}
 
-    {# Message if no projects match filters - CORRECTED SYNTAX #}
-    {% if not projects and selected_skill_slug or selected_topic_slug %}
+    {# Message if no projects match filters #}
+    {% if not projects and selected_skill_slug or not projects and selected_topic_slug %}
         <div class="text-center py-10 bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-blue-900/20 mt-10">
             <p class="text-xl text-gray-600 dark:text-gray-300">No projects found matching your criteria.</p>
-            {% if selected_skill_slug or selected_topic_slug %} {# This inner condition is fine #}
+            {% if selected_skill_slug or selected_topic_slug %} {# This inner check is okay #}
              <p class="text-gray-500 dark:text-gray-400 mt-2">Try clearing the filters.</p>
              <a href="{% url 'portfolio:all_projects' %}{% if current_sort != '-date_created' %}?sort={{ current_sort }}{% endif %}" class="mt-4 inline-block text-blue-600 dark:text-blue-400 hover:underline">Clear Filters</a>
             {% endif %}
         </div>
-    {% elif not projects and not selected_skill_slug and not selected_topic_slug %} {# CORRECTED SYNTAX #}
-         {# Message if no projects exist at all (and no demo card added manually) #}
+    {# Message if no projects exist at all (and no demo card added manually) #}
+    {% elif not projects and not selected_skill_slug and not selected_topic_slug %}
+         {# Check if there's also no static demo card; adjust if needed #}
+         {# For now, assume if projects queryset is empty and no filters, show this #}
          <p class="text-center text-gray-600 dark:text-gray-400 mt-10">No projects have been added yet.</p>
     {% endif %}
 

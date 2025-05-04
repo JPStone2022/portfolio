@@ -1,0 +1,84 @@
+{# portfolio/templates/portfolio/colophon.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn how this portfolio site was built." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"colophon, django, python, portfolio, web development" }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-10">{{ page_title }}</h1>
+
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-gray-900/20 transition-colors duration-300 ease-in-out">
+        {# Use prose for nice typography #}
+        <div class="prose prose-indigo dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-6">
+
+            <p>This portfolio serves not only as a showcase for my data science, AI, and machine learning projects but also as a project in itself, demonstrating practical software development skills using Python and the Django web framework. This page outlines the key technologies, features, and development processes involved.</p>
+
+            <h2 class="!mb-3 dark:text-gray-100">1. Core Technologies & Skills Demonstrated</h2>
+            <p>Building this website involved applying a range of technical skills relevant to modern software and data roles:</p>
+            <ul>
+                <li><strong>Python:</strong> The primary backend language.</li>
+                <li><strong>Django Framework:</strong> Utilizing a robust, high-level Python web framework (MVT architecture).</li>
+                <li><strong>HTML:</strong> Structuring web page content semantically.</li>
+                <li><strong>CSS (via Tailwind CSS):</strong> Applying modern styling and responsive design.</li>
+                <li><strong>Database Management (SQLite/PostgreSQL):</strong> Defining models (ORM), managing schemas (migrations), and database interaction.</li>
+                <li><strong>Version Control:</strong> Using Git and GitHub for code management and deployment.</li>
+                <li><strong>Deployment (PythonAnywhere/Render/Heroku):</strong> Configuring and deploying to PaaS, managing environment variables, static/media files, WSGI (Gunicorn).</li>
+                <li><strong>Testing:</strong> Writing unit tests for models, views, and forms.</li>
+                <li><strong>Command Line Interface (CLI):</strong> Using Bash/Shell for environment setup, management commands, Git, etc.</li>
+                <li><strong>JavaScript:</strong> For client-side interactivity like the dark mode toggle and some demo elements.</li>
+                <li><strong>ML/DS Libraries (in Demos):</strong> Integrating libraries like TensorFlow, PyTorch, Hugging Face Transformers, Pandas, Scikit-learn, NLTK, SciPy, etc.</li>
+            </ul>
+
+            <h2 class="!mb-3 !mt-8 dark:text-gray-100">2. Project Structure & Key Features</h2>
+            <p>The site is structured using multiple Django apps (`portfolio`, `blog`, `skills`, `topics`, `recommendations`, `demos`) for modularity. Key features include:</p>
+            <ul>
+                <li>Dynamic content management via the Django Admin.</li>
+                <li>Detailed project, skill, and topic pages with relationships.</li>
+                <li>Interactive ML/DS/Tooling demos.</li>
+                <li>A blog, recommendations section, and certificate showcase.</li>
+                <li>CV page with PDF viewer/download.</li>
+                <li>Contact form with basic spam protection.</li>
+                <li>Search, filtering, and sorting capabilities.</li>
+                <li>Responsive design with dark mode.</li>
+                <li>SEO basics (`sitemap.xml`, `robots.txt`, meta tags).</li>
+            </ul>
+
+            <h2 class="!mb-3 !mt-8 dark:text-gray-100">3. Development Process Highlights</h2>
+            <ul>
+                <li>Defined database structure using Django Models (`models.py`).</li>
+                <li>Managed schema changes using Migrations (`makemigrations`, `migrate`).</li>
+                <li>Handled request/response logic in Views (`views.py`).</li>
+                <li>Mapped URLs to views (`urls.py`).</li>
+                <li>Designed the user interface using Templates (`*.html`) with Django Template Language and Tailwind CSS.</li>
+                <li>Handled user input using Django Forms (`forms.py`).</li>
+                <li>Managed static assets (CSS, JS, images) and user uploads (media files).</li>
+                <li>Wrote unit tests (`tests.py`) to ensure reliability.</li>
+                <li>Configured the application for deployment.</li>
+            </ul>
+
+             <h2 class="!mb-3 !mt-8 dark:text-gray-100">4. Relevance to Data Science & Machine Learning</h2>
+             <p>While distinct from core model building, web development skills are highly complementary:</p>
+             <ul>
+                 <li>Demonstrates strong Python proficiency.</li>
+                 <li>Shows experience with data handling and database interaction (ORM).</li>
+                 <li>Highlights problem decomposition and system design skills.</li>
+                 <li>Provides understanding of API concepts (request/response).</li>
+                 <li>Touches upon deployment and MLOps principles.</li>
+                 <li>Emphasizes the importance of testing for reliable systems.</li>
+                 <li>Showcases the ability to present results and build interfaces (visualization).</li>
+                 <li>Crucially, the interactive demos bridge the gap by integrating ML models directly into a working web application.</li>
+             </ul>
+
+            <p>Building and maintaining this portfolio has been a valuable exercise in applying full-stack development practices alongside my core focus on AI and data science.</p>
+
+        </div>
+    </div>
+
+     <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

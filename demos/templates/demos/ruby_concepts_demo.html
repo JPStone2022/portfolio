@@ -1,0 +1,145 @@
+{# demos/templates/demos/ruby_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn how Ruby on Rails integrates with ML services." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Ruby, Ruby on Rails, machine learning, API integration, web development" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-red-600 to-rose-600 dark:from-red-500 dark:to-rose-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        While Python dominates ML model development, <strong>Ruby</strong>, particularly through the <strong>Ruby on Rails</strong> framework, shines in building robust and user-friendly web applications. A common pattern is to use Rails for the user interface and application logic, while interacting with separate ML models served as APIs (often built in Python/Flask/FastAPI).
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-rose-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Ruby on Rails Strengths --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Ruby on Rails for Web Applications</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>Rails is a full-stack framework excelling at:</p>
+                <ul>
+                    <li><strong>Rapid Development:</strong> Convention over configuration and built-in generators speed up development significantly.</li>
+                    <li><strong>Database Interaction:</strong> ActiveRecord (its ORM) provides an intuitive way to work with databases.</li>
+                    <li><strong>User Interfaces:</strong> Handling views (HTML generation), forms, user sessions, and asset management is streamlined.</li>
+                    <li><strong>Rich Ecosystem (Gems):</strong> Numerous libraries (gems) are available for common web development tasks (authentication, background jobs, APIs, etc.).</li>
+                </ul>
+                <p><strong>Relevance:</strong> Ideal for building the user-facing part of an application that needs to leverage ML capabilities provided by another service.</p>
+            </div>
+        </section>
+
+        {# --- Section 2: Ruby in ML/DS/AI --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Ruby's Role in ML/AI/Data Science</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>Compared to Python and R, Ruby has a much smaller footprint in these fields:</p>
+                <ul>
+                    <li><strong>Limited Core Libraries:</strong> Lacks the extensive, mature, and highly optimized numerical computing (like NumPy), data manipulation (like Pandas), and core ML/DL libraries (like Scikit-learn, TensorFlow, PyTorch) found in Python.</li>
+                    <li><strong>Performance:</strong> Being a dynamic, interpreted language, Ruby can be slower than Python (which relies on C extensions for performance) or compiled languages for computationally heavy tasks common in ML.</li>
+                    <li><strong>Community Focus:</strong> The community primarily focuses on web development, meaning fewer resources, tutorials, and pre-built tools specifically for ML/DS tasks.</li>
+                    <li><strong>Existing Libraries (Gems):</strong> Some Ruby gems (libraries) exist for specific tasks (e.g., `ruby-fann` for neural networks, `nmatrix` for numerical computation, `daru` for data frames), but they are generally less comprehensive and widely adopted than their Python counterparts.</li>
+                </ul>
+                <p><strong>Typical Use Cases</strong> (Where it <strong>might</strong> appear):</p>
+                <ul>
+                    <li><strong>Web Interface Integration:</strong> Building the web front-end (using Ruby on Rails) for an application where the ML model is served separately (often as a Python-based API that the Rails app consumes).</li>
+                    <li><strong>Simple Scripting/Automation:</strong> Ruby can be used for general scripting tasks related to data pipelines or infrastructure, similar to Python or Bash, though less common in ML-specific teams.</li>
+                </ul>
+            </div>
+        </section>
+
+        {# --- Section 3: Integrating with ML Services --- #}
+        <section class="mb-8 pb-6">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Integrating with External ML APIs</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>The most common way Ruby/Rails interacts with ML is by making HTTP requests to a dedicated ML API endpoint.</p>
+                <ul>
+                    <li>The ML model (e.g., image classifier, sentiment analyzer) is trained (usually in Python) and deployed behind an API (e.g., using Flask, FastAPI, or a cloud ML service).</li>
+                    <li>The Rails application collects user input (text, image uploads).</li>
+                    <li>It sends this input data to the ML API endpoint via an HTTP POST request.</li>
+                    <li>It receives the prediction results (usually as JSON) back from the API.</li>
+                    <li>It processes the JSON response and displays the results to the user within the Rails view.</li>
+                </ul>
+            </div>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet (Conceptual Rails Controller Action):</h4>
+            <pre><code class="language-ruby">
+# Example: app/controllers/predictions_controller.rb
+
+require 'net/http'
+require 'uri'
+require 'json'
+
+class PredictionsController < ApplicationController
+
+# Action to show a form (GET /predict/new)
+def new
+# Renders app/views/predictions/new.html.erb
+end
+
+# Action to process form submission (POST /predict)
+def create
+# Get input from the form parameters
+input_text = params[:text_to_analyze]
+
+# Prepare data and API details
+api_endpoint = "http://your-python-ml-api.com/sentiment" # URL of the ML service
+uri = URI.parse(api_endpoint)
+request_data = { text: input_text }.to_json
+
+begin
+  # Set up HTTP POST request
+  http = Net::HTTP.new(uri.host, uri.port)
+  # Use SSL if the API endpoint uses https
+  # http.use_ssl = (uri.scheme == "https")
+  request = Net::HTTP::Post.new(uri.request_uri, {'Content-Type': 'application/json'})
+  request.body = request_data
+
+  # Send request and get response
+  response = http.request(request)
+
+  if response.is_a?(Net::HTTPSuccess) # Check for 2xx status code
+    @prediction_result = JSON.parse(response.body)
+    # Example result: {"sentiment": "POSITIVE", "score": 0.98}
+    # Render the result page: app/views/predictions/show.html.erb
+    render :show
+  else
+    # Handle API errors
+    flash[:error] = "Error contacting analysis service: #{response.code} #{response.message}"
+    render :new, status: :service_unavailable
+  end
+
+rescue StandardError => e
+  # Handle network or other errors
+  flash[:error] = "Could not connect to analysis service: #{e.message}"
+  render :new, status: :internal_server_error
+end
+
+
+            </code></pre>
+             <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">This shows a Rails controller sending user input to an external API, parsing the JSON response, and preparing to display it in a view.</p>
+        </section>
+
+         {# --- Conclusion --- #}
+         <section>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Conclusion</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>Ruby, especially with Rails, excels at building the user-facing web application layer. While not typically used for the core ML model development itself, it integrates effectively with specialized ML services (often Python-based) via APIs. This separation allows developers to leverage the best tool for each part of the system: Ruby/Rails for rapid web development and Python/specialized libraries for the complex ML tasks.</p>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

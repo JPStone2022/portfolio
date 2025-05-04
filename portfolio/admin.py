@@ -2,30 +2,22 @@
 
 from django.contrib import admin
 # Import models from this app
-from .models import Project, Certificate, ProjectTopic
-
+from .models import Project, Certificate
+from topics.models import ProjectTopic
 # Import Skill model safely
 try:
     from skills.models import Skill
 except ImportError:
     Skill = None
 
-# Register ProjectTopic Admin
-@admin.register(ProjectTopic)
-class ProjectTopicAdmin(admin.ModelAdmin):
-    list_display = ('name', 'order')
-    list_editable = ('order',)
-    prepopulated_fields = {'slug': ('name',)}
-    search_fields = ('name', 'description')
-
 # Update Project Admin
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('title', 'date_created', 'order')
     # Add topics to filter
-    list_filter = ('date_created', 'skills', 'topics')
+    list_filter = ('date_created', 'skills')
     # Add topics to search
-    search_fields = ('title', 'description', 'skills__name', 'topics__name')
+    search_fields = ('title', 'description', 'skills__name')
     list_editable = ('order',)
     prepopulated_fields = {'slug': ('title',)}
     fieldsets = (

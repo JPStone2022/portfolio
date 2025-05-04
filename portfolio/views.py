@@ -3,7 +3,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
-from .models import Project, Certificate, ProjectTopic
+from .models import Project, Certificate
+from topics.models import ProjectTopic
 # Import models from other apps
 try:
     from blog.models import BlogPost
@@ -110,7 +111,7 @@ def all_projects_view(request):
     valid_sort_options = {'-date_created': '-date_created', 'date_created': 'date_created', 'title': 'title', '-title': '-title', 'order': 'order', '-order': '-order'}
     sort_key = valid_sort_options.get(sort_by, '-date_created')
     projects_list = projects_list.order_by(sort_key)
-
+    
     context = {
         'page_title': 'All Projects',
         'projects': projects_list,
@@ -143,22 +144,6 @@ def project_detail(request, slug):
     }
     return render(request, 'portfolio/project_detail.html', context=context)
 
-# --- Topic Detail View (NEW) ---
-def topic_detail(request, topic_slug):
-    """ Displays details for a single topic and lists associated projects. """
-    topic = get_object_or_404(ProjectTopic, slug=topic_slug)
-    # Get related projects using the related_name 'projects' from the Project model
-    related_projects = topic.projects.prefetch_related('skills', 'topics').all()
-
-    context = {
-        'topic': topic,
-        'projects': related_projects, # Pass projects related to this topic
-        'page_title': f"Projects - {topic.name}",
-        'meta_description': f"Projects related to {topic.name}. {topic.description[:120]}..." if topic.description else f"Projects related to {topic.name}.",
-        'meta_keywords': f"{topic.name}, project, portfolio, deep learning, AI",
-    }
-    return render(request, 'portfolio/topic_detail.html', context=context)
-# --- End Topic Detail View ---
 
 
 # --- Certificate View ---
@@ -262,3 +247,32 @@ def hire_me_view(request):
     }
     # You could potentially add context here about specific services if you model them
     return render(request, 'portfolio/hire_me_page.html', context=context)
+
+# --- Privacy Policy View (NEW) ---
+def privacy_policy_view(request):
+    """ Renders the Privacy Policy page. """
+    context = {
+        'page_title': 'Privacy Policy',
+    }
+    return render(request, 'portfolio/privacy_policy.html', context)
+
+# --- Colophon View (NEW) ---
+def colophon_view(request):
+    """ Renders the Colophon / 'How this site was built' page. """
+    context = {
+        'page_title': 'Colophon: How This Site Was Built',
+        'meta_description': "Learn about the technologies and process used to build this Django portfolio website.",
+        'meta_keywords': "colophon, portfolio, django, python, tailwind css, web development, site build",
+    }
+    return render(request, 'portfolio/colophon.html', context=context)
+
+
+# --- Accessibility Statement View (NEW) ---
+def accessibility_statement_view(request):
+    """ Renders the Accessibility Statement page. """
+    context = {
+        'page_title': 'Accessibility Statement',
+    }
+    return render(request, 'portfolio/accessibility_statement.html', context=context)
+
+

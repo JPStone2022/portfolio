@@ -1,0 +1,157 @@
+{# demos/templates/demos/pytorch_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn about PyTorch for deep learning." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"PyTorch, deep learning, AI, tensors, autograd" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-blue-500 to-red-500 dark:from-blue-400 dark:to-red-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        <strong>PyTorch</strong> is a leading open-source machine learning framework, particularly strong in <strong>deep learning</strong> research and development. Developed primarily by Meta AI, it's known for its Pythonic feel, flexibility, and powerful GPU acceleration.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-red-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Core Concepts --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Core PyTorch Concepts</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <ul>
+                    <li><strong>Tensors:</strong> The fundamental data structure, similar to NumPy arrays but with built-in GPU acceleration and automatic differentiation capabilities. They form the basis for all data manipulation and computation.</li>
+                    <li><strong>Autograd (Automatic Differentiation):</strong> PyTorch automatically calculates gradients for tensor operations. This is essential for training neural networks using backpropagation, as it computes how much each model parameter contributed to the error.</li>
+                    <li><strong>Modules (`torch.nn.Module`):</strong> Neural network layers, loss functions, and entire models are typically implemented as classes inheriting from `nn.Module`. This provides a structured way to define parameters and the forward pass logic.</li>
+                    <li><strong>Optimizers (`torch.optim`):</strong> Contains implementations of various optimization algorithms (like SGD, Adam, RMSprop) used to update model parameters based on calculated gradients during training.</li>
+                    <li><strong>Dynamic Computation Graphs:</strong> Unlike early TensorFlow's static graphs, PyTorch builds the computation graph on-the-fly as operations are performed. This makes debugging easier and allows for more flexible model architectures involving dynamic control flow (like loops and conditionals).</li>
+                </ul>
+                <p><strong>Relevance:</strong> These components provide a flexible and powerful environment for building, training, and experimenting with complex deep learning models.</p>
+            </div>
+            <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet (Tensor & Autograd):</h4>
+            <pre><code class="language-python">
+import torch
+
+# Create tensors; requires_grad=True tracks operations for autograd
+x = torch.tensor([[1., 2.], [3., 4.]], requires_grad=True)
+w = torch.tensor([[0.5], [0.1]], requires_grad=True)
+b = torch.tensor([0.2], requires_grad=True)
+
+# Define a simple linear operation (part of a computation graph)
+y = x @ w + b # Matrix multiplication '@'
+z = y.mean() # Calculate mean (another operation)
+
+print("Input x:\n", x)
+print("Weights w:\n", w)
+print("Bias b:\n", b)
+print("Output y:\n", y)
+print("Final scalar z:", z)
+
+# Calculate gradients using Autograd
+z.backward() # Computes dz/dx, dz/dw, dz/db
+
+print("\nGradient dz/dw:\n", w.grad)
+print("Gradient dz/dx:\n", x.grad)
+            </code></pre>
+        </section>
+
+        {# --- Section 2: Building Neural Networks --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Building Neural Networks (`torch.nn`)</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>PyTorch provides the `torch.nn` module for building neural networks layer by layer. Models are defined as classes inheriting from `nn.Module`.</p>
+            </div>
+            <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet (Simple Network):</h4>
+            <pre><code class="language-python">
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class SimpleNet(nn.Module):
+def __init__(self, input_size, hidden_size, output_size):
+    super(SimpleNet, self).__init__()
+    # Define layers (attributes of the class)
+    self.layer1 = nn.Linear(input_size, hidden_size)
+    self.layer2 = nn.Linear(hidden_size, output_size)
+
+# Define the forward pass (how data flows through layers)
+def forward(self, x):
+    x = self.layer1(x)
+    x = F.relu(x) # Apply activation function
+    x = self.layer2(x)
+    # No final activation (e.g., softmax) here, often handled by loss function
+    return x
+
+# Instantiate the model
+input_dim = 10
+hidden_dim = 20
+output_dim = 3 # e.g., for 3 classes
+model = SimpleNet(input_dim, hidden_dim, output_dim)
+print("\nModel Architecture:")
+print(model)
+
+# Example forward pass with dummy data
+dummy_input = torch.randn(64, input_dim) # Batch of 64 samples
+output = model(dummy_input)
+print("\nOutput shape (batch_size, num_classes):", output.shape)
+            </code></pre>
+        </section>
+
+        {# --- Section 3: Training Loop Concept --- #}
+        <section>
+             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Training Loop (Conceptual)</h2>
+             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                 <p>Training typically involves iterating through the dataset, calculating loss, computing gradients, and updating model weights using an optimizer.</p>
+             </div>
+             <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet (Conceptual Training Step):</h4>
+             <pre><code class="language-python">
+# Assume model, dataloader, loss_fn, optimizer are defined
+
+# --- Single Training Step ---
+# model.train() # Set model to training mode
+
+# for batch_inputs, batch_labels in dataloader:
+# Move data to GPU if available
+# inputs, labels = batch_inputs.to(device), batch_labels.to(device)
+
+# 1. Forward pass: Get model predictions
+# outputs = model(inputs)
+
+# 2. Calculate loss
+# loss = loss_fn(outputs, labels)
+
+# 3. Backward pass: Calculate gradients
+# optimizer.zero_grad() # Clear previous gradients
+# loss.backward()     # Compute gradients for current batch
+
+# 4. Update weights
+# optimizer.step()    # Adjust model parameters based on gradients
+
+# (Repeat for all batches / epochs)
+             </code></pre>
+             <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">This loop forms the core of training deep learning models in PyTorch.</p>
+        </section>
+
+        {# --- Conclusion --- #}
+        <section class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
+             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Conclusion</h2>
+             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>PyTorch provides a flexible, Pythonic, and powerful platform for deep learning research and development. Its core concepts of Tensors, Autograd, and `nn.Module` enable the creation and training of complex neural networks for a wide range of AI tasks in NLP, Computer Vision, and beyond. Its popularity in the research community often means cutting-edge models and techniques are readily available.</p>
+             </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

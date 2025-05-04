@@ -1,0 +1,123 @@
+{# demos/templates/demos/oop_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Understanding OOP in Python for ML/DS." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"OOP, Python, machine learning, data science, class" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        Object-Oriented Programming (OOP) is a fundamental paradigm used extensively in Python and the libraries powering data science and machine learning. Understanding OOP helps in using tools like Scikit-learn, Keras, and PyTorch effectively and in building more organized, reusable code.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-purple-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Core OOP Concepts --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Core OOP Concepts</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <ul>
+                    <li><strong>Classes:</strong> Blueprints or templates for creating objects. They define attributes (data) and methods (functions) that objects of that class will have.</li>
+                    <li><strong>Objects (Instances):</strong> Concrete occurrences created from a class. Each object has its own state (values of its attributes) but shares the behavior (methods) defined by the class.</li>
+                    <li><strong>Attributes:</strong> Variables bound to an object, representing its properties or state (e.g., a `LinearRegression` object might have a `coef_` attribute).</li>
+                    <li><strong>Methods:</strong> Functions bound to an object, defining its behavior or actions it can perform (e.g., a `model` object has `.fit()` and `.predict()` methods).</li>
+                    <li><strong>Encapsulation:</strong> Bundling data (attributes) and methods that operate on the data within a single unit (the object), often hiding internal implementation details.</li>
+                    <li><strong>Inheritance:</strong> Creating a new class (subclass or derived class) that inherits attributes and methods from an existing class (superclass or base class), allowing code reuse and specialization.</li>
+                    <li><strong>Polymorphism:</strong> Allowing objects of different classes to respond to the same method call in their own specific ways (e.g., different Scikit-learn models all having a `.fit()` method, but implementing it differently).</li>
+                </ul>
+            </div>
+            <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Example: Simple Data Point Class</h4>
+            <pre><code class="language-python">
+class DataPoint:
+    # Constructor method (initializes object)
+    def __init__(self, feature1, feature2, label=None):
+        self.feature1 = feature1 # Attribute
+        self.feature2 = feature2 # Attribute
+        self.label = label       # Attribute
+
+    # Method
+    def display(self):
+        label_str = f"Label: {self.label}" if self.label is not None else "No Label"
+        print(f"Point(F1={self.feature1}, F2={self.feature2}, {label_str})")
+
+    # Method
+    def get_features_as_list(self):
+        return [self.feature1, self.feature2]
+
+# Create objects (instances)
+point1 = DataPoint(5.1, 3.5, label='setosa')
+point2 = DataPoint(6.0, 2.9)
+
+# Call methods
+point1.display() # Output: Point(F1=5.1, F2=3.5, Label: setosa)
+features = point2.get_features_as_list()
+print(features)  # Output: [6.0, 2.9]
+            </code></pre>
+        </section>
+
+        {# --- Section 2: OOP vs Other Paradigms --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Comparison with Other Paradigms</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <ul>
+                    <li><strong>Procedural Programming:</strong> Focuses on procedures or functions that operate on data. Code is organized into functions, often leading to global state or data being passed around extensively. Simple scripts often start this way.</li>
+                    <li><strong>Functional Programming (FP):</strong> Treats computation as the evaluation of mathematical functions, emphasizing immutability (data doesn't change after creation) and avoiding side effects. Functions are first-class citizens. Found in languages like Scala, Haskell, and increasingly used within Python (e.g., `map`, `filter`, list comprehensions, libraries like `functools`). Helpful for parallel processing (like in Spark).</li>
+                    <li><strong>Object-Oriented Programming (OOP):</strong> Organizes code around objects that bundle data and behavior. Well-suited for modeling real-world entities or complex systems with interacting components.</li>
+                </ul>
+                <p><strong>In Practice:</strong> Python supports multiple paradigms. Data science workflows often blend them: using functions for specific processing steps (procedural/functional style) while heavily interacting with objects provided by OOP-based libraries (like Pandas DataFrames or Scikit-learn models).</p>
+            </div>
+        </section>
+
+        {# --- Section 3: OOP in ML/DS Libraries --- #}
+        <section>
+             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. OOP in Action: ML/DS Libraries</h2>
+             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                 <p>Understanding OOP makes using core libraries much more intuitive:</p>
+             </div>
+             <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Example: Scikit-learn Estimator API</h4>
+             <pre><code class="language-python">
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+
+# 1. Instantiate Objects from Classes
+scaler = StandardScaler() # Create a Scaler object
+model = LogisticRegression() # Create a Model object
+
+# Assume X_train, y_train, X_test exist
+
+# 2. Call Methods on Objects
+# Scaler object has fit() and transform() methods
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Model object has fit() and predict() methods
+model.fit(X_train_scaled, y_train)
+predictions = model.predict(X_test_scaled)
+
+# 3. Access Attributes of Objects
+# print(model.coef_) # Access learned coefficients (attribute)
+             </code></pre>
+             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mt-4">
+                <p>This consistent object-based interface (`fit`, `predict`, `transform`) across different models and transformers is a direct benefit of OOP design (Polymorphism).</p>
+                <p>Similarly, Keras/PyTorch models and layers are classes you instantiate and combine. Pandas DataFrames are objects with methods for manipulation. OOP provides the structure that makes these powerful libraries organized and extensible.</p>
+             </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

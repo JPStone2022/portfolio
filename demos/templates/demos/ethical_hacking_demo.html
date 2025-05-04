@@ -1,0 +1,118 @@
+{# demos/templates/demos/ethical_hacking_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Ethical hacking principles applied to ML/AI security." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"ethical hacking, security, machine learning, AI, adversarial attacks" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-slate-600 via-gray-700 to-black dark:from-slate-400 dark:via-gray-300 dark:to-white bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        <strong>Ethical Hacking</strong> involves probing systems for vulnerabilities with permission, mimicking malicious attackers to find weaknesses before they can be exploited. While distinct from core ML/DS development, applying an ethical hacking <strong>mindset</strong> is crucial for building secure and robust AI systems. It's about thinking adversarially about your data, models, and infrastructure.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-gray-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Why Apply This Mindset? --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Why Think Like an Attacker?</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>ML/AI systems introduce unique attack surfaces beyond traditional software:</p>
+                <ul>
+                    <li><strong>Data is Valuable:</strong> Training datasets can contain sensitive information, making data pipelines and storage prime targets.</li>
+                    <li><strong>Models are Assets:</strong> Trained models represent significant investment and intellectual property; attackers might try to steal or copy them.</li>
+                    <li><strong>Model Integrity Matters:</strong> Attackers might try to manipulate model predictions (evasion) or poison training data to degrade performance or introduce bias.</li>
+                    <li><strong>Infrastructure Complexity:</strong> ML systems often involve complex infrastructure (cloud services, APIs, data stores) with potential misconfigurations.</li>
+                </ul>
+                <p>An ethical hacking approach helps proactively identify and mitigate these specific risks.</p>
+            </div>
+        </section>
+
+        {# --- Section 2: Applying Ethical Hacking Concepts --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Applying the Mindset to ML/AI/DS</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>While not typically running Nmap scans, ML/DS practitioners can adopt these principles:</p>
+                <ul>
+                    <li><strong>Data Pipeline Security Testing:</strong>
+                        <ul>
+                            <li>Can unauthorized users access data sources?</li>
+                            <li>Are data transformation scripts vulnerable to injection if they process external input?</li>
+                            <li>Is data encrypted in transit and at rest?</li>
+                        </ul>
+                    </li>
+                     <li><strong>Model API Penetration Testing:</strong>
+                        <ul>
+                            <li>If deploying a model via an API (Flask, Django, etc.), apply standard web security testing (OWASP Top 10): check for injection flaws, broken authentication/authorization, insecure input handling.</li>
+                            <li>Test for rate limiting abuse, denial-of-service vulnerabilities.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Adversarial Robustness Testing:</strong>
+                        <ul>
+                            <li>Actively try to generate adversarial examples (e.g., slightly modified images/text) to see if they fool your model. This is a form of security testing specific to ML.</li>
+                            <li>Explore model evasion techniques relevant to your application (e.g., can spam filter be easily bypassed?).</li>
+                        </ul>
+                    </li>
+                     <li><strong>Privacy Auditing:</strong>
+                        <ul>
+                            <li>Attempt model inversion or membership inference attacks (techniques to try and extract training data information from model predictions) to assess privacy risks.</li>
+                            <li>Review data anonymization techniques for potential weaknesses.</li>
+                        </ul>
+                    </li>
+                     <li><strong>Infrastructure Security Review:</strong>
+                        <ul>
+                            <li>Are cloud storage buckets (like S3) correctly configured with minimal necessary permissions?</li>
+                            <li>Are API keys and database credentials stored securely (e.g., using Secret Manager, not hardcoded)?</li>
+                            <li>Is access to training/deployment servers properly restricted?</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+             <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Conceptual Example: Testing API Input Validation</h4>
+             <pre><code class="language-text">
+# Scenario: An API endpoint expects JSON like {"text": "some input"}
+# Ethical Hacking Mindset Question: What happens if I send...
+
+# 1. Malformed JSON?
+#    POST /predict Content-Type: application/json Body: {"text": "hello", <- missing closing brace
+
+# 2. Unexpected data types?
+#    POST /predict Content-Type: application/json Body: {"text": 12345}
+
+# 3. Excessively long input?
+#    POST /predict Content-Type: application/json Body: {"text": "[VERY LONG STRING...]"}
+
+# 4. Input designed to cause errors (e.g., special characters)?
+#    POST /predict Content-Type: application/json Body: {"text": "' OR 1=1 --"}
+
+# Expected Outcome: The API should gracefully handle these invalid inputs
+# (e.g., return 400 Bad Request errors) without crashing or revealing
+# internal errors/stack traces.
+             </code></pre>
+        </section>
+
+         {# --- Conclusion --- #}
+         <section>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Conclusion</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>Integrating an ethical hacking mindset into the ML/AI/DS lifecycle means proactively thinking about potential weaknesses in data handling, model integrity, and deployment infrastructure. By considering how an attacker might exploit the system, developers can build more secure, robust, and trustworthy AI applications.</p>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

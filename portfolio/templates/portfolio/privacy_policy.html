@@ -1,0 +1,73 @@
+{# portfolio/templates/portfolio/privacy_policy.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}Privacy Policy - Portfolio{% endblock %}
+{% block meta_description %}Privacy Policy for [Your Name]'s portfolio website.{% endblock %}
+{% block meta_keywords %}privacy policy, data protection, portfolio{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-10">Privacy Policy</h1>
+
+    <div class="max-w-3xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-gray-900/20 transition-colors duration-300 ease-in-out">
+        {# Use prose for nice typography on policy text #}
+        <div class="prose prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+
+            {# --- Paste/Format Content from your Privacy Policy artifact here --- #}
+            <p class="text-sm text-gray-500 dark:text-gray-400"><strong>Last Updated:</strong> May 3, 2025</p>
+
+            <p>Thank you for visiting Julian Stone's portfolio website. This Privacy Policy explains how I collect, use, and protect any personal information you may provide while using this site.</p>
+
+            <strong>1. Information I Collect</strong>
+            <p>The primary way I collect personal information on this site is through the <strong>Contact Form</strong>. When you use the contact form, you may provide:</p>
+            <ul>
+                <li><strong>Name:</strong> To know who is contacting me.</li>
+                <li><strong>Email Address:</strong> To respond to your inquiry.</li>
+                <li><strong>Subject & Message:</strong> The content of your message, query, or feedback.</li>
+            </ul>
+            <p>This website does not currently use tracking cookies for analytics (like Google Analytics) or advertising. Necessary cookies might be used by the web framework (Django) for basic site functionality like security (CSRF protection) but are not used to track your activity across other sites.</p>
+
+            <strong>2. How I Use Your Information</strong>
+            <p>The personal information collected via the contact form is used solely for the purpose of:</p>
+            <ul>
+                <li>Responding to your inquiries, comments, or requests.</li>
+                <li>Communicating with you regarding potential collaborations or opportunities if initiated by you.</li>
+            </ul>
+            <p>I do not sell, trade, or rent your personal information to others.</p>
+
+            <strong>3. Data Storage and Security</strong>
+            <p>I take reasonable technical measures to protect the information submitted via the contact form. However, no method of transmission over the Internet or electronic storage is 100% secure.</p>
+            <ul>
+                <li>Contact form submissions may be stored temporarily in email logs or on the hosting platform (e.g., PythonAnywhere, Render) as part of the standard operation of sending/receiving email or processing web requests.</li>
+                <li>I will retain the information only as long as necessary to address your inquiry or for potential follow-up communication initiated by you.</li>
+            </ul>
+
+            <strong>4. Third-Party Services</strong>
+            <p>This website is hosted on [Mention your hosting provider, e.g., PythonAnywhere, Render, Heroku]. The hosting provider may collect standard server logs (like IP addresses, browser types, access times) for security and operational purposes, subject to their own privacy policies. I do not typically access or use these logs for tracking individuals.</p>
+
+            <strong>5. Your Rights</strong>
+            <p>Depending on your location, you may have rights regarding your personal information, such as the right to access, correct, or request deletion of the data I hold about you (primarily data submitted via the contact form).</p>
+            <p>To exercise these rights, please contact me using the details provided below or via the contact form itself. I will respond to your request within a reasonable timeframe.</p>
+
+            <strong>6. Children's Privacy</strong>
+            <p>This website is not intended for children under the age of 13 (or the relevant age in your jurisdiction). I do not knowingly collect personal information from children.</p>
+
+            <strong>7. Changes to This Policy</strong>
+            <p>I may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated "Last Updated" date.</p>
+
+            <strong>8. Contact Information</strong>
+            <p>If you have any questions about this Privacy Policy, please contact me:</p>
+            <p><a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">email Julian</a></p>
+
+            <hr>
+            {# --- End Policy Content --- #}
+
+        </div>
+    </div>
+
+     <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
+</div>
+{% endblock %}

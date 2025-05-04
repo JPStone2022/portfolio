@@ -1,0 +1,106 @@
+{# demos/templates/demos/java_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn about Java in the ML/DS ecosystem." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Java, big data, Spark, Hadoop, enterprise AI" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-orange-500 to-red-600 dark:from-orange-400 dark:to-red-500 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        <strong>Java</strong> is a robust, object-oriented, platform-independent language widely used in large <strong>enterprise systems</strong> and forming the backbone of much of the <strong>Big Data ecosystem</strong> (like Hadoop and parts of Spark). While Python dominates ML model development, Java plays a crucial role in integrating these models and handling large-scale data infrastructure.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-red-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Key Java Features --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Key Java Features & Concepts</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <ul>
+                    <li><strong>Platform Independent (JVM):</strong> Java code compiles to bytecode that runs on the Java Virtual Machine (JVM), allowing it to run on almost any operating system without recompilation ("Write Once, Run Anywhere").</li>
+                    <li><strong>Strongly Typed:</strong> Variables must have declared types, catching many errors at compile time.</li>
+                    <li><strong>Object-Oriented:</strong> Enforces OOP principles (encapsulation, inheritance, polymorphism) rigorously.</li>
+                    <li><strong>Large Standard Library & Ecosystem:</strong> Extensive built-in libraries and a vast number of third-party libraries for various tasks.</li>
+                    <li><strong>Memory Management:</strong> Automatic garbage collection simplifies memory management for developers.</li>
+                    <li><strong>Concurrency:</strong> Mature support for multi-threading and concurrency utilities.</li>
+                </ul>
+                <p><strong>Relevance:</strong> Its robustness, platform independence, strong typing, and large ecosystem make it suitable for building large-scale, reliable enterprise applications and data infrastructure.</p>
+            </div>
+        </section>
+
+        {# --- Section 2: Java in Big Data (Hadoop/Spark) --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Java in the Big Data Ecosystem</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>Java is foundational to many key Big Data technologies:</p>
+                <ul>
+                    <li><strong>Apache Hadoop:</strong> The core components of Hadoop (like HDFS and MapReduce) are written primarily in Java.</li>
+                    <li><strong>Apache Spark:</strong> While Spark's core is Scala, it runs on the JVM and has a well-supported Java API. Data engineers sometimes write Spark jobs in Java, especially in organizations with existing Java expertise.</li>
+                    <li><strong>Other Tools:</strong> Many other data processing frameworks and databases in the big data space (e.g., Kafka, Cassandra, Elasticsearch) are built on the JVM and have strong Java APIs.</li>
+                </ul>
+                <p><strong>Relevance:</strong> Essential for developers building or maintaining core big data infrastructure or integrating applications directly with these systems.</p>
+            </div>
+            <h4 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Conceptual Example (Java with Spark DataFrame):</h4>
+            <pre><code class="language-java">
+// Assuming 'spark' is an existing SparkSession instance
+// Dataset<Row> df = spark.read().json("path/to/data.json");
+Dataset<Row> df = ...; // Placeholder for loaded DataFrame
+
+// DataFrame operations using the Java API
+Dataset<Row> filteredDF = df.filter(col("age").gt(30))
+                       .select("name", "age");
+
+filteredDF.show();
+
+// Example using Spark MLlib (less common for model dev than Python/Scala)
+/*
+import org.apache.spark.ml.classification.LogisticRegression;
+import org.apache.spark.ml.feature.VectorAssembler;
+
+VectorAssembler assembler = new VectorAssembler()
+.setInputCols(new String[]{"feature1", "feature2"})
+.setOutputCol("features");
+Dataset<Row> dfWithFeatures = assembler.transform(df);
+
+LogisticRegression lr = new LogisticRegression().setMaxIter(10).setRegParam(0.01);
+LogisticRegressionModel lrModel = lr.fit(dfWithFeatures);
+
+System.out.println("Coefficients: " + lrModel.coefficients() + " Intercept: " + lrModel.intercept());
+*/
+            </code></pre>
+             <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">Java provides APIs for interacting with Spark DataFrames and MLlib, often used in enterprise settings.</p>
+        </section>
+
+        {# --- Section 3: ML Model Deployment & Integration --- #}
+        <section>
+             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. ML Model Deployment & Enterprise Integration</h2>
+             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>While models are typically trained in Python, Java is often used in the deployment phase:</p>
+                <ul>
+                    <li><strong>Integrating with Existing Systems:</strong> Many large companies have existing backend infrastructure built in Java. ML models (often exported to formats like ONNX or PMML, or accessed via an API) need to be integrated into these Java applications.</li>
+                    <li><strong>Building Robust Backend Services:</strong> Java frameworks like Spring Boot are used to build scalable and reliable backend systems that might consume ML model predictions.</li>
+                    <li><strong>Android Development:</strong> While Kotlin is now preferred, Java is still used for developing Android apps, which might incorporate on-device ML models (e.g., using TensorFlow Lite's Java API).</li>
+                    <li><strong>ML Libraries:</strong> Some Java-based ML libraries exist (e.g., Deeplearning4j, Weka, Tribuo), though they have smaller communities compared to Python's ecosystem.</li>
+                </ul>
+                 <p><strong>Relevance:</strong> Important for ML Engineers or Software Engineers working in large enterprises or needing to integrate ML into existing Java codebases or Android apps.</p>
+             </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

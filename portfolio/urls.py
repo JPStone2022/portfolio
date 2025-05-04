@@ -11,7 +11,7 @@ urlpatterns = [
     # Project detail page
     path('project/<slug:slug>/', views.project_detail, name='project_detail'),
     # Add path for topic detail page
-    path('topic/<slug:topic_slug>/', views.topic_detail, name='topic_detail'),
+    #path('topic/<slug:topic_slug>/', views.topic_detail, name='topic_detail'),
     # Add path for certificates page
     path('certificates/', views.certificates_view, name='certificates'),
     # Add path for the all projects page
@@ -26,4 +26,10 @@ urlpatterns = [
     path('search/', views.search_results_view, name='search_results'),
     # Add path for the Hire Me page view
     path('hire-me/', views.hire_me_view, name='hire_me'),
+    # Add path for the Privacy Policy page view
+    path('privacy-policy/', views.privacy_policy_view, name='privacy_policy'),
+    # Add path for the Colophon page view
+    path('colophon/', views.colophon_view, name='colophon'),
+    # Add path for the Accessibility Statement page view
+    path('accessibility/', views.accessibility_statement_view, name='accessibility'),
 ]

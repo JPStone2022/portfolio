@@ -9,6 +9,8 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from .forms import ImageUploadForm, SentimentAnalysisForm, CSVUploadForm, ExplainableAIDemoForm # Import new form
 import numpy as np
+# Import Demo model
+from .models import Demo
 
 # --- TensorFlow / Keras Imports (for Image Classification) ---
 try:
@@ -111,6 +113,21 @@ try:
 except ImportError:
     print("SciPy not found. Optimization demo disabled."); SCIPY_AVAILABLE = False
 
+
+# --- All Demos List View (NEW) ---
+def all_demos_view(request):
+    """ Displays a list of all available interactive demos. """
+    all_demos_list = Demo.objects.all() # Fetch all, ordered by model Meta
+    context = {
+        'demos': all_demos_list,
+        'page_title': 'All Interactive Demos',
+        'meta_description': "Explore interactive demonstrations showcasing various data science, machine learning, and AI concepts.",
+        'meta_keywords': "demo, interactive, machine learning, data science, AI, portfolio",
+    }
+    return render(request, 'demos/all_demos.html', context=context)
+
+
+
 # --- Image Classification View ---
 def image_classification_view(request):
     form = ImageUploadForm()
@@ -152,6 +169,7 @@ def image_classification_view(request):
 
     context = { 'form': form, 'prediction_results': prediction_results, 'uploaded_image_url': uploaded_image_url, 'error_message': error_message, 'page_title': 'Image Classification Demo', }
     return render(request, 'demos/image_classification_demo.html', context=context)
+
 
 
 # --- Sentiment Analysis View (NEW) ---
@@ -469,7 +487,7 @@ def explainable_ai_view(request):
         'input_features': input_features_dict, # Pass cleaned dict
         # 'target_names': iris.target_names if iris else [], # No longer needed separately
         'error_message': error_message,
-        'page_title': 'Explainable AI Demo (Decision Tree)',
+        'page_title': 'Explainable AI (Decision Tree)',
     }
     return render(request, 'demos/explainable_ai_demo.html', context=context)
 
@@ -478,7 +496,7 @@ def explainable_ai_view(request):
 def flask_api_demo_view(request):
     """ Renders the page explaining Flask for simple ML APIs. """
     context = {
-        'page_title': 'Demo: Flask for ML APIs',
+        'page_title': 'Flask for Machine Learning APIs',
         'meta_description': "Learn how the Flask microframework is often used to create simple APIs for serving machine learning models.",
         'meta_keywords': "Flask, API, machine learning, deployment, Python, microframework",
     }
@@ -488,7 +506,7 @@ def flask_api_demo_view(request):
 def django_concepts_demo_view(request):
     """ Renders the page explaining key Django concepts. """
     context = {
-        'page_title': 'Demo: Key Django Concepts',
+        'page_title': 'Key Django Concepts',
         'meta_description': "Explore key features of the Django web framework, including its ORM, Admin, Forms, and Template system.",
         'meta_keywords': "Django, web framework, ORM, admin, forms, templates, Python",
     }
@@ -613,7 +631,7 @@ def optimization_demo_view(request):
 
     if not SCIPY_AVAILABLE or not DATA_LIBS_AVAILABLE or not np:
         error_message = "Required libraries (SciPy, NumPy, Matplotlib) not installed."
-        context = {'error_message': error_message, 'page_title': 'Optimization Demo (SciPy)'}
+        context = {'error_message': error_message, 'page_title': 'Optimization with SciPy'}
         return render(request, 'demos/optimization_demo.html', context)
 
     try:
@@ -711,7 +729,7 @@ def optimization_demo_view(request):
     context = {
         'results': results,
         'error_message': error_message,
-        'page_title': 'Optimization Demo (SciPy)',
+        'page_title': 'Optimization with SciPy',
         'meta_description': "Demonstration of finding function minima using SciPy's optimization tools.",
         'meta_keywords': "scipy, optimization, minimize, Nelder-Mead, Himmelblau, data science, demo",
     }
@@ -721,7 +739,7 @@ def optimization_demo_view(request):
 def django_security_demo_view(request):
     """ Renders the page explaining key Django security features. """
     context = {
-        'page_title': 'Demo: Django Security Features',
+        'page_title': 'Django Security Features',
         'meta_description': "Learn about built-in security features in the Django framework like CSRF protection, XSS prevention, and SQL injection prevention.",
         'meta_keywords': "Django, security, web framework, CSRF, XSS, SQL injection, protection",
     }
@@ -743,7 +761,7 @@ def django_testing_demo_view(request):
 def ai_tools_demo_view(request):
     """ Renders the page explaining the use and risks of AI tools in development. """
     context = {
-        'page_title': 'Demo: AI Tools in ML/DS Development',
+        'page_title': 'AI Tools in Machine Learning and Data Science Development',
         'meta_description': "Exploring the benefits and potential dangers of using AI code assistants and large language models in machine learning and data science workflows.",
         'meta_keywords': "AI tools, LLM, code assistant, Copilot, ChatGPT, machine learning, data science, productivity, risks, ethics",
     }
@@ -753,7 +771,7 @@ def ai_tools_demo_view(request):
 def python_concepts_demo_view(request):
     """ Renders the page explaining/demonstrating core Python concepts. """
     context = {
-        'page_title': 'Demo: Core Python Concepts for ML/DS',
+        'page_title': 'Core Python Concepts for ML/DS',
         'meta_description': "Interactive examples showcasing Python lists, dictionaries, loops, and functions and their relevance to data science and machine learning.",
         'meta_keywords': "Python, core concepts, data structures, list, dictionary, function, loop, machine learning, data science, demo",
     }
@@ -764,7 +782,7 @@ def python_concepts_demo_view(request):
 def r_concepts_demo_view(request):
     """ Renders the page explaining core R concepts for Data Science. """
     context = {
-        'page_title': 'Demo: R Language for Data Science',
+        'page_title': 'R Language for Data Science',
         'meta_description': "Explore key concepts and packages in the R programming language commonly used for statistical analysis, data visualization, and machine learning.",
         'meta_keywords': "R language, data science, statistics, dplyr, ggplot2, data visualization, machine learning, demo",
     }
@@ -775,8 +793,200 @@ def r_concepts_demo_view(request):
 def go_concepts_demo_view(request):
     """ Renders the page explaining Go's role in ML/DS infrastructure. """
     context = {
-        'page_title': 'Demo: Go (Golang) in ML/DS Infrastructure',
+        'page_title': 'Go (Golang) in ML/DS Infrastructure',
         'meta_description': "Learn how the Go programming language is used for building performant backend systems, APIs, and infrastructure components supporting machine learning workflows.",
         'meta_keywords': "Go, Golang, machine learning, data science, infrastructure, performance, concurrency, API",
     }
     return render(request, 'demos/go_concepts_demo.html', context=context)
+
+
+# --- Scala Concepts Demo View (NEW) ---
+def scala_concepts_demo_view(request):
+    """ Renders the page explaining Scala's role, especially with Spark. """
+    context = {
+        'page_title': 'Scala in Big Data & ML Ecosystem',
+        'meta_description': "Learn how Scala, running on the JVM, is used with Apache Spark for large-scale data processing and machine learning tasks.",
+        'meta_keywords': "Scala, Spark, big data, machine learning, data engineering, JVM, functional programming",
+    }
+    return render(request, 'demos/scala_concepts_demo.html', context=context)
+
+
+# --- Java Concepts Demo View (NEW) ---
+def java_concepts_demo_view(request):
+    """ Renders the page explaining Java's role in the ML/DS ecosystem. """
+    context = {
+        'page_title': 'Java in Big Data & Enterprise AI',
+        'meta_description': "Learn how the Java programming language and its ecosystem are used in large-scale data processing (Hadoop, Spark), enterprise systems, and for deploying ML models.",
+        'meta_keywords': "Java, machine learning, data science, big data, Hadoop, Spark, enterprise, JVM",
+    }
+    return render(request, 'demos/java_concepts_demo.html', context=context)
+
+
+# --- Language Comparison Demo View (NEW) ---
+def language_comparison_demo_view(request):
+    """ Renders the page comparing languages used in ML/DS/AI. """
+    context = {
+        'page_title': 'Languages in ML, AI & Data Science',
+        'meta_description': "Comparing the roles and use cases of Python, R, Scala, Java, C++, and other languages in the machine learning, AI, and data science ecosystem.",
+        'meta_keywords': "programming languages, Python, R, Scala, Java, C++, machine learning, data science, AI, comparison",
+    }
+    return render(request, 'demos/language_comparison_demo.html', context=context)
+
+
+# --- Ruby Concepts Demo View (NEW) ---
+def ruby_concepts_demo_view(request):
+    """ Renders the page explaining Ruby's role relative to ML/DS. """
+    context = {
+        'page_title': 'Ruby & the ML/AI/DS Ecosystem',
+        'meta_description': "Understanding the role of the Ruby programming language, primarily known for web development (Ruby on Rails), in relation to data science and AI.",
+        'meta_keywords': "Ruby, Ruby on Rails, machine learning, data science, AI, web development",
+    }
+    return render(request, 'demos/ruby_concepts_demo.html', context=context)
+
+
+# --- OOP Concepts Demo View (NEW) ---
+def oop_concepts_demo_view(request):
+    """ Renders the page explaining OOP concepts and their relevance to ML/DS. """
+    context = {
+        'page_title': 'Demo: OOP Concepts in ML/DS',
+        'meta_description': "Understanding Object-Oriented Programming (OOP) principles like classes, objects, inheritance, and encapsulation and their application in Python for data science and machine learning.",
+        'meta_keywords': "OOP, Object-Oriented Programming, Python, machine learning, data science, classes, objects, inheritance, encapsulation, polymorphism",
+    }
+    return render(request, 'demos/oop_concepts_demo.html', context=context)
+
+
+# --- Kotlin Concepts Demo View (NEW) ---
+def kotlin_concepts_demo_view(request):
+    """ Renders the page explaining Kotlin's role, mainly in Android ML integration. """
+    context = {
+        'page_title': 'Demo: Kotlin & On-Device AI (Android)',
+        'meta_description': "Understanding Kotlin's primary role in Android development and how machine learning models (like TensorFlow Lite) are integrated for on-device AI features.",
+        'meta_keywords': "Kotlin, Android, machine learning, AI, TensorFlow Lite, on-device ML, mobile AI",
+    }
+    return render(request, 'demos/kotlin_concepts_demo.html', context=context)
+
+
+# --- Jupyter Demo View (NEW) ---
+def jupyter_demo_view(request):
+    """ Renders the page explaining Jupyter Notebooks for ML/DS. """
+    context = {
+        'page_title': 'Demo: Jupyter Notebooks in ML/DS',
+        'meta_description': "Understanding the use of Jupyter Notebooks for interactive data exploration, analysis, model prototyping, and sharing results in data science and machine learning.",
+        'meta_keywords': "Jupyter Notebook, data science, machine learning, interactive computing, Python, R, Julia, EDA",
+    }
+    return render(request, 'demos/jupyter_demo.html', context=context)
+
+
+# --- PySpark Concepts Demo View (NEW) ---
+def pyspark_concepts_demo_view(request):
+    """ Renders the page explaining PySpark for Big Data ML/DS. """
+    context = {
+        'page_title': 'Demo: PySpark for Big Data & ML',
+        'meta_description': "Understanding PySpark (Python API for Apache Spark) and its use for distributed data processing, analysis, and machine learning on large datasets.",
+        'meta_keywords': "PySpark, Spark, big data, distributed computing, data engineering, machine learning, data science, Python",
+    }
+    return render(request, 'demos/pyspark_concepts_demo.html', context=context)
+
+
+# --- PyTorch Concepts Demo View (NEW) ---
+def pytorch_concepts_demo_view(request):
+    """ Renders the page explaining PyTorch for Deep Learning. """
+    context = {
+        'page_title': 'Demo: PyTorch for Deep Learning',
+        'meta_description': "Understanding the PyTorch framework, its core concepts like Tensors and Autograd, and its use in building and training neural networks for AI and machine learning.",
+        'meta_keywords': "PyTorch, deep learning, machine learning, AI, tensors, autograd, neural networks, Python",
+    }
+    return render(request, 'demos/pytorch_concepts_demo.html', context=context)
+
+
+# --- Data Security Demo View (NEW) ---
+def data_security_demo_view(request):
+    """ Renders the page explaining security considerations in ML/DS/AI. """
+    context = {
+        'page_title': 'Security in ML, AI & Data Science',
+        'meta_description': "Understanding key security risks and considerations in machine learning, AI, and data science, including data privacy, model security, and infrastructure protection.",
+        'meta_keywords': "security, machine learning, data science, AI, data privacy, model security, adversarial attacks, infrastructure security",
+    }
+    return render(request, 'demos/data_security_demo.html', context=context)
+
+
+# --- Ethical Hacking Concepts Demo View (NEW) ---
+def ethical_hacking_demo_view(request):
+    """ Renders the page explaining ethical hacking concepts relevant to ML/DS/AI. """
+    context = {
+        'page_title': 'Demo: Ethical Hacking Mindset for AI/ML Security',
+        'meta_description': "Understanding how ethical hacking principles apply to securing data pipelines, machine learning models, and AI infrastructure against potential threats.",
+        'meta_keywords': "ethical hacking, security, machine learning, AI, data science, adversarial attacks, penetration testing, vulnerability",
+    }
+    return render(request, 'demos/ethical_hacking_demo.html', context=context)
+
+# --- Django to Heroku Deployment Guide View (NEW) ---
+def deploying_to_heroku_view(request):
+    """ Renders the page Django to Heroku Deployment Guide relevant to ML/DS/AI. """
+    context = {
+        'page_title': 'Demo: Django to Heroku Deployment Guide for AI/ML Security',
+        'meta_description': "Understanding how Django to Heroku Deployment Guide.",
+        'meta_keywords': "Django, Heroku, Deployment, Guide",
+    }
+    return render(request, 'demos/deploying_django_app_to_heroku.html', context=context)
+
+# --- Django to Render Deployment Guide View (NEW) ---
+def deploying_to_render_view(request):
+    """ Renders the page Django to Render Deployment Guide relevant to ML/DS/AI. """
+    context = {
+        'page_title': 'Demo: Django to Render Deployment Guide for AI/ML Security',
+        'meta_description': "Understanding how Django to Render Deployment Guide.",
+        'meta_keywords': "Django, Render, Deployment, Guide",
+    }
+    return render(request, 'demos/deploying_django_app_to_render.html', context=context)
+
+# --- Django to Python Anywhere Deployment Guide View (NEW) ---
+def deploying_to_python_anywhere_view(request):
+    """ Renders the page Django to Python Anywhere Deployment Guide relevant to ML/DS/AI. """
+    context = {
+        'page_title': 'Demo: Django to Python Anywhere Deployment Guide for AI/ML Security',
+        'meta_description': "Understanding how Django to Python Anywhere Deployment Guide.",
+        'meta_keywords': "Django, Python Anywhere, Deployment, Guide",
+    }
+    return render(request, 'demos/deploying_django_app_to_pythonanywhere.html', context=context)
+
+# --- Django to Google App Engine Deployment Guide View (NEW) ---
+def deploying_to_google_app_engine_view(request):
+    """ Renders the page Django to Google App Engine Deployment Guide relevant to ML/DS/AI. """
+    context = {
+        'page_title': 'Demo: Django to Google App Engine Deployment Guide for AI/ML Security',
+        'meta_description': "Understanding how Django to Google App Engine Deployment Guide.",
+        'meta_keywords': "Django, Google App Engine, Deployment, Guide",
+    }
+    return render(request, 'demos/deploying_django_app_to_google_app_engine.html', context=context)
+
+# --- Django to AWS Elastic Beanstalk Deployment Guide View (NEW) ---
+def deploying_to_aws_elastic_beanstalk_view(request):
+    """ Renders the page Django to AWS Elastic Beanstalk Deployment Guide relevant to ML/DS/AI. """
+    context = {
+        'page_title': 'Demo: Django to AWS Elastic Beanstalk Deployment Guide for AI/ML Security',
+        'meta_description': "Understanding how Django to AWS Elastic Beanstalk Deployment Guide.",
+        'meta_keywords': "Django, AWS Elastic Beanstalk, Deployment, Guide",
+    }
+    return render(request, 'demos/deploying_django_app_to_aws_elastic_beanstalk.html', context=context)
+
+# --- Django Deployment Options View (NEW) ---
+def deploying_options_view(request):
+    """ Renders the page Django Deployment Guide relevant to ML/DS/AI. """
+    context = {
+        'page_title': 'Demo: Django Deployment Guide for AI/ML Security',
+        'meta_description': "Understanding how Django Deployment Guide.",
+        'meta_keywords': "Django, Deployment, Options, Guide",
+    }
+    return render(request, 'demos/deploying_django_options.html', context=context)
+
+# --- Django Deployment Comparisons View (NEW) ---
+def deploying_comparisons_view(request):
+    """ Renders the page Django Deployment Comparisons Guide relevant to ML/DS/AI. """
+    context = {
+        'page_title': 'Demo: Django Deployment Comparisons Guide for AI/ML Security',
+        'meta_description': "Understanding Django Deployment Comparisons Guide.",
+        'meta_keywords': "Django, Deployment, Comparisons, Guide",
+    }
+    return render(request, 'demos/deploying_django_comparisons.html', context=context)
+

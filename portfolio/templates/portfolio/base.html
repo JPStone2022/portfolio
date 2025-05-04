@@ -1,5 +1,17 @@
 <!DOCTYPE html>
 {% load static %}
+<script>
+    // Apply theme immediately based on localStorage or system preference
+    (function() {
+      const theme = localStorage.getItem('color-theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (theme === 'dark' || (!theme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark'); // Ensure light mode if not dark
+      }
+    })();
+  </script>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -32,7 +44,7 @@
         /*.dark pre[class*="language-"] { */
              /* Example: ensure background matches dark theme if needed */
              /* background-color: #2d2d2d; */
-        /*}*/
+        /*}
         /* Add padding to code blocks */
         pre[class*="language-"] {
             padding: 1em;
@@ -70,7 +82,9 @@
                 <a href="{% url 'portfolio:about_me' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">About</a>
                 <a href="{% url 'skills:skill_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Skills</a>
                 <a href="{% url 'portfolio:all_projects' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Projects</a>
-                <a href="{% url 'portfolio:certificates' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Certificates</a>
+                {# Add Demos Link #}
+                <a href="{% url 'demos:all_demos_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Demos</a>
+                <a href="{% url 'topics:topic_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Topics</a>
                 <!-- <a href="{% url 'blog:blog_post_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Blog</a> -->
                 {# Conditionally display Recommendations Link #}
                 {% if recommendation_count > 0 %}
@@ -100,7 +114,10 @@
        {# ... Footer content ... #}
         <div class="container mx-auto px-6 text-center text-sm">
             <p>&copy; {% now "Y" %} Julian Stone. All rights reserved.</p>
-            <p>Built by Julian, with <a href="https://www.djangoproject.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Django</a> & <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Tailwind CSS</a>.</p>
+            <p class="mt-1">
+                <a href="{% url 'portfolio:privacy_policy' %}" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Privacy Policy</a>
+                <span class="mx-2">|</span>
+                Built by Julian, with <a href="https://www.djangoproject.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Django</a> & <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Tailwind CSS</a>.</p>
         </div>
     </footer>
 
@@ -112,36 +129,52 @@
 
     {# --- Theme Toggle JS (keep as before) --- #}
     <script>
-        // Theme toggle script from previous step...
         const themeToggleBtn = document.getElementById('theme-toggle');
         const themeToggleSunIcon = document.getElementById('theme-toggle-sun-icon');
         const themeToggleMoonIcon = document.getElementById('theme-toggle-moon-icon');
-        const htmlElement = document.documentElement;
-        function applyTheme(theme) { /* ... apply theme logic ... */
-            if (theme === 'dark') {
-                htmlElement.classList.add('dark');
+        const htmlElement = document.documentElement; // Still need this reference
+
+        // Function to update button icon based on current theme
+        function updateButtonIcon() {
+            if (htmlElement.classList.contains('dark')) {
                 themeToggleMoonIcon.classList.remove('hidden');
                 themeToggleSunIcon.classList.add('hidden');
-                localStorage.setItem('color-theme', 'dark');
             } else {
-                htmlElement.classList.remove('dark');
                 themeToggleSunIcon.classList.remove('hidden');
                 themeToggleMoonIcon.classList.add('hidden');
-                localStorage.setItem('color-theme', 'light');
             }
         }
-        const storedTheme = localStorage.getItem('color-theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        let initialTheme = 'light';
-        if (storedTheme === 'dark' || (!storedTheme && systemPrefersDark)) { initialTheme = 'dark'; }
-        applyTheme(initialTheme);
+
+        // Update button icon on initial load based on class set by script in <head>
+        updateButtonIcon();
+
+        // Add event listener for the toggle button click
         themeToggleBtn.addEventListener('click', function() {
-            const currentTheme = htmlElement.classList.contains('dark') ? 'dark' : 'light';
-            applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+            // Toggle the class on <html>
+            htmlElement.classList.toggle('dark');
+
+            // Update localStorage
+            if (htmlElement.classList.contains('dark')) {
+                localStorage.setItem('color-theme', 'dark');
+            } else {
+                localStorage.setItem('color-theme', 'light');
+            }
+
+            // Update button icon
+            updateButtonIcon();
         });
-         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (!localStorage.getItem('color-theme')) { applyTheme(event.matches ? 'dark' : 'light'); }
-         });
+
+        // Optional: Listen for system theme changes (if no user preference stored)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem('color-theme')) {
+                if (event.matches) {
+                    htmlElement.classList.add('dark');
+                } else {
+                    htmlElement.classList.remove('dark');
+                }
+                updateButtonIcon(); // Update icon if system preference changes
+            }
+        });
     </script>
 
     {% block extra_scripts %}{% endblock %}

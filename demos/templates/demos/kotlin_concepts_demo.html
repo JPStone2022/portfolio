@@ -1,0 +1,119 @@
+{# demos/templates/demos/kotlin_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn about Kotlin for Android AI integration." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Kotlin, Android, AI, ML, TensorFlow Lite" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-purple-500 to-violet-600 dark:from-purple-400 dark:to-violet-500 bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        <strong>Kotlin</strong> is a modern, statically typed programming language that runs on the JVM (like Java and Scala) and is now Google's preferred language for <strong>Android app development</strong>. While not typically used for <strong>training</strong> large ML models, it plays a key role in deploying models for <strong>on-device inference</strong> within mobile applications.
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-violet-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Kotlin Features & Focus --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Key Kotlin Features</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <ul>
+                    <li><strong>Concise & Expressive:</strong> Often requires less boilerplate code than Java for similar tasks.</li>
+                    <li><strong>Null Safety:</strong> The type system helps prevent null pointer exceptions, a common source of bugs.</li>
+                    <li><strong>Interoperable with Java:</strong> Kotlin code can seamlessly call Java code and vice-versa, allowing gradual adoption and use of existing Java libraries.</li>
+                    <li><strong>Coroutines:</strong> Built-in support for efficient asynchronous programming, important for responsive mobile apps.</li>
+                    <li><strong>Modern Features:</strong> Includes features like data classes, extension functions, and smart casts.</li>
+                </ul>
+                <p><strong>Primary Focus:</strong> Android application development, but also used for server-side development (e.g., with Ktor or Spring Boot) and multiplatform projects.</p>
+            </div>
+        </section>
+
+        {# --- Section 2: Kotlin & On-Device ML --- #}
+        <section class="mb-8 pb-6">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. On-Device AI with TensorFlow Lite</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>The most common intersection of Kotlin and ML/AI is deploying models directly onto Android devices using <strong>TensorFlow Lite (TFLite)</strong>.</p>
+                <ul>
+                    <li><strong>Model Conversion:</strong> Models trained in Python (using TensorFlow/Keras) are converted to the lightweight `.tflite` format.</li>
+                    <li><strong>TFLite Interpreter:</strong> The Android app (written in Kotlin or Java) includes the TFLite runtime library.</li>
+                    <li><strong>Inference:</strong> The Kotlin code loads the `.tflite` model and uses the TFLite Interpreter to run predictions directly on the device using input data (e.g., camera frames, sensor readings, user text).</li>
+                    <li><strong>Use Cases:</strong> Real-time image classification, object detection in camera feeds, on-device text analysis, smart replies, personalized recommendations without needing constant server communication.</li>
+                </ul>
+                <p><strong>Benefits:</strong> Low latency (no network round-trip), offline capability, enhanced data privacy (data doesn't necessarily leave the device).</p>
+            </div>
+            <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Illustrative Snippet (Conceptual Kotlin with TFLite):</h4>
+            <pre><code class="language-kotlin">
+// Example: Conceptual Kotlin code in an Android Activity/ViewModel
+
+// Assuming 'tfliteInterpreter' is initialized with the .tflite model
+// Assuming 'inputBitmap' is a Bitmap image from the camera or gallery
+
+// 1. Preprocess the input Bitmap
+val tensorImage = TensorImage.fromBitmap(inputBitmap)
+// (Add resizing, normalization specific to the model)
+// val processedImage = imageProcessor.process(tensorImage)
+
+// 2. Prepare input buffer for the model
+// val inputBuffer = processedImage.buffer
+val inputBuffer: ByteBuffer = ??? // Placeholder for prepared input
+
+// 3. Prepare output buffer (size depends on model output)
+val outputBuffer = TensorBuffer.createFixedSize(intArrayOf(1, NUM_CLASSES), DataType.FLOAT32)
+
+// 4. Run Inference
+try {
+tfliteInterpreter?.run(inputBuffer, outputBuffer.buffer)
+} catch (e: Exception) {
+Log.e("TFLite", "Error running model inference.", e)
+// Handle error
+}
+
+// 5. Process Output Buffer
+val outputArray = outputBuffer.floatArray // Get probabilities
+// Find the index with the highest probability
+var maxProb = 0f
+var maxIndex = -1
+outputArray.forEachIndexed { index, probability ->
+if (probability > maxProb) {
+    maxProb = probability
+    maxIndex = index
+}
+}
+
+// Map index to label (assuming 'labels' list is loaded)
+val predictedLabel = if (maxIndex != -1) labels[maxIndex] else "Unknown"
+val confidence = maxProb * 100
+
+// Update UI
+Log.d("TFLite", "Prediction: $predictedLabel, Confidence: $confidence%")
+// Update TextViews, display results, etc.
+
+            </code></pre>
+             <p class="text-xs italic text-gray-500 dark:text-gray-400 mt-1 mb-1">This shows the typical flow: preprocess input, prepare buffers, run the TFLite interpreter, and process the output probabilities within Kotlin code.</p>
+        </section>
+
+         {# --- Conclusion --- #}
+         <section>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Conclusion</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>Kotlin is the modern language for Android development. While not used for the heavy lifting of ML model training, it's essential for integrating pre-trained models (especially TensorFlow Lite) into mobile applications to create powerful on-device AI features. Understanding Kotlin is key for developers building AI-powered mobile experiences.</p>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

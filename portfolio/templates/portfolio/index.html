@@ -283,6 +283,13 @@
                 {% endfor %}
             </div>
              {# Optional: Link to a page listing all demos if you create one #}
+             <div class="text-center mt-10">
+                {# Add focus ring to link #}
+                <a href="{% url 'demos:all_demos_list' %}"
+                   class="text-blue-600 dark:text-blue-400 hover:underline font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 rounded">
+                   View All Demos &rarr;
+                </a>
+           </div>
              </div>
     </section>
     {% endif %}

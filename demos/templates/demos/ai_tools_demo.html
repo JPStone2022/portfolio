@@ -15,7 +15,7 @@
         {{ page_title }}
     </h1>
     <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
-        AI tools like Large Language Models (LLMs) and code assistants (e.g., GitHub Copilot, ChatGPT) are rapidly changing development workflows. They offer huge potential but also introduce risks, especially depending on the user's experience level.
+        AI tools like Large Language Models (LLMs) and code assistants (e.g., GitHub Copilot, ChatGPT) are rapidly changing development workflows. They offer huge potential, but also introduce many risks, especially depending on the user's experience level.
     </p>
 
     {# Main content area - Two Columns #}
@@ -41,7 +41,7 @@
                  <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mt-4 mb-1">Illustrative Scenario:</h4>
                  <pre><code class="language-text">
 # User Prompt (Experienced Dev):
-# "Write a Python function using Pandas to load a CSV,
+# "Write a Python function using Pandas to load a CSV file,
 # fill missing 'age' values with the median,
 # and one-hot encode the 'category' column."
 
@@ -56,7 +56,7 @@ def preprocess_data(df):
         df = pd.get_dummies(df, columns=['category'], prefix='cat', drop_first=True)
     return df
 
-# Experienced Dev Review: Looks reasonable, checks edge cases
+# Experienced Dev Review: Looks reasonable, checks edge cases, considers follow-up questions
 # (e.g., what if 'age' isn't numeric?), adapts column names if needed.
                  </code></pre>
             </div>
@@ -66,14 +66,14 @@ def preprocess_data(df):
         <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-red-900/20 border-t-4 border-red-500 dark:border-red-400 transition-colors duration-300 ease-in-out">
              <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
                 <svg class="w-6 h-6 text-red-500 dark:text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                Potential Pitfalls for the Inexperienced
+                Potential Pitfalls for the Inexperienced Coder
             </h2>
              <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                 <p>Without a solid understanding of the underlying concepts, relying heavily on AI tools can be dangerous:</p>
+                 <p>Without a solid understanding of the underlying concepts of programming, relying heavily on AI tools can be dangerous:</p>
                  <ul>
                      <li><strong>Subtle Bugs & "Hallucinations":</strong> AI can generate code that looks plausible but is logically flawed, statistically incorrect, or introduces subtle bugs that are hard to spot without expertise.</li>
                      <li><strong>Security Vulnerabilities:</strong> Generated code might inadvertently include security flaws (e.g., improper input validation, susceptibility to injection attacks) if the user doesn't know what to look for.</li>
-                     <li><strong>Lack of Understanding:</strong> Copy-pasting code without understanding *why* it works prevents true learning and makes debugging or modification extremely difficult.</li>
+                     <li><strong>Lack of Understanding:</strong> Copy-pasting code without understanding <strong>why</strong> it works prevents true learning, and makes debugging or modification extremely difficult.</li>
                      <li><strong>Reinforcing Bad Practices:</strong> The AI might generate inefficient, unidiomatic, or outdated code based on its training data, which the user might adopt without realizing better alternatives exist.</li>
                      <li><strong>Over-Reliance / Skill Atrophy:</strong> Depending too much on AI for core tasks can hinder the development of fundamental problem-solving and coding skills.</li>
                      <li><strong>Data Privacy/Leakage:</strong> Pasting sensitive data or proprietary code into external AI tools carries significant privacy and intellectual property risks.</li>
@@ -89,7 +89,7 @@ def preprocess_data(df):
 cursor.execute(f"SELECT * FROM users WHERE name = '{user_input}'")
 
 # Beginner Review: "It works!" - doesn't recognize the huge security risk.
-# Experienced Dev Review: Immediately flags the SQL injection vulnerability.
+# Experienced Dev Review: Immediately flags the SQL injection vulnerability and acts accordingly.
                   </code></pre>
              </div>
         </div>
