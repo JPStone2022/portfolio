@@ -18,7 +18,7 @@ echo "Collectstatic finished."
 
 # Apply any outstanding database migrations
 echo "Running database migrations..."
-python manage.py migrate --no-input
+python manage.py migrate --no-input && python import_data.py
 echo "Migrations finished."
 
 # --- Add Data Import/Update Commands Here ---
