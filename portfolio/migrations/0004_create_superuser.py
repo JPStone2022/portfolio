@@ -50,5 +50,7 @@ class Migration(migrations.Migration):
         # Or if it's the first migration in portfolio:
         # ('portfolio', '__first__'),
         # IMPORTANT: It MUST also depend on the initial auth migration
+        ('portfolio', '0001_initial'),
         ('portfolio', '0003_alter_project_table'), # Check latest auth migration number
+        
     ]
