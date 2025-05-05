@@ -1,0 +1,145 @@
+{# demos/templates/demos/drf_concepts_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Learn about Django REST Framework." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Django REST Framework, DRF, API, REST" }}{% endblock %}
+
+
+{% block content %}
+<div class="container mx-auto px-6 py-12">
+    {# Apply gradient text to heading #}
+    <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-gray-700 via-gray-800 to-black dark:from-gray-300 dark:via-gray-200 dark:to-white bg-clip-text text-transparent">
+        {{ page_title }}
+    </h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
+        **Django REST Framework (DRF)** is a powerful and flexible toolkit built on top of Django for creating **Web APIs** (Application Programming Interfaces). In the context of ML/AI/DS, APIs are the standard way to make trained models accessible to other applications (web frontends, mobile apps, other services).
+    </p>
+
+    {# Main content area #}
+    <div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg dark:shadow-gray-900/20 transition-colors duration-300 ease-in-out">
+
+        {# --- Section 1: Why DRF for ML APIs? --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">1. Why DRF for ML/DS APIs?</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>While simple APIs can be built with Flask or FastAPI, DRF offers advantages, especially when integrating with a larger Django application (like this portfolio!):</p>
+                <ul>
+                    <li><strong>Integration:** Seamlessly integrates with Django's ORM, authentication, and permissions systems.</li>
+                    <li><strong>Serialization:** Provides powerful serializers to convert complex data (like Django model instances or querysets) into JSON (or other formats) suitable for APIs, and vice-versa for validating input data.</li>
+                    <li><strong>Browsable API:** Offers an automatically generated, web-browsable API interface, making it easy to test and explore your endpoints during development.</li>
+                    <li>**Authentication & Permissions:** Includes built-in support for various authentication schemes (token, session, OAuth) and fine-grained permission controls.</li>
+                    <li>**ViewSets & Routers:** Simplifies building standard CRUD (Create, Read, Update, Delete) interfaces for your models.</li>
+                    <li>**Throttling:** Built-in support for rate limiting API requests.</li>
+                </ul>
+                <p><strong>Relevance:</strong> Ideal for exposing ML model predictions, serving datasets, or providing programmatic access to results within a structured Django project.</p>
+            </div>
+        </section>
+
+        {# --- Section 2: Core DRF Concepts --- #}
+        <section class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">2. Core DRF Concepts Illustrated</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                 <p>Building an API with DRF typically involves these components:</p>
+            </div>
+             {# Serializer Example #}
+             <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">a) Serializers (`serializers.py`)</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Define how complex data (like model instances) is converted to JSON and how incoming JSON is validated and converted back to objects.</p>
+                <pre><code class="language-python">
+# portfolio/serializers.py (Example)
+from rest_framework import serializers
+from .models import Project
+# Import related serializers if needed
+# from skills.serializers import SkillSerializer
+
+class ProjectSerializer(serializers.ModelSerializer):
+# Optionally override or add fields
+# skills = SkillSerializer(many=True, read_only=True) # Example nested serializer
+
+class Meta:
+    model = Project
+    # Specify fields to include in the API output
+    fields = ['id', 'title', 'slug', 'description', 'image_url',
+              'results_metrics', 'github_url', 'demo_url', 'skills', 'topics']
+    read_only_fields = ['slug'] # Slug usually generated automatically
+
+                </code></pre>
+            </div>
+             {# ViewSet Example #}
+             <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">b) Views / ViewSets (`views.py` or `api_views.py`)</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Handle API request logic. ViewSets automatically provide CRUD operations for a model.</p>
+                <pre><code class="language-python">
+# portfolio/api_views.py (Example)
+from rest_framework import viewsets, permissions
+from .models import Project
+from .serializers import ProjectSerializer
+
+class ProjectViewSet(viewsets.ReadOnlyModelViewSet): # Provides list and retrieve actions
+"""
+API endpoint that allows projects to be viewed.
+"""
+queryset = Project.objects.all().order_by('-date_created') # Data source
+serializer_class = ProjectSerializer # How to serialize the data
+permission_classes = [permissions.AllowAny] # Who can access (e.g., AllowAny, IsAuthenticated)
+lookup_field = 'slug' # Use slug instead of pk in URL for detail view
+
+                </code></pre>
+            </div>
+            {# URL Example #}
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">c) URLs (`urls.py`)</h3>
+                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Map URLs to Views/ViewSets, often using DRF's Routers for convenience.</p>
+                 <pre><code class="language-python">
+# portfolio/urls.py (Example adding API endpoints)
+# from django.urls import path, include
+# from rest_framework import routers
+# from . import api_views # Import the API views
+
+# router = routers.DefaultRouter()
+# router.register(r'projects', api_views.ProjectViewSet) # Register ViewSet
+
+# urlpatterns = [
+#     # ... your existing portfolio page URLs ...
+#     path('api/', include(router.urls)), # Include DRF URLs under /api/
+#     # This automatically creates /api/projects/ and /api/projects/<slug>/
+# ]
+                 </code></pre>
+             </div>
+        </section>
+
+        {# --- Section 3: Use Case: ML Model Serving API --- #}
+        <section>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">3. Use Case: Serving an ML Model</h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                <p>While you could serve models directly from Django views, DRF provides a structured way:</p>
+                <ul>
+                    <li>Create a Serializer to validate input features sent in the request (e.g., ensuring image data or text is present).</li>
+                    <li>Create an API View (e.g., inheriting from `APIView`) that:
+                        <ul>
+                            <li>Receives the POST request.</li>
+                            <li>Uses the serializer to validate input data.</li>
+                            <li>Loads your pre-trained ML model (e.g., from a file).</li>
+                            <li>Performs prediction using the validated input data.</li>
+                            <li>Uses another serializer (or just constructs a dictionary) to format the prediction results.</li>
+                            <li>Returns the results as a JSON `Response`.</li>
+                        </ul>
+                    </li>
+                    <li>Define a URL route pointing to this API View.</li>
+                </ul>
+                <p><strong>Benefits:** Standardized request/response handling, input validation, browsable API for testing, integration with Django's authentication/permissions.</p>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+ <div class="text-center mt-12">
+    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+</div>
+</div>
+{% endblock %}

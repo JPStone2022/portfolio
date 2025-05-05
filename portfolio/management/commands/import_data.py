@@ -43,6 +43,12 @@ except ImportError:
     RecommendedProduct = None
     RECOMMENDATIONS_APP_EXISTS = False
 
+try:
+    from demos.models import Demo
+    DEMO_APP_EXISTS = True
+except ImportError:
+    Demo = None
+    DEMO_APP_EXISTS = False
 
 # Define which model corresponds to which file type/name
 # Only include models that were successfully imported
@@ -58,7 +64,8 @@ if SKILLS_APP_EXISTS:
     MODEL_MAP['skillcategories'] = SkillCategory
 if RECOMMENDATIONS_APP_EXISTS:
     MODEL_MAP['recommendations'] = RecommendedProduct
-
+if DEMO_APP_EXISTS:
+    MODEL_MAP['demos'] = Demo
 
 class Command(BaseCommand):
     help = 'Imports data from a specified CSV file into the database.'
@@ -123,6 +130,7 @@ class Command(BaseCommand):
                 elif model_type == 'skills': required_headers = ['name']
                 elif model_type == 'topics': required_headers = ['name']
                 elif model_type == 'certificates': required_headers = ['title']
+                elif model_type == 'demo': required_headers = ['title']
                 # Add checks for other models...
 
                 if not reader.fieldnames:
@@ -224,6 +232,19 @@ class Command(BaseCommand):
                             try: data['order'] = int(row.get('order', 0))
                             except (ValueError, TypeError): data['order'] = 0
                             if unique_field == 'name': unique_value = data['name'] # Match on name for recommendations
+
+                        elif model_type == 'demos':
+                             if not DEMO_APP_EXISTS: continue
+                             data['title'] = row.get('title', '').strip()
+                             if not data['title']: raise ValueError("Missing required field: title")
+                             data['description'] = row.get('description', '').strip()
+                             data['demo_url_name'] = row.get('demo_url', '').strip()
+                             data['image_url'] = row.get('image_url', '').strip()
+                             try: data['order'] = int(row.get('order', 0))
+                             except (ValueError, TypeError): data['order'] = 0
+                             if unique_field == 'slug' and unique_value: data['slug'] = unique_value
+                             elif unique_field == 'title': unique_value = data['title']
+
 
 
                         # --- Create or Update Logic ---
