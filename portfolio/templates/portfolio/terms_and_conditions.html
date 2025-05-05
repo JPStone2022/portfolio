@@ -1,0 +1,156 @@
+{# portfolio/templates/portfolio/terms_and_conditions.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}Terms and Conditions - Portfolio{% endblock %}
+{% block meta_description %}Terms and Conditions for Julian Stone's portfolio website.{% endblock %}
+{% block meta_keywords %}ters, conditions, policy, data protection, portfolio{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms and Conditions - Julian Stone's Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for code blocks (if any were needed) */
+        pre {
+            background-color: #1f2937; /* bg-gray-800 */
+            color: #f3f4f6; /* text-gray-100 */
+            padding: 1rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.875rem; /* text-sm */
+        }
+        code {
+             font-family: 'Courier New', Courier, monospace;
+             background-color: #e5e7eb; /* bg-gray-200 */
+             padding: 0.1rem 0.3rem;
+             border-radius: 0.25rem; /* rounded */
+             font-size: 0.875rem; /* text-sm */
+             color: #1f2937; /* text-gray-800 */
+        }
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            color: inherit;
+        }
+        /* Style for headings */
+        h1, h2, h3 {
+            font-weight: 600; /* font-semibold */
+        }
+        /* Custom list marker style */
+        .terms-list li {
+            padding-left: 0.5rem; /* Add some space before the marker */
+        }
+        .terms-list li::marker {
+             font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 leading-relaxed">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Terms and Conditions</h1>
+            <p class="text-sm text-gray-500">for Julian Stone's Portfolio</p>
+            <p class="text-sm text-gray-500 mt-1">Last Updated: Date May 5, 2025</p>
+        </header>
+
+        <main class="bg-white p-6 md:p-8 rounded-lg shadow-md space-y-6">
+
+            <p class="text-gray-700">Welcome to my personal portfolio website. Please read these Terms and Conditions ("Terms") carefully before using the website located at <a href="https://julianstone2024.eu.pythonanywhere.com/" class="text-blue-600 hover:underline">Julian's Portfolio</a> (the "Service") operated by Julian Stone ("I", "me", "my").</p>
+
+            <p class="text-gray-700">Your access to and use of the Service is conditioned upon your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who wish to access or use the Service. By accessing or using the Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you do not have permission to access the Service.</p>
+
+            <section id="use-of-website">
+                <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3 text-gray-700">1. Use of Website</h2>
+                <p class="mb-2 text-gray-700">This website and its content (including blog posts, project descriptions, images, demos, and code snippets) are provided primarily for informational and demonstration purposes to showcase my skills and experience in Data Science, Machine Learning, and AI development.</p>
+                <p class="mb-2 text-gray-700">You are granted a limited license to access and use the content for personal, non-commercial review.</p>
+                <p class="text-gray-700">You agree not to use the website in any way that causes, or may cause, damage to the website or impairment of the availability or accessibility of the website; or in any way which is unlawful, illegal, fraudulent, or harmful.</p>
+            </section>
+
+            <section id="intellectual-property">
+                <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3 text-gray-700">2. Intellectual Property</h2>
+                <p class="mb-2 text-gray-700">The content created by me on this Service, including text (blog posts, project descriptions, etc.), graphics, logos, and code examples (unless otherwise stated or sourced), is my property and protected by copyright and other intellectual property laws.</p>
+                <p class="text-gray-700">Code snippets provided are for illustrative purposes. While concepts may be reused, direct copying for commercial projects without understanding or attribution may not be appropriate. Look for specific licenses if provided, otherwise assume standard copyright applies.</p>
+            </section>
+
+            <section id="interactive-demos">
+                <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3 text-gray-700">3. Interactive Demos</h2>
+                 <p class="mb-2 text-gray-700">The interactive demos provided on this website (e.g., Image Classification, Sentiment Analysis, Explainable AI, Data Analysis, ETL Simulation, etc.) are for demonstration and educational purposes only.</p>
+                 <p class="mb-2 text-gray-700">They may use simplified models, simulated data, or pre-trained models that may not be suitable for production use.</p>
+                 <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700 terms-list">
+                     <li><strong>Accuracy Not Guaranteed:</strong> No guarantee is made regarding the accuracy, reliability, or performance of the predictions or outputs generated by these demos.</li>
+                     <li><strong>Use At Your Own Risk:</strong> You interact with these demos at your own risk. I am not liable for any decisions made or actions taken based on the output of these demos. Do not submit sensitive personal information into the demo interfaces.</li>
+                 </ul>
+            </section>
+
+            <section id="disclaimers">
+                <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3 text-gray-700">4. Disclaimers</h2>
+                <p class="mb-2 text-gray-700">The information provided on this website (including blog posts, project details, and explanations) is for general informational purposes only. It does not constitute professional advice (e.g., technical, financial, legal).</p>
+                <p class="text-gray-700">While I strive to keep information accurate and up-to-date, I make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability with respect to the website or the information contained within it. Any reliance you place on such information is therefore strictly at your own risk.</p>
+            </section>
+
+            <section id="limitation-liability">
+                <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3 text-gray-700">5. Limitation of Liability</h2>
+                <p class="text-gray-700">In no event shall I be liable for any loss or damage including without limitation, indirect or consequential loss or damage, or any loss or damage whatsoever arising from loss of data or profits arising out of, or in connection with, the use of this website or its demos.</p>
+            </section>
+
+            <section id="third-party-links">
+                <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3 text-gray-700">6. Third-Party Links</h2>
+                <p class="mb-2 text-gray-700">This website may contain links to third-party websites or services that are not owned or controlled by me (e.g., links to projects on GitHub, product recommendations, external datasets or papers).</p>
+                <p class="text-gray-700">I have no control over, and assume no responsibility for the content, privacy policies, or practices of any third-party websites or services. You acknowledge and agree that I shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with the use of or reliance on any such content, goods, or services available on or through any such websites or services.</p>
+            </section>
+
+            <section id="privacy-policy">
+                <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3 text-gray-700">7. Privacy Policy</h2>
+                <p class="text-gray-700">Your use of the Service is also governed by our Privacy Policy, which can be accessed here: <a href="{% url 'portfolio:privacy_policy' %}" class="text-blue-600 hover:underline">Privacy Policy</a>. Please review the Privacy Policy to understand practices regarding personal information collected via the contact form.</p>
+            </section>
+
+            <section id="changes-terms">
+                <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3 text-gray-700">8. Changes to Terms</h2>
+                <p class="mb-2 text-gray-700">I reserve the right, at my sole discretion, to modify or replace these Terms at any time. If a revision is material, I will provide notice prior to any new terms taking effect (e.g., by updating the "Last Updated" date). What constitutes a material change will be determined at my sole discretion.</p>
+                <p class="text-gray-700">By continuing to access or use the Service after any revisions become effective, you agree to be bound by the revised terms.</p>
+            </section>
+
+            <section id="governing-law">
+                <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3 text-gray-700">9. Governing Law (Optional)</h2>
+                <p class="text-gray-700">These Terms shall be governed and construed in accordance with the laws of [Your Country/Region, e.g., England and Wales], without regard to its conflict of law provisions. (You may omit this or consult a legal professional about appropriate jurisdiction).</p>
+            </section>
+
+            <section id="contact">
+                <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3 text-gray-700">10. Contact Information</h2>
+                <p class="text-gray-700">If you have any questions about these Terms, please contact me:</p>
+                 <ul class="list-disc list-inside space-y-1 pl-4 mt-2 text-gray-700">
+                     <li>Via Contact Form: <a href="{% url 'portfolio:contact' %}" class="text-blue-600 hover:underline">Contact Julian</a></li>
+                 </ul>
+            </section>
+
+             <section id="legal-disclaimer">
+                 <p class="mt-6 text-xs text-gray-500 italic">Disclaimer: This is a sample Terms and Conditions document and may not be fully compliant with all legal requirements in all jurisdictions. It is recommended to consult with a legal professional for advice specific to your situation.</p>
+            </section>
+
+        </main>
+
+
+        <div class="text-center mt-12">
+            <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+        </div>
+    </div>
+
+</body>
+</html>
+{% endblock %}

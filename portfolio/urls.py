@@ -32,4 +32,6 @@ urlpatterns = [
     path('colophon/', views.colophon_view, name='colophon'),
     # Add path for the Accessibility Statement page view
     path('accessibility/', views.accessibility_statement_view, name='accessibility'),
+    # Add path for the Accessibility Statement page view
+    path('terms-and-conditions/', views.terms_and_conditions_view, name='terms'),
 ]

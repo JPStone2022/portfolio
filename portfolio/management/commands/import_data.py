@@ -1,6 +1,3 @@
-# portfolio/management/commands/import_data.py
-# (Place this file in portfolio/management/commands/import_data.py)
-
 import csv
 import os
 from django.core.management.base import BaseCommand, CommandError
