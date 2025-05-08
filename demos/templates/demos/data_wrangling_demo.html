@@ -3,6 +3,8 @@
 {% load static %}
 
 {% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Upload a small CSV file (with headers) to see some common data wrangling steps applied." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"data wrangling, missing values, renaming columns, creating new features, CSV files" }}{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-6 py-12">

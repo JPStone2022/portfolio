@@ -5,35 +5,20 @@ from pathlib import Path
 import dj_database_url
 # --- Add these lines ---
 from dotenv import load_dotenv
-load_dotenv() # Loads variables from .env file into environment
+
 # -----------------------
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Construct the path to the .env file
+# --- Explicitly load .env from the project root ---
 dotenv_path = BASE_DIR / '.env'
 
-# Load .env only if it exists (indicating development)
 if dotenv_path.is_file():
-    load_dotenv(dotenv_path=dotenv_path)
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        # Configure production database using environment variables if needed
-        # ssl_require=True if not DEBUG else False # Example for Heroku PG
-    }
-}
+    print(f".env file found at: {dotenv_path}")
+    load_dotenv(dotenv_path=dotenv_path, override=True) # Use override=True for testing if needed
 else:
-    # Database configuration (using dj-database-url example)
-    
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-            conn_max_age=600,
-            # ssl_require=True if not DEBUG else False # Example for Heroku PG
-        )
-    }
+    print(f".env file NOT found at: {dotenv_path}")
+# ----------------------------------------------------
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Read secret key from environment variable in production
@@ -41,8 +26,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-=your-default-develop
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Set DEBUG to False unless an environment variable named 'DEBUG' is set to exactly 'True'
-#DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-DEBUG = 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
 # Update ALLOWED_HOSTS based on environment
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1 localhost').split(' ')
 #ALLOWED_HOSTS = [os.environ.get('PYTHONANYWHERE_DOMAIN')] # Add your domain/IP in production
@@ -59,7 +44,7 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 # HEROKU_APP_NAME = os.environ.get('HEROKU_APP_NAME') # Optional: Set this env var on Heroku
 # if HEROKU_APP_NAME:
-#     ALLOWED_HOSTS.append(f"{HEROKU_APP_NAME}.herokuapp.com")
+#     ALLOWED_HOSTS.append(f"{HEROKU_APP_NAME}.herokuapp.com")/ugfg
 
 # Application definition
 
@@ -120,26 +105,14 @@ WSGI_APPLICATION = 'dl_portfolio_project.wsgi.application'
 
 
 # Database used in development
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#         # Configure production database using environment variables if needed
-#         # ssl_require=True if not DEBUG else False # Example for Heroku PG
-#     }
-# }
-
-# Database used in production
-
-# # Database configuration (using dj-database-url example)
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-#         conn_max_age=600,
-#         # ssl_require=True if not DEBUG else False # Example for Heroku PG
-#     )
-# }
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}", # Fallback for local dev if DATABASE_URL not set
+        conn_max_age=600,
+        # ssl_require can also be controlled by an env var
+        # ssl_require=os.environ.get('DB_SSL_REQUIRE', 'True') == 'True'
+    )
+}
 
 #print("DEBUG DATABASES:", DATABASES)
 
@@ -173,8 +146,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles' # For collectstatic in production
 MEDIA_URL = '/media/' # Base URL for serving media files
 MEDIA_ROOT = BASE_DIR / 'mediafiles' # Absolute filesystem path to the directory for user uploads
 
-# # Staticfiles storage using WhiteNoise (Recommended for Render)
-# # For Django 4.2+
+# Staticfiles storage using WhiteNoise (Recommended for Render)
+# For Django 4.2+
 # STORAGES = {
 #     "staticfiles": {
 #         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
@@ -214,14 +187,19 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 SERVER_EMAIL = os.environ.get('SERVER_EMAIL', EMAIL_HOST_USER)
 # ADMINS = [('Your Name', 'your_admin_email@example.com')] # Optional: For site error notifications
 
-# --------------------------------------------------------------------------
+# Default to 'False' string so that `== 'True'` evaluates to False if env var not set
+# CSRF_COOKIE_SECURE = os.environ.get('DJANGO_CSRF_COOKIE_SECURE', 'False') == 'True'
+# SESSION_COOKIE_SECURE = os.environ.get('DJANGO_SESSION_COOKIE_SECURE', 'False') == 'True'
+# SECURE_SSL_REDIRECT = os.environ.get('DJANGO_SECURE_SSL_REDIRECT', 'False') == 'True'
 
-# Security settings for production (when DEBUG=False)
-# Uncomment and configure these as needed, especially if using HTTPS
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
-# SECURE_SSL_REDIRECT = True
-# SECURE_HSTS_SECONDS = 31536000 # e.g., 1 year
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') # If behind a proxy like Render's
+# For HSTS, only enable if you are sure and understand the implications.
+# These should generally only be True in production HTTPS environments.
+# SECURE_HSTS_SECONDS = int(os.environ.get('DJANGO_SECURE_HSTS_SECONDS', 0)) # Default to 0 (off)
+# if SECURE_HSTS_SECONDS: # Only set these if HSTS is enabled
+#     SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get('DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS', 'True') == 'True'
+#     SECURE_HSTS_PRELOAD = os.environ.get('DJANGO_SECURE_HSTS_PRELOAD', 'True') == 'True'
+
+# SECURE_PROXY_SSL_HEADER: Only needed if Django is behind a reverse proxy that terminates SSL.
+# Render handles this, so you might need it. Check Render's documentation.
+# if os.environ.get('DJANGO_SECURE_PROXY_SSL_HEADER_ENABLED', 'False') == 'True':
+#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

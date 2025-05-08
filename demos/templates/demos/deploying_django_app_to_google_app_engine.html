@@ -1,144 +1,127 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deploying Django to Google App Engine Guide</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Apply Inter font */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Style for code blocks */
-        pre {
-            background-color: #1f2937; /* bg-gray-800 */
-            color: #f3f4f6; /* text-gray-100 */
-            padding: 1rem;
-            border-radius: 0.5rem; /* rounded-lg */
-            overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.875rem; /* text-sm */
-        }
-        code {
-             font-family: 'Courier New', Courier, monospace;
-             background-color: #e5e7eb; /* bg-gray-200 */
-             padding: 0.1rem 0.3rem;
-             border-radius: 0.25rem; /* rounded */
-             font-size: 0.875rem; /* text-sm */
-             color: #1f2937; /* text-gray-800 */
-        }
-        pre code {
-            background-color: transparent;
-            padding: 0;
-            border-radius: 0;
-            color: inherit;
-        }
-        /* Style for headings */
-        h1, h2, h3 {
-            font-weight: 600; /* font-semibold */
-        }
-    </style>
-</head>
-<body class="bg-gray-100 text-gray-800 leading-relaxed">
+{# demos/templates/demos/deploying_django_app_to_google_app_engine.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
 
-    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+{% block title %}{{ page_title|default:"Deploying Django to Google App Engine" }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Guide on deploying Django applications to Google App Engine (GAE) Standard Environment using the gcloud CLI." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Django, Google App Engine, GAE, Deployment, Guide, PaaS, GCP, Cloud SQL, Cloud Storage" }}{% endblock %}
 
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-2">Deploying Your Django Project to Google App Engine</h1>
-            <p class="text-lg text-gray-600">A step-by-step guide for the Standard Environment.</p>
-        </header>
+{% block content %}
+<div class="container mx-auto px-6 py-12">
 
-        <main class="bg-white p-6 md:p-8 rounded-lg shadow-md space-y-8">
+    <header class="mb-10 text-center">
+        {# Gradient heading #}
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-green-500 to-yellow-400 dark:from-blue-400 dark:via-green-400 dark:to-yellow-300 bg-clip-text text-transparent">
+            {{ page_title|default:"Deploying Django to Google App Engine" }}
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400">A step-by-step guide for the Standard Environment using the gcloud CLI.</p>
+    </header>
+
+    <main class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg dark:shadow-green-900/20 transition-colors duration-300 ease-in-out">
+        {# Use prose for overall text formatting #}
+        <div class="prose prose-indigo dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-8">
 
             <section id="prerequisites">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-blue-600">1. Prerequisites</h2>
-                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">1. Prerequisites</h2>
+                <ul class="!list-disc !list-inside !space-y-2 !pl-4">
                     <li>A working Django project committed to a Git repository (optional but good practice).</li>
                     <li>Python and Pip installed locally.</li>
-                    <li>A <a href="https://cloud.google.com/free/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Google Cloud Platform (GCP) account</a> with billing enabled (App Engine has a free tier, but billing needs to be enabled for project creation).</li>
+                    <li>A <a href="https://cloud.google.com/free/" target="_blank" rel="noopener noreferrer">Google Cloud Platform (GCP) account</a> with billing enabled (App Engine has a free tier, but billing needs to be enabled for project creation).</li>
                     <li>A GCP Project created. Note your Project ID.</li>
-                    <li>The <a href="https://cloud.google.com/sdk/docs/install" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Google Cloud SDK (gcloud CLI)</a> installed and initialized (`gcloud init`).</li>
+                    <li>The <a href="https://cloud.google.com/sdk/docs/install" target="_blank" rel="noopener noreferrer">Google Cloud SDK (gcloud CLI)</a> installed and initialized (`gcloud init`).</li>
                     <li>Git installed locally.</li>
-                    <li>Gunicorn installed in your project: <code>pip install gunicorn</code></li>
+                    <li>Gunicorn installed in your project: <code>pip install gunicorn</code> (Add to `requirements.txt`).</li>
                 </ul>
             </section>
 
             <section id="config-files">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-blue-600">2. Configuration Files</h2>
-                <p class="mb-4 text-gray-700">Create/update these files in the root directory of your Django project (where `manage.py` is located).</p>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">2. Configuration Files</h2>
+                <p>Create/update these files in the root directory of your Django project (where `manage.py` is located).</p>
 
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2">app.yaml</h3>
-                    <p class="mb-2 text-gray-700">The main configuration file for App Engine. Defines runtime, entrypoint, environment variables, scaling, and handlers.</p>
-                    <pre><code class="language-yaml">
-runtime: python310 # Specify your Python version (e.g., python39, python310, python311)
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="!text-xl !font-semibold !mb-2">app.yaml</h3>
+                        <p class="!text-sm">The main configuration file for App Engine. Defines runtime, entrypoint, environment variables, scaling, and handlers.</p>
+                        <pre><code class="language-yaml">
+runtime: python311 # Specify Python version (e.g., python39, python310, python311, python312)
 entrypoint: gunicorn -b :$PORT your_project_name.wsgi:application # How to start your app
 
 instance_class: F1 # Basic instance class (check App Engine docs for options)
 
+# Reference secrets from Secret Manager (Recommended)
+# env_variables:
+#   SECRET_KEY: ${sm://projects/YOUR_PROJECT_ID/secrets/YOUR_SECRET_KEY_NAME/versions/latest}
+#   DB_PASSWORD: ${sm://projects/YOUR_PROJECT_ID/secrets/YOUR_DB_PASSWORD_NAME/versions/latest}
+#   DB_USER: ${sm://projects/YOUR_PROJECT_ID/secrets/YOUR_DB_USER_NAME/versions/latest}
+#   DB_NAME: ${sm://projects/YOUR_PROJECT_ID/secrets/YOUR_DB_NAME/versions/latest}
+#   # Cloud SQL Connection Name (usually safe to put here)
+#   DB_HOST: '/cloudsql/your-gcp-project-id:your-region:your-instance-name'
+#   DJANGO_SETTINGS_MODULE: 'your_project_name.settings'
+#   # Add other non-sensitive env vars here if needed
+#   # DJANGO_DEBUG: 'False' # Can be set here or in settings.py
+
+# Or set non-sensitive vars directly (Secrets preferred for sensitive data)
 env_variables:
-  # Set environment variables needed by your Django app
-  # SECRET_KEY: 'your_production_secret_key' # Set via Secret Manager instead!
   DJANGO_SETTINGS_MODULE: 'your_project_name.settings'
-  # Example for Cloud SQL (replace with your connection name)
-  # DB_HOST: '/cloudsql/your-gcp-project-id:your-region:your-instance-name'
-  # DB_NAME: 'your_db_name'
-  # DB_USER: 'your_db_user'
-  # DB_PASSWORD: 'your_db_password' # Set via Secret Manager instead!
+  DB_HOST: '/cloudsql/your-gcp-project-id:your-region:your-instance-name'
+  # Avoid putting secrets directly here!
 
 handlers:
-# Route static files to Google Cloud Storage (recommended) or serve directly
-# Option 1: Serve directly via App Engine (simpler for small sites, less efficient)
-- url: /static
-  static_dir: staticfiles/ # Path to your collected static files
+# Route static files (Choose one option)
 
-# Option 2: Route to GCS (requires setting up a GCS bucket - see Django settings)
-# - url: /static
-#   static_files: staticfiles/\1 # Requires more setup in settings.py
-#   upload: staticfiles/.*
+# Option 1: Serve directly via App Engine (simpler, less performant)
+# Ensure 'staticfiles/' matches your STATIC_ROOT setting
+- url: /static
+  static_dir: staticfiles/
+
+# Option 2: Route to GCS (Recommended for performance)
+# Requires django-storages setup in settings.py and collectstatic before deploy
+# - url: /static/(.*)
+#   static_files: staticfiles/\1 # Maps URL path to collected files
+#   upload: staticfiles/.* # Regex to upload collected files
+
+# Route media files (if using GCS - requires django-storages)
+# - url: /media/(.*)
+#   static_files: mediafiles/\1 # Assumes media files are collected/uploaded to 'mediafiles/' in bucket
+#   upload: mediafiles/.*
 
 # Route all other requests to the Django application
 - url: /.*
   script: auto
+  secure: always # Optional: Redirect HTTP to HTTPS
 
 # Optional: Automatic Scaling settings
 # automatic_scaling:
 #   target_cpu_utilization: 0.65
 #   min_instances: 0 # Can scale to zero on free tier
 #   max_instances: 1 # Adjust as needed
-                    </code></pre>
-                    <p class="mt-2 text-sm text-gray-600">
-                        Replace `python310` with your Python version.<br>
-                        Replace `your_project_name` with your Django project's name.<br>
-                        Replace placeholders for Cloud SQL or other variables as needed.<br>
-                        <strong>Security:</strong> Do NOT put secrets like `SECRET_KEY` or `DB_PASSWORD` directly in `app.yaml`. Use <a href="https://cloud.google.com/secret-manager" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Secret Manager</a> and reference secrets in `app.yaml` or load them in `settings.py`.
-                    </p>
-                </div>
+                        </code></pre>
+                        <p class="!text-xs !mt-2">
+                            Replace placeholders (`python311`, `your_project_name`, Cloud SQL connection name, secret names, project ID) with your actual values.<br>
+                            <strong>Security:</strong> Use <a href="https://cloud.google.com/secret-manager" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">Secret Manager</a> for sensitive values like `SECRET_KEY`, `DB_PASSWORD`, `DB_USER`, `DB_NAME` and reference them using the `${sm://...}` syntax.
+                        </p>
+                    </div>
 
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2">requirements.txt</h3>
-                    <p class="mb-2 text-gray-700">Lists Python dependencies.</p>
-                    <pre><code class="language-bash">pip freeze > requirements.txt</code></pre>
-                    <p class="mt-2 text-sm text-gray-600">Ensure it includes:</p>
-                    <ul class="list-disc list-inside space-y-1 pl-4 text-sm text-gray-600">
-                        <li><code>Django</code></li>
-                        <li><code>gunicorn</code></li>
-                        <li><code>psycopg2-binary</code> (If using Cloud SQL for PostgreSQL)</li>
-                        <li><code>mysqlclient</code> (If using Cloud SQL for MySQL)</li>
-                        <li><code>django-storages[google]</code> (If using Cloud Storage for static/media files)</li>
-                        <li><code>google-cloud-secret-manager</code> (If using Secret Manager)</li>
-                        <li>Any other project dependencies.</li>
-                    </ul>
-                </div>
+                    <div>
+                        <h3 class="!text-xl !font-semibold !mb-2">requirements.txt</h3>
+                        <p class="!text-sm">Lists Python dependencies.</p>
+                        <pre><code class="language-bash">pip freeze > requirements.txt</code></pre>
+                        <p class="!text-xs !mt-2">Ensure it includes:</p>
+                        <ul class="!list-disc !list-inside !space-y-1 !pl-4 !text-xs">
+                            <li><code>Django</code></li>
+                            <li><code>gunicorn</code></li>
+                            <li><code>psycopg2-binary</code> (If using Cloud SQL for PostgreSQL)</li>
+                            <li><code>mysqlclient</code> (If using Cloud SQL for MySQL)</li>
+                            <li><code>django-storages[google]</code> (If using Cloud Storage)</li>
+                            <li><code>google-cloud-secret-manager</code> (If loading secrets in `settings.py`)</li>
+                            <li>Any other project dependencies.</li>
+                        </ul>
+                    </div>
 
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2">.gcloudignore</h3>
-                    <p class="mb-2 text-gray-700">Specifies files and directories that should NOT be uploaded to App Engine during deployment. Similar to `.gitignore`.</p>
-                    <pre><code class="language-text">
+                    <div>
+                        <h3 class="!text-xl !font-semibold !mb-2">.gcloudignore</h3>
+                        <p class="!text-sm">Specifies files/directories NOT to upload during deployment.</p>
+                        <pre><code class="language-text">
 # Default .gcloudignore file generated by gcloud can be a good starting point
 # Add files/directories specific to your project that aren't needed for deployment
 
@@ -146,70 +129,100 @@ handlers:
 .git
 .gitignore
 venv/
+env/
 __pycache__/
 *.pyc
-*.env
+*.log
+*.pot
+*.pt
+*.swp
+db.sqlite3*
 local_settings.py
-# Add other files like local databases, media files if stored elsewhere, etc.
-                    </code></pre>
-                     <p class="mt-2 text-sm text-gray-600">You can often start with the default generated by `gcloud` and add your specific exclusions.</p>
+*.env
+.env
+/mediafiles/ # Exclude local media if using cloud storage
+/staticfiles/ # Exclude collected static files if serving via GCS/App Engine static handler
+# Add other sensitive files or large data directories
+                        </code></pre>
+                        <p class="!text-xs !mt-2">Start with `gcloud init` generated file or create manually. Be sure to exclude secrets and local-only files.</p>
+                    </div>
                 </div>
             </section>
 
             <section id="django-settings">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-blue-600">3. Django Settings (`settings.py`)</h2>
-                <p class="mb-4 text-gray-700">Modify your project's `settings.py` for Google Cloud compatibility.</p>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">3. Django Settings (`settings.py`)</h2>
+                <p>Modify your project's `settings.py` for Google Cloud compatibility.</p>
 
-                <ul class="list-disc list-inside space-y-4 pl-4 text-gray-700">
+                <ul class="!list-disc !list-inside !space-y-4 !pl-4">
                     <li>
-                        <strong>SECRET_KEY:</strong> Load from Secret Manager or environment variable (set via Secret Manager).
+                        <strong>SECRET_KEY:</strong> Load from Secret Manager (recommended) or environment variable (set via Secret Manager reference in `app.yaml`).
                         <pre><code class="language-python">
 # settings.py
 import os
-# If using google-cloud-secret-manager:
-# from google.cloud import secretmanager
-# def get_secret(secret_id, project_id="your-gcp-project-id", version_id="latest"):
-#     client = secretmanager.SecretManagerServiceClient()
-#     name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
-#     response = client.access_secret_version(request={"name": name})
-#     return response.payload.data.decode("UTF-8")
-# SECRET_KEY = get_secret("YOUR_SECRET_KEY_NAME_IN_SECRET_MANAGER")
+from google.cloud import secretmanager # If loading directly
 
-# Simpler approach: Set SECRET_KEY as env var in app.yaml, backed by Secret Manager
+# Option 1: Load directly from Secret Manager (requires permissions)
+# def get_secret(secret_id, project_id="your-gcp-project-id", version_id="latest"):
+#     try:
+#         client = secretmanager.SecretManagerServiceClient()
+#         name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+#         response = client.access_secret_version(request={"name": name})
+#         return response.payload.data.decode("UTF-8")
+#     except Exception as e:
+#         # Handle error appropriately, maybe raise ImproperlyConfigured
+#         print(f"Error accessing secret: {e}")
+#         return None # Or raise error
+#
+# SECRET_KEY = get_secret("YOUR_SECRET_KEY_NAME_IN_SECRET_MANAGER") or "local-fallback-key-if-needed"
+
+# Option 2: Load from environment variable set via app.yaml referencing Secret Manager
 SECRET_KEY = os.environ.get('SECRET_KEY', 'your-local-dev-secret-key') # Fallback for local
                         </code></pre>
                     </li>
                     <li>
-                        <strong>DEBUG:</strong> Should be `False` in production.
+                        <strong>DEBUG:</strong> Set based on App Engine environment.
                         <pre><code class="language-python">
-DEBUG = os.environ.get('GAE_ENV', '').startswith('standard') is False # True locally, False on GAE
-# Or simply:
-# DEBUG = False
+# settings.py
+# Defaults to True for local dev, False on App Engine Standard
+DEBUG = os.environ.get('GAE_ENV', '') != 'standard'
                         </code></pre>
                     </li>
                     <li>
-                        <strong>ALLOWED_HOSTS:</strong> App Engine provides the hostname via `GAE_APPLICATION` variable.
+                        <strong>ALLOWED_HOSTS:</strong> Get from environment variables or App Engine metadata.
                         <pre><code class="language-python">
 # settings.py
 ALLOWED_HOSTS = []
-APPENGINE_URL = os.environ.get('GAE_APPLICATION', '').split('~')[-1] + '.appspot.com'
-if APPENGINE_URL:
-    ALLOWED_HOSTS.append(APPENGINE_URL)
-# Add custom domains if configured
-# ALLOWED_HOSTS.append('www.yourdomain.com')
-# Add localhost for local development if needed
-# if not os.environ.get('GAE_ENV'):
-#    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+# GAE_APPLICATION format is 'g~project-id' or 's~project-id'
+gae_app_id = os.environ.get('GAE_APPLICATION', '')
+if gae_app_id:
+    project_id = gae_app_id.split('~')[-1]
+    # Default App Engine URL
+    ALLOWED_HOSTS.append(f'{project_id}.appspot.com')
+    # Default service URL (for standard env)
+    ALLOWED_HOSTS.append(f'{project_id}.uc.r.appspot.com') # Check region prefix if not us-central (uc)
+
+# Add custom domain if configured via environment variable
+custom_domain = os.environ.get('CUSTOM_DOMAIN')
+if custom_domain:
+    ALLOWED_HOSTS.append(custom_domain)
+
+# Add localhost and 127.0.0.1 for local development if DEBUG is True
+if DEBUG:
+   ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+
+# Ensure ALLOWED_HOSTS is not empty in production
+if not DEBUG and not ALLOWED_HOSTS:
+    # Log a warning or raise an error if no hosts are allowed in production
+    # For safety, you might add a default if absolutely sure, but explicit config is better.
+    # ALLOWED_HOSTS.append('.appspot.com') # Example fallback (less secure)
+    import warnings
+    warnings.warn("ALLOWED_HOSTS is empty in production environment!")
+
                         </code></pre>
                     </li>
                     <li>
-                        <strong>Database (Cloud SQL):</strong>
-                        <ul class="list-disc list-inside space-y-2 mt-2 pl-4 text-sm text-gray-600">
-                            <li>Enable the <a href="https://console.cloud.google.com/apis/library/sqladmin.googleapis.com" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Cloud SQL Admin API</a> in your GCP project.</li>
-                            <li>Create a Cloud SQL instance (PostgreSQL or MySQL). Note the **Instance connection name**.</li>
-                            <li>Create a database and user within the Cloud SQL instance.</li>
-                            <li>Configure `settings.py` to connect via the Unix socket provided by App Engine:
-                            <pre><code class="language-python">
+                        <strong>Database (Cloud SQL):</strong> Connect via Unix socket in production.
+                        <pre><code class="language-python">
 # settings.py
 import os
 
@@ -218,106 +231,128 @@ if os.getenv('GAE_ENV', '').startswith('standard'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql', # Or mysql
-            'HOST': '/cloudsql/YOUR_INSTANCE_CONNECTION_NAME', # e.g., /cloudsql/project-id:region:instance-id
+            # Get connection name from DB_HOST env var set in app.yaml
+            'HOST': os.environ.get('DB_HOST'), # e.g., /cloudsql/project-id:region:instance-id
             'USER': os.environ.get('DB_USER'), # Set via Secret Manager/env_var
             'PASSWORD': os.environ.get('DB_PASSWORD'), # Set via Secret Manager/env_var
             'NAME': os.environ.get('DB_NAME'), # Set via Secret Manager/env_var
         }
     }
 else:
-    # Local development settings
+    # Local development settings (e.g., SQLite or local Postgres/MySQL)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
-            # Or configure local Postgres/MySQL
         }
     }
-                            </code></pre>
-                            Replace `YOUR_INSTANCE_CONNECTION_NAME` and ensure `DB_USER`, `DB_PASSWORD`, `DB_NAME` are set securely as environment variables (referenced from Secret Manager in `app.yaml` is best).
-                            </li>
-                        </ul>
+                        </code></pre>
+                        Ensure `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` are set securely as environment variables (referenced from Secret Manager in `app.yaml` is best).
                     </li>
                      <li>
                         <strong>Static & Media Files (Cloud Storage - Recommended):</strong>
-                         <ul class="list-disc list-inside space-y-2 mt-2 pl-4 text-sm text-gray-600">
-                            <li>Install `django-storages[google]`.</li>
-                            <li>Enable the <a href="https://console.cloud.google.com/apis/library/storage-component.googleapis.com" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Cloud Storage API</a>.</li>
-                            <li>Create a Google Cloud Storage (GCS) bucket. Make it publicly readable if serving static/media files directly.</li>
-                            <li>Configure `settings.py`:
-                            <pre><code class="language-python">
+                        <pre><code class="language-python">
 # settings.py
+import os
 
-# Static files
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # For collectstatic
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Target for collectstatic
 
-# Media files
+# Media files (User Uploads)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles') # Local media root
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles') # Local media root during development
 
-# Google Cloud Storage Settings (if using GCS)
+# Google Cloud Storage Settings (Production - when GAE_ENV is set)
 if os.getenv('GAE_ENV', '').startswith('standard'):
-    GS_BUCKET_NAME = 'your-gcs-bucket-name' # Replace with your bucket name
-    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-    # Define URL prefix based on bucket name (adjust if using CDN or custom domain)
-    STATIC_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/static/'
-    MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/media/'
-    # Optional: Set specific locations within the bucket
-    # GS_LOCATION = 'static' # For static files
-    # GS_MEDIA_LOCATION = 'media' # For media files
+    # Ensure django-storages[google] is installed
+    GS_BUCKET_NAME = os.environ.get('GS_BUCKET_NAME') # Set in app.yaml or via Secret Manager
+    if GS_BUCKET_NAME:
+        STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+        DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage' # For Media files
+
+        # Define URLs based on bucket name (adjust if using CDN or custom domain)
+        STATIC_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/static/'
+        MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/media/'
+
+        # Optional: Set specific locations within the bucket
+        # GS_LOCATION = 'static' # Handled by STATIC_URL path
+        # GS_MEDIA_LOCATION = 'media' # Handled by MEDIA_URL path
+        # GS_DEFAULT_ACL = 'publicRead' # Make files publicly readable by default
+    else:
+        # Log a warning if running on GAE but bucket name isn't set
+        import warnings
+        warnings.warn("Running on App Engine but GS_BUCKET_NAME not set. Static/Media files might not work correctly.")
 else:
-    # Local storage settings (already defined above or default Django behavior)
+    # Local development storage settings (Django default or others)
     pass
 
 # Important: Ensure your App Engine service account has permissions
-# to write to the GCS bucket (Storage Object Admin role).
-                            </code></pre>
-                            Replace `your-gcs-bucket-name`.
-                            </li>
-                        </ul>
+# to write to the GCS bucket (e.g., Storage Object Admin role).
+                        </code></pre>
+                        Replace `your-gcs-bucket-name` (ideally load from env/secret). Run `collectstatic` before deploying.
+                    </li>
+                    <li>
+                        **Security Middleware (Production):** Enable HTTPS-related settings. App Engine handles SSL termination, so `SECURE_PROXY_SSL_HEADER` is often needed.
+                        <pre><code class="language-python">
+# settings.py
+if os.getenv('GAE_ENV', '').startswith('standard'):
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # Consider HSTS settings carefully
+    # SECURE_HSTS_SECONDS = 31536000 # 1 year
+    # SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    # SECURE_HSTS_PRELOAD = True
+                        </code></pre>
                     </li>
                 </ul>
             </section>
 
             <section id="deployment">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-blue-600">4. Deployment Steps</h2>
-                <ol class="list-decimal list-inside space-y-4 pl-4 text-gray-700">
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">4. Deployment Steps</h2>
+                <ol class="!list-decimal !list-inside !space-y-4 !pl-4">
                     <li>
                         <strong>Set up Google Cloud Project:</strong> Ensure you've run `gcloud init` and selected the correct GCP project.
                         <pre><code class="language-bash">gcloud config set project YOUR_PROJECT_ID</code></pre>
                     </li>
                      <li>
-                        <strong>Enable APIs:</strong> Ensure Cloud Build API, Cloud SQL Admin API (if using Cloud SQL), Secret Manager API, and Cloud Storage API (if using GCS) are enabled for your project. You can do this via the GCP Console or `gcloud services enable [API_NAME]`.
+                        <strong>Enable APIs:</strong> Ensure Cloud Build API, Cloud SQL Admin API (if using Cloud SQL), Secret Manager API, and Cloud Storage API (if using GCS) are enabled for your project.
+                        <pre><code class="language-bash">
+gcloud services enable cloudbuild.googleapis.com
+gcloud services enable sqladmin.googleapis.com
+gcloud services enable secretmanager.googleapis.com
+gcloud services enable storage-component.googleapis.com
+gcloud services enable appengine.googleapis.com
+                        </code></pre>
                     </li>
                     <li>
-                        <strong>Set up Secrets:</strong> Create secrets for `SECRET_KEY`, `DB_PASSWORD`, etc. in Secret Manager. Grant the App Engine service account access to these secrets (Secret Manager Secret Accessor role). Update `app.yaml` to reference them or load them in `settings.py`.
+                        <strong>Set up Secrets:</strong> Create secrets for `SECRET_KEY`, `DB_PASSWORD`, etc. in Secret Manager via GCP Console or `gcloud secrets create ...`. Grant the App Engine service account (`YOUR_PROJECT_ID@appspot.gserviceaccount.com`) access (Secret Manager Secret Accessor role). Update `app.yaml` to reference them or load them in `settings.py`.
                     </li>
                     <li>
-                        <strong>Run `collectstatic` Locally (Important if using GCS):</strong> If using GCS, you need to collect static files locally *before* deploying so they can be uploaded.
+                        <strong>Run `collectstatic` Locally (If using GCS):</strong> Collect static files into the directory specified by `STATIC_ROOT` (e.g., `staticfiles/`).
                         <pre><code class="language-bash">python manage.py collectstatic --noinput</code></pre>
-                        <p class="text-sm text-gray-600">If serving static files directly from App Engine (less common), this step isn't strictly needed before deploy but is good practice.</p>
                     </li>
                     <li>
                         <strong>Deploy the Application:</strong> From your project root directory (where `app.yaml` is).
                         <pre><code class="language-bash">gcloud app deploy</code></pre>
-                        <p class="text-sm text-gray-600">Follow the prompts. This will build your application using Cloud Build, upload files, and start the new version.</p>
-                         <p class="text-sm text-gray-600">Use `gcloud app deploy --version=v2 --no-promote` to deploy a new version without routing traffic to it immediately (for testing).</p>
+                        <p class="!text-xs !mt-1">Follow the prompts. This builds your app using Cloud Build and deploys it.</p>
+                        <p class="!text-xs !mt-1">Use `gcloud app deploy --version=v2 --no-promote` to deploy without immediately routing traffic.</p>
                     </li>
                     <li>
-                        <strong>Run Migrations:</strong> App Engine doesn't run migrations automatically. You need to connect via the Cloud Shell or configure a job. The easiest way is often using the Cloud SQL Proxy locally or from Cloud Shell.
-                        <p class="text-sm text-gray-600 mb-1">Method 1: Using Cloud Shell (Recommended)</p>
-                        <ol class="list-alpha list-inside space-y-1 pl-4 text-sm text-gray-600">
-                            <li>Open Cloud Shell in the GCP Console.</li>
-                            <li>Clone your repository: `git clone ...`</li>
-                            <li>Set up virtualenv & install requirements: `python -m venv env`, `source env/bin/activate`, `pip install -r requirements.txt`</li>
-                            <li>Set required environment variables (DB creds, SECRET_KEY) or load `.env`.</li>
-                            <li>Connect to DB using Cloud SQL Proxy (usually pre-installed in Cloud Shell): `./cloud_sql_proxy -instances=YOUR_INSTANCE_CONNECTION_NAME=tcp:5432 &` (Use port 3306 for MySQL. Run in background).</li>
-                            <li>Run migrations (ensure `settings.py` points to `127.0.0.1:5432` or `127.0.0.1:3306` when proxy is running): `python manage.py migrate`</li>
-                            <li>Create superuser if needed: `python manage.py createsuperuser`</li>
+                        <strong>Run Migrations:</strong> Connect via Cloud Shell or use the Cloud SQL Proxy locally.
+                        <p class="!text-sm !font-semibold !mt-2 !mb-1">Method: Using Cloud Shell</p>
+                        <ol class="!list-alpha !list-inside !space-y-1 !pl-4 !text-xs">
+                            <li>Open Cloud Shell in GCP Console.</li>
+                            <li>Clone repo: `git clone ...` & `cd your-repo`</li>
+                            <li>Setup venv & install: `python -m venv env && source env/bin/activate && pip install -r requirements.txt`</li>
+                            <li>Set env vars (DB creds, SECRET_KEY) OR ensure `settings.py` loads them from Secret Manager.</li>
+                            <li>Start Proxy: `./cloud_sql_proxy -instances=YOUR_INSTANCE_CONNECTION_NAME=tcp:5432 &` (Use 3306 for MySQL. Ensure `settings.py` uses `127.0.0.1` as HOST when proxy runs).</li>
+                            <li>Migrate: `python manage.py migrate`</li>
+                            <li>Create Superuser: `python manage.py createsuperuser`</li>
+                            <li>Stop proxy (find process ID `ps aux | grep cloud_sql_proxy` and use `kill [PID]`).</li>
                         </ol>
-                         <p class="text-sm text-gray-600 mt-2 mb-1">Method 2: Configure as a separate App Engine service or Cloud Run job (More advanced).</p>
                     </li>
                     <li>
                         <strong>Browse your app:</strong>
@@ -327,31 +362,32 @@ else:
             </section>
 
             <section id="troubleshooting">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-blue-600">5. Troubleshooting</h2>
-                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">5. Troubleshooting</h2>
+                <ul class="!list-disc !list-inside !space-y-2 !pl-4">
                     <li>
-                        <strong>Check Logs:</strong> Use the GCP Console (Logging > Logs Explorer, filter by App Engine Application) or the gcloud CLI.
+                        <strong>Check Logs:</strong> Use GCP Console (Logging > Logs Explorer) or gcloud CLI.
                         <pre><code class="language-bash">
-gcloud app logs tail -s default # View logs for the default service
+# Stream logs for default service
+gcloud app logs tail -s default
+# Read recent logs
 gcloud app logs read
                         </code></pre>
                     </li>
-                     <li><strong>Build Failures:</strong> Check Cloud Build logs in the GCP Console. Often related to `requirements.txt` issues or missing files.</li>
-                    <li><strong>500 Server Errors:</strong> Check App Engine request logs and application logs for Django tracebacks. Common causes: database connection errors, missing environment variables/secrets, incorrect `ALLOWED_HOSTS`, errors in `settings.py`.</li>
-                    <li><strong>Static Files Not Loading:</strong> If serving directly, check `static_dir` path in `app.yaml` and ensure `collectstatic` ran. If using GCS, check bucket permissions, `STATICFILES_STORAGE` settings, `GS_BUCKET_NAME`, and ensure `collectstatic` ran *before* deploy.</li>
-                    <li><strong>Database Connection Issues:</strong> Verify Cloud SQL instance is running, proxy connection name is correct, database user/password are correct (and accessible via Secret Manager/env vars), and Cloud SQL Admin API is enabled. Ensure the App Engine service account has the "Cloud SQL Client" role.</li>
-                    <li><strong>Permissions Errors:</strong> Ensure the App Engine service account (`YOUR_PROJECT_ID@appspot.gserviceaccount.com`) has necessary IAM roles (e.g., Cloud SQL Client, Secret Manager Secret Accessor, Storage Object Admin).</li>
-                    <li>Consult the <a href="https://cloud.google.com/appengine/docs/standard/python3/runtime" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">App Engine Standard Environment for Python 3 Docs</a>.</li>
+                     <li><strong>Build Failures:</strong> Check Cloud Build history in GCP Console. Often `requirements.txt` errors or missing files in upload.</li>
+                    <li><strong>500 Server Errors:</strong> Check App Engine request logs (`stdout`, `stderr`) for Django tracebacks. Common: DB connection, missing secrets/env vars, `ALLOWED_HOSTS`, `settings.py` errors.</li>
+                    <li><strong>Static Files Not Loading:</strong> If direct serving: check `static_dir` in `app.yaml`. If GCS: check bucket permissions, `STATICFILES_STORAGE`/`GS_BUCKET_NAME` settings, ensure `collectstatic` ran *before* deploy, check `STATIC_URL`.</li>
+                    <li><strong>Database Connection Issues:</strong> Verify Cloud SQL instance/proxy running, connection name correct, DB user/pass correct & accessible, Cloud SQL Admin API enabled. Check App Engine service account has "Cloud SQL Client" IAM role.</li>
+                    <li><strong>Permissions Errors:</strong> Ensure App Engine service account (`YOUR_PROJECT_ID@appspot.gserviceaccount.com`) has necessary IAM roles (Cloud SQL Client, Secret Manager Secret Accessor, Storage Object Admin/Viewer).</li>
+                    <li>Consult the <a href="https://cloud.google.com/appengine/docs/standard/python3/runtime" target="_blank" rel="noopener noreferrer">App Engine Standard Python 3 Docs</a>.</li>
                 </ul>
             </section>
 
-        </main>
+        </div>{# End Prose #}
+    </main>
 
-        <footer class="text-center text-gray-500 mt-8 text-sm">
-            <p>Happy Deploying on Google Cloud!</p>
-        </footer>
-
+    <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
     </div>
 
-</body>
-</html>
+</div>
+{% endblock %}

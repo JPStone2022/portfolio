@@ -1,133 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django Deployment Platform Comparison</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Apply Inter font */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Style for code blocks (less used here) */
-        pre {
-            background-color: #1f2937; /* bg-gray-800 */
-            color: #f3f4f6; /* text-gray-100 */
-            padding: 1rem;
-            border-radius: 0.5rem; /* rounded-lg */
-            overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.875rem; /* text-sm */
-        }
-        code {
-             font-family: 'Courier New', Courier, monospace;
-             background-color: #e5e7eb; /* bg-gray-200 */
-             padding: 0.1rem 0.3rem;
-             border-radius: 0.25rem; /* rounded */
-             font-size: 0.875rem; /* text-sm */
-             color: #1f2937; /* text-gray-800 */
-        }
-        pre code {
-            background-color: transparent;
-            padding: 0;
-            border-radius: 0;
-            color: inherit;
-        }
-        /* Style for headings */
-        h1, h2, h3 {
-            font-weight: 600; /* font-semibold */
-        }
-        /* Table styles */
-        th, td {
-            padding: 0.75rem; /* p-3 */
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb; /* border-b border-gray-200 */
-        }
-        th {
-            background-color: #f9fafb; /* bg-gray-50 */
-            font-weight: 600; /* font-semibold */
-            font-size: 0.875rem; /* text-sm */
-            color: #4b5563; /* text-gray-600 */
-        }
-        tbody tr:nth-child(even) {
-            background-color: #f9fafb; /* bg-gray-50 */
-        }
-        .platform-color-heroku { color: #673ab7; } /* Indigo-ish */
-        .platform-color-render { color: #0891b2; } /* Cyan */
-        .platform-color-pythonanywhere { color: #16a34a; } /* Green */
-        .platform-color-gae { color: #1d4ed8; } /* Blue */
-        .platform-color-eb { color: #ea580c; } /* Orange */
+{# demos/templates/demos/deploying_django_comparisons.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
 
-    </style>
-</head>
-<body class="bg-gray-100 text-gray-800 leading-relaxed">
+{% block title %}{{ page_title|default:"Comparison: Django Deployment Platforms" }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Comparing Heroku, Render, PythonAnywhere, Google App Engine, and AWS Elastic Beanstalk for Django deployment." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Django, Deployment, Comparison, Heroku, Render, PythonAnywhere, Google App Engine, AWS Elastic Beanstalk, PaaS" }}{% endblock %}
 
-    <div class="container mx-auto p-4 md:p-8 max-w-6xl"> <header class="mb-8 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Comparison: Django Deployment Platforms</h1>
-            <p class="text-lg text-gray-600">Heroku vs. Render vs. PythonAnywhere vs. Google App Engine vs. AWS Elastic Beanstalk</p>
-        </header>
+{% block content %}
+<div class="container mx-auto px-6 py-12">
 
-        <main class="bg-white p-6 md:p-8 rounded-lg shadow-md space-y-10">
+    <header class="mb-10 text-center">
+        {# Gradient heading #}
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-700 via-gray-800 to-black dark:from-gray-300 dark:via-gray-200 dark:to-white bg-clip-text text-transparent">
+            {{ page_title|default:"Comparison: Django Deployment Platforms" }}
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400">Heroku vs. Render vs. PythonAnywhere vs. Google App Engine vs. AWS Elastic Beanstalk</p>
+        {# Optional: Add last updated date #}
+        {# <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Comparison current as of: May 2025</p> #}
+    </header>
+
+    <main class="max-w-6xl mx-auto bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg dark:shadow-gray-900/20 transition-colors duration-300 ease-in-out">
+        {# Use prose for introductory/concluding text sections #}
+        <div class="prose prose-indigo dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-10">
 
             <section>
-                 <p class="text-lg text-gray-700">Deploying a Django application involves choosing a platform that balances ease of use, control, scalability, and cost. This guide compares five popular options: Heroku, Render, PythonAnywhere, Google App Engine (Standard), and AWS Elastic Beanstalk.</p>
+                 <p>Deploying a Django application involves choosing a platform that balances ease of use, control, scalability, and cost. This guide compares five popular Platform-as-a-Service (PaaS) options.</p>
             </section>
 
             <section id="overview">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-6 text-gray-700">Platform Overviews</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <article class="p-4 border border-gray-200 rounded-lg shadow-sm">
-                        <h3 class="text-xl font-semibold mb-2 platform-color-heroku">Heroku (PaaS)</h3>
-                        <p class="text-sm text-gray-600">Pioneer PaaS, known for simplicity and developer experience. Git-based deploys, large add-on marketplace. Can get expensive.</p>
+                {# Use standard heading style from prose, override size/margin if needed #}
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-6 text-gray-800 dark:text-gray-100">Platform Overviews</h2>
+                {# Use 'not-prose' on the container for custom grid/card styling #}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 not-prose">
+                    <article class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800/50">
+                        <h3 class="text-xl font-semibold mb-2 text-indigo-600 dark:text-indigo-400">Heroku</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Pioneer PaaS, known for simplicity and DX. Git-based deploys, large add-on marketplace. Can get expensive; free tier limitations changed.</p>
                     </article>
-                    <article class="p-4 border border-gray-200 rounded-lg shadow-sm">
-                        <h3 class="text-xl font-semibold mb-2 platform-color-render">Render (PaaS)</h3>
-                        <p class="text-sm text-gray-600">Modern Heroku alternative with predictable pricing. Native support for background workers, cron jobs, private networking. Free tiers available.</p>
+                    <article class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800/50">
+                        <h3 class="text-xl font-semibold mb-2 text-cyan-600 dark:text-cyan-400">Render</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Modern Heroku alternative with predictable pricing. Native support for background workers, cron jobs, private networking. Generous free tiers.</p>
                     </article>
-                    <article class="p-4 border border-gray-200 rounded-lg shadow-sm">
-                        <h3 class="text-xl font-semibold mb-2 platform-color-pythonanywhere">PythonAnywhere (PaaS)</h3>
-                        <p class="text-sm text-gray-600">Python-focused platform, very beginner-friendly web UI setup. Good for small projects/learning. Less flexible scaling.</p>
+                    <article class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800/50">
+                        <h3 class="text-xl font-semibold mb-2 text-green-600 dark:text-green-400">PythonAnywhere</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Python-focused platform, very beginner-friendly web UI setup. Good for small projects/learning. Less flexible scaling/config.</p>
                     </article>
-                     <article class="p-4 border border-gray-200 rounded-lg shadow-sm">
-                        <h3 class="text-xl font-semibold mb-2 platform-color-gae">Google App Engine (PaaS)</h3>
-                        <p class="text-sm text-gray-600">Highly scalable Google Cloud service. Standard environment is sandboxed and simple; Flexible environment offers more control (Docker). Integrates deeply with GCP.</p>
+                     <article class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800/50">
+                        <h3 class="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400">Google App Engine (Std)</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Highly scalable GCP service. Standard environment is sandboxed and simple; Flex offers Docker. Deep GCP integration.</p>
                     </article>
-                     <article class="p-4 border border-gray-200 rounded-lg shadow-sm">
-                        <h3 class="text-xl font-semibold mb-2 platform-color-eb">AWS Elastic Beanstalk (PaaS)</h3>
-                        <p class="text-sm text-gray-600">AWS's PaaS offering. Manages EC2, Load Balancers, etc. More configuration options (and complexity) than Heroku/Render. Leverages the broad AWS ecosystem.</p>
+                     <article class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800/50">
+                        <h3 class="text-xl font-semibold mb-2 text-orange-600 dark:text-orange-400">AWS Elastic Beanstalk</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">AWS PaaS. Manages EC2, Load Balancers, etc. More config options (and complexity) than Heroku/Render. Leverages AWS ecosystem.</p>
                     </article>
                 </div>
             </section>
 
             <section id="comparison-table">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-6 text-gray-700">Feature Comparison</h2>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full">
-                        <thead>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-6 text-gray-800 dark:text-gray-100">Feature Comparison</h2>
+                {# Use 'not-prose' on the container for custom table styling #}
+                <div class="overflow-x-auto shadow rounded-lg border border-gray-200 dark:border-gray-700 not-prose">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-100 dark:bg-gray-700"> {# Slightly darker header #}
                             <tr>
-                                <th>Feature</th>
-                                <th class="platform-color-heroku">Heroku</th>
-                                <th class="platform-color-render">Render</th>
-                                <th class="platform-color-pythonanywhere">PythonAnywhere</th>
-                                <th class="platform-color-gae">Google App Engine (Std)</th>
-                                <th class="platform-color-eb">AWS Elastic Beanstalk</th>
+                                {# Use Tailwind text classes for header colors #}
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Feature</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Heroku</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">Render</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wider">PythonAnywhere</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wider">GAE (Std)</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-orange-600 dark:text-orange-400 uppercase tracking-wider">AWS EB</th>
                             </tr>
                         </thead>
-                        <tbody class="text-sm text-gray-700">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 text-sm text-gray-700 dark:text-gray-300">
+                            {# Use alternating row colors with Tailwind #}
                             <tr>
-                                <td class="font-medium">Primary Type</td>
+                                <td class="px-4 py-3 font-medium">Primary Type</td>
                                 <td>PaaS</td>
                                 <td>PaaS</td>
                                 <td>PaaS (Python-focused)</td>
                                 <td>PaaS</td>
                                 <td>PaaS</td>
                             </tr>
-                            <tr>
-                                <td class="font-medium">Ease of Use</td>
+                            <tr class="bg-gray-50 dark:bg-gray-700/50">
+                                <td class="px-4 py-3 font-medium">Ease of Use</td>
                                 <td>Very High</td>
                                 <td>High</td>
                                 <td>Very High (Web UI)</td>
@@ -135,31 +90,31 @@
                                 <td>Medium</td>
                             </tr>
                             <tr>
-                                <td class="font-medium">Deployment</td>
+                                <td class="px-4 py-3 font-medium">Deployment</td>
                                 <td>Git Push, CLI</td>
                                 <td>Git Push (Auto), CLI, IaC (`render.yaml`)</td>
                                 <td>Git Clone/Upload + Web UI Setup</td>
                                 <td>CLI (`gcloud app deploy`)</td>
                                 <td>CLI (`eb deploy`), Console, Git</td>
                             </tr>
-                             <tr>
-                                <td class="font-medium">Configuration</td>
-                                <td>`Procfile`, `requirements.txt`, `runtime.txt`, Web UI/CLI Vars</td>
-                                <td>`requirements.txt`, `runtime.txt`, `build.sh` (opt), `render.yaml` (opt), Web UI/CLI Vars</td>
+                             <tr class="bg-gray-50 dark:bg-gray-700/50">
+                                <td class="px-4 py-3 font-medium">Configuration</td>
+                                <td>`Procfile`, `requirements.txt`, `runtime.txt`, Config Vars</td>
+                                <td>`requirements.txt`, `runtime.txt`, `build.sh` (opt), `render.yaml` (opt), Env Vars</td>
                                 <td>`requirements.txt`, Web UI, WSGI file edits</td>
-                                <td>`app.yaml`, `requirements.txt`, `.gcloudignore`, Web UI/CLI Vars, Secret Manager</td>
-                                <td>`requirements.txt`, `.platform`/`.ebextensions`, Web UI/CLI Vars</td>
+                                <td>`app.yaml`, `requirements.txt`, `.gcloudignore`, Env Vars, Secret Manager</td>
+                                <td>`requirements.txt`, `.platform`/`.ebextensions`, Env Vars</td>
                             </tr>
                              <tr>
-                                <td class="font-medium">Control</td>
+                                <td class="px-4 py-3 font-medium">Control</td>
                                 <td>Low</td>
                                 <td>Low-Medium</td>
                                 <td>Low</td>
                                 <td>Low (Standard Env)</td>
                                 <td>Medium-High</td>
                             </tr>
-                             <tr>
-                                <td class="font-medium">Scalability</td>
+                             <tr class="bg-gray-50 dark:bg-gray-700/50">
+                                <td class="px-4 py-3 font-medium">Scalability</td>
                                 <td>Easy (Slider), Expensive</td>
                                 <td>Easy (Plan change), Predictable cost</td>
                                 <td>Limited (Plan change)</td>
@@ -167,44 +122,44 @@
                                 <td>High (Auto Scaling Groups)</td>
                             </tr>
                              <tr>
-                                <td class="font-medium">Free Tier</td>
-                                <td>Limited (Eco/Mini plans, previously free)</td>
-                                <td>Yes (Web Service, DB, Redis)</td>
+                                <td class="px-4 py-3 font-medium">Free Tier</td>
+                                <td>Limited (Eco/Mini plans)</td>
+                                <td>Yes (Web Svc, DB, Redis, Cron)</td>
                                 <td>Yes (Limited resources)</td>
                                 <td>Yes (Generous F-instance hours)</td>
-                                <td>Yes (via underlying AWS Free Tier - EC2, RDS etc.)</td>
+                                <td>Yes (via underlying AWS Free Tier)</td>
+                            </tr>
+                             <tr class="bg-gray-50 dark:bg-gray-700/50">
+                                <td class="px-4 py-3 font-medium">Database</td>
+                                <td>Add-on (Heroku PG)</td>
+                                <td>Managed Service (Render PG)</td>
+                                <td>SQLite, Managed MySQL/PG (Paid)</td>
+                                <td>Cloud SQL (Managed PG/MySQL/SQL Server)</td>
+                                <td>RDS (Managed PG/MySQL/etc.)</td>
                             </tr>
                              <tr>
-                                <td class="font-medium">Database</td>
-                                <td>Add-on (Heroku Postgres)</td>
-                                <td>Managed Service (Render PG), External</td>
-                                <td>Built-in SQLite, Managed MySQL/PG (Paid)</td>
-                                <td>Cloud SQL (Managed PG/MySQL/SQL Server), External</td>
-                                <td>RDS (Managed), External</td>
-                            </tr>
-                             <tr>
-                                <td class="font-medium">Static Files</td>
-                                <td>WhiteNoise (common) or S3/CDN</td>
-                                <td>WhiteNoise (common) or Object Storage/CDN</td>
+                                <td class="px-4 py-3 font-medium">Static Files</td>
+                                <td>WhiteNoise or S3/CDN</td>
+                                <td>WhiteNoise or Object Storage/CDN</td>
                                 <td>Direct Mapping (Web UI)</td>
-                                <td>Direct Mapping or GCS (recommended)</td>
-                                <td>WhiteNoise or S3/CloudFront (recommended)</td>
+                                <td>Direct Mapping or GCS (Recommended)</td>
+                                <td>WhiteNoise or S3/CloudFront (Recommended)</td>
                             </tr>
-                             <tr>
-                                <td class="font-medium">CLI Tool</td>
+                             <tr class="bg-gray-50 dark:bg-gray-700/50">
+                                <td class="px-4 py-3 font-medium">CLI Tool</td>
                                 <td>`heroku`</td>
                                 <td>`render`</td>
-                                <td>(None specific, uses standard Linux)</td>
+                                <td>(None specific)</td>
                                 <td>`gcloud`</td>
                                 <td>`eb`</td>
                             </tr>
                              <tr>
-                                <td class="font-medium">Best For</td>
-                                <td>Quick Startups, Prototypes, Simple Apps, Add-on Ecosystem</td>
-                                <td>Startups, Predictable Costs, Integrated Services (Workers, Cron)</td>
+                                <td class="px-4 py-3 font-medium">Best For</td>
+                                <td>Quick Startups, Simple Apps, Add-on Ecosystem</td>
+                                <td>Startups, Predictable Costs, Integrated Services</td>
                                 <td>Beginners, Education, Small/Personal Projects</td>
-                                <td>Scalable Apps, GCP Integration, Microservices (Flex Env)</td>
-                                <td>AWS Integration, More Config Control, Existing AWS Users</td>
+                                <td>Scalable Apps, GCP Integration, Microservices</td>
+                                <td>AWS Integration, More Config Control, AWS Users</td>
                             </tr>
                         </tbody>
                     </table>
@@ -212,52 +167,51 @@
             </section>
 
             <section id="similarities">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-gray-700">Key Similarities</h2>
-                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
-                    <li>All are PaaS (Platform-as-a-Service) providers, abstracting away much of the server management.</li>
-                    <li>All support Python and Django deployment.</li>
-                    <li>Most rely on `requirements.txt` for dependency management.</li>
-                    <li>Most offer managed database solutions (though implementation varies).</li>
-                    <li>Most have mechanisms for setting environment variables for configuration and secrets.</li>
-                    <li>Most support Git-based workflows for deployment (though PythonAnywhere is more manual).</li>
-                    <li>All require configuration of static file serving for production (either via WhiteNoise, direct mapping, or cloud storage).</li>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">Key Similarities</h2>
+                <ul class="!list-disc !list-inside !space-y-2 !pl-4">
+                    <li>All are PaaS providers, abstracting server management.</li>
+                    <li>All support Python/Django deployment.</li>
+                    <li>Most use `requirements.txt` for dependencies.</li>
+                    <li>Most offer managed database solutions.</li>
+                    <li>Most use environment variables for configuration/secrets.</li>
+                    <li>Most support Git-based deployment workflows.</li>
+                    <li>All require configuration for serving static files in production.</li>
                 </ul>
             </section>
 
             <section id="differences">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-gray-700">Key Differences</h2>
-                 <ul class="list-disc list-inside space-y-3 pl-4 text-gray-700">
-                    <li><strong>Configuration Complexity:</strong> PythonAnywhere (Web UI) and Heroku/Render (simple files/vars) are generally simpler than GAE (`app.yaml`) and especially EB (`.platform`/`.ebextensions`).</li>
-                    <li><strong>Deployment Method:</strong> Heroku/Render focus on `git push`. GAE/EB use dedicated CLIs (`gcloud`/`eb`). PythonAnywhere uses `git clone` + Web UI setup.</li>
-                    <li><strong>Control vs. Abstraction:</strong> EB offers the most control over underlying resources (EC2 instances), while GAE Standard and PythonAnywhere offer the least. Heroku and Render sit in the middle.</li>
-                    <li><strong>Pricing Model:</strong> Heroku's dyno hours can be complex. Render aims for predictability. PythonAnywhere is tiered. GAE/EB costs depend heavily on underlying GCP/AWS resource usage.</li>
-                    <li><strong>Ecosystem Integration:</strong> GAE and EB integrate deeply with their respective cloud ecosystems (GCP/AWS), offering more related services but potentially leading to vendor lock-in. Heroku has a large third-party add-on market.</li>
-                    <li><strong>Static/Media Files:</strong> PythonAnywhere uses direct path mapping. GAE/EB strongly recommend cloud storage (GCS/S3). Heroku/Render often use WhiteNoise or cloud storage.</li>
-                     <li><strong>Database Provisioning:</strong> Heroku/Render offer tightly integrated managed databases. PythonAnywhere includes SQLite/MySQL. GAE/EB connect to separate managed database services (Cloud SQL/RDS).</li>
-                </ul>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">Key Differences</h2>
+                 <ul class="!list-disc !list-inside !space-y-3 !pl-4">
+                    <li><strong>Configuration Complexity:</strong> PythonAnywhere < Heroku ≈ Render < GAE < EB.</li>
+                    <li><strong>Deployment Method:</strong> Git push (Heroku/Render), Platform CLI (GAE/EB), Git clone + UI (PythonAnywhere).</li>
+                    <li><strong>Control vs. Abstraction:</strong> EB offers most control, GAE Std/PythonAnywhere least.</li>
+                    <li><strong>Pricing Model:</strong> Varies significantly (Usage-based, Tiered, Predictable Plans).</li>
+                    <li><strong>Ecosystem Integration:</strong> GAE/EB integrate deeply with GCP/AWS. Heroku has add-ons. Render integrates common services.</li>
+                    <li><strong>Static/Media Files:</strong> Direct mapping (PythonAnywhere), Cloud Storage focus (GAE/EB), WhiteNoise/Cloud Storage (Heroku/Render).</li>
+                 </ul>
             </section>
 
             <section id="conclusion">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-gray-700">Conclusion</h2>
-                <p class="text-gray-700">
-                    There's no single "best" platform; the ideal choice depends on your project's needs, your technical expertise, budget, and scalability requirements.
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">Conclusion</h2>
+                <p>
+                    There's no single "best" platform; the ideal choice depends on your project's needs, technical expertise, budget, and scalability requirements.
                 </p>
-                 <ul class="list-disc list-inside space-y-2 pl-4 mt-4 text-gray-700">
-                     <li>For **beginners or simple projects**, <strong class="platform-color-pythonanywhere">PythonAnywhere</strong> offers the gentlest learning curve.</li>
-                     <li>For **rapid development and ease of use**, <strong class="platform-color-heroku">Heroku</strong> and <strong class="platform-color-render">Render</strong> are excellent choices, with Render often having more predictable pricing.</li>
-                     <li>For **high scalability within the Google ecosystem**, <strong class="platform-color-gae">Google App Engine</strong> is a powerful option.</li>
-                     <li>For **more control and deep integration with AWS**, <strong class="platform-color-eb">AWS Elastic Beanstalk</strong> provides flexibility but requires more configuration.</li>
+                 <ul class="!list-disc !list-inside !space-y-2 !pl-4 !mt-4">
+                     {# Using Tailwind text colors directly for emphasis #}
+                     <li>For **beginners or simple projects**, <strong class="text-green-600 dark:text-green-400">PythonAnywhere</strong> offers the gentlest learning curve.</li>
+                     <li>For **rapid development and ease of use**, <strong class="text-indigo-600 dark:text-indigo-400">Heroku</strong> and <strong class="text-cyan-600 dark:text-cyan-400">Render</strong> are excellent, with Render often having more predictable pricing and better free tiers.</li>
+                     <li>For **high scalability within the Google ecosystem**, <strong class="text-blue-600 dark:text-blue-400">Google App Engine</strong> is powerful.</li>
+                     <li>For **more control and deep integration with AWS**, <strong class="text-orange-600 dark:text-orange-400">AWS Elastic Beanstalk</strong> provides flexibility but requires more configuration.</li>
                  </ul>
-                 <p class="mt-4 text-gray-700">Evaluate the trade-offs based on the comparison above and the specific requirements of your Django application.</p>
+                 <p class="!mt-4">Evaluate the trade-offs based on the comparison above and your specific requirements.</p>
             </section>
 
-        </main>
+        </div>{# End Prose #}
+    </main>
 
-        <footer class="text-center text-gray-500 mt-8 text-sm">
-            <p>Choose the platform that fits your project best!</p>
-        </footer>
-
+    <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
     </div>
 
-</body>
-</html>
+</div>
+{% endblock %}

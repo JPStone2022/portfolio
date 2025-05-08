@@ -3,6 +3,8 @@
 {% load static %}
 
 {% block title %}{{ page_title }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Demonstration of Simple CSV Data Analyzer with basic descriptive statistics and a distribution plot." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"data analyser, CSV file analysis, descriptive statistics, distribution plot" }}{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-6 py-12">

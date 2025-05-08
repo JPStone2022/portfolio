@@ -1,323 +1,277 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deploying Django to PythonAnywhere Guide</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Apply Inter font */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Style for code blocks */
-        pre {
-            background-color: #1f2937; /* bg-gray-800 */
-            color: #f3f4f6; /* text-gray-100 */
-            padding: 1rem;
-            border-radius: 0.5rem; /* rounded-lg */
-            overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.875rem; /* text-sm */
-        }
-        code {
-             font-family: 'Courier New', Courier, monospace;
-             background-color: #e5e7eb; /* bg-gray-200 */
-             padding: 0.1rem 0.3rem;
-             border-radius: 0.25rem; /* rounded */
-             font-size: 0.875rem; /* text-sm */
-             color: #1f2937; /* text-gray-800 */
-        }
-        pre code {
-            background-color: transparent;
-            padding: 0;
-            border-radius: 0;
-            color: inherit;
-        }
-        /* Style for headings */
-        h1, h2, h3 {
-            font-weight: 600; /* font-semibold */
-        }
-        /* Style for console/bash prompts */
-        .bash-prompt::before {
-            content: "$ ";
-            color: #9ca3af; /* text-gray-400 */
-        }
-        .pythonanywhere-prompt::before {
-            content: "(your_virtualenv) $ "; /* Adjust as needed */
-            color: #60a5fa; /* text-blue-400 */
-        }
-    </style>
-</head>
-<body class="bg-gray-100 text-gray-800 leading-relaxed">
+{# demos/templates/demos/deploying_django_app_to_pythonanywhere.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
 
-    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+{% block title %}{{ page_title|default:"Deploying Django to PythonAnywhere" }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Step-by-step guide for deploying Django applications to PythonAnywhere.com." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Django, PythonAnywhere, Deployment, Guide, Python, WSGI, Hosting" }}{% endblock %}
 
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-green-700 mb-2">Deploying Your Django Project to PythonAnywhere</h1>
-            <p class="text-lg text-gray-600">A step-by-step guide to get your Django app live on PythonAnywhere.com.</p>
-        </header>
+{% block content %}
+<div class="container mx-auto px-6 py-12">
 
-        <main class="bg-white p-6 md:p-8 rounded-lg shadow-md space-y-8">
+    <header class="mb-10 text-center">
+        {# Gradient heading #}
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-green-500 via-lime-500 to-yellow-500 dark:from-green-400 dark:via-lime-400 dark:to-yellow-400 bg-clip-text text-transparent">
+            {{ page_title|default:"Deploying Django to PythonAnywhere" }}
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400">A step-by-step guide to get your Django app live on PythonAnywhere.com.</p>
+    </header>
+
+    <main class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg dark:shadow-lime-900/20 transition-colors duration-300 ease-in-out">
+        {# Use prose for overall text formatting #}
+        <div class="prose prose-indigo dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-8">
 
             <section id="prerequisites">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-green-600">1. Prerequisites</h2>
-                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">1. Prerequisites</h2>
+                <ul class="!list-disc !list-inside !space-y-2 !pl-4">
                     <li>A working Django project.</li>
                     <li>A `requirements.txt` file listing all dependencies (generate with <code>pip freeze > requirements.txt</code>).</li>
-                    <li>A <a href="https://www.pythonanywhere.com/registration/register/beginner/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">PythonAnywhere account</a> (Free "Beginner" tier available).</li>
+                    <li>A <a href="https://www.pythonanywhere.com/registration/register/beginner/" target="_blank" rel="noopener noreferrer">PythonAnywhere account</a> (Free "Beginner" tier available).</li>
                     <li>Your code available via Git (GitHub, GitLab, Bitbucket) OR ready to upload as a zip file.</li>
                     <li>Basic familiarity with the Linux command line (used in PythonAnywhere consoles).</li>
                 </ul>
             </section>
 
             <section id="upload-project">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-green-600">2. Upload Your Project</h2>
-                <p class="mb-4 text-gray-700">Get your code onto PythonAnywhere's servers.</p>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">2. Upload Your Project</h2>
+                <p>Get your code onto PythonAnywhere's servers.</p>
 
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2">Option A: Using Git (Recommended)</h3>
-                    <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700">
-                        <li>Open a "Bash Console" from the PythonAnywhere "Consoles" tab.</li>
-                        <li>Clone your repository:
-                            <pre><code class="language-bash bash-prompt">git clone https://github.com/yourusername/your-repo-name.git</code></pre>
-                            <p class="text-sm text-gray-600 mt-1">(Replace with your actual repository URL).</p>
-                        </li>
-                        <li>Your code will now be in a directory named `your-repo-name` inside your PythonAnywhere home directory (`/home/yourusername/`).</li>
-                    </ol>
-                </div>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="!text-xl !font-semibold !mb-2">Option A: Using Git (Recommended)</h3>
+                        <ol class="!list-decimal !list-inside !space-y-2 !pl-4">
+                            <li>Open a "Bash Console" from the PythonAnywhere "Consoles" tab.</li>
+                            <li>Clone your repository:
+                                <pre><code class="language-bash">git clone https://github.com/yourusername/your-repo-name.git</code></pre>
+                                <p class="!text-xs !mt-1">(Replace with your actual repository URL).</p>
+                            </li>
+                            <li>Your code will now be in a directory named `your-repo-name` inside your PythonAnywhere home directory (`/home/yourusername/`).</li>
+                        </ol>
+                    </div>
 
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2">Option B: Uploading a Zip File</h3>
-                     <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700">
-                        <li>Zip your entire project directory locally.</li>
-                        <li>Go to the "Files" tab on PythonAnywhere.</li>
-                        <li>Navigate to the directory where you want your project (usually your home directory).</li>
-                        <li>Use the "Upload a file" button to upload your zip file.</li>
-                        <li>Open a "Bash Console".</li>
-                        <li>Unzip the file:
-                            <pre><code class="language-bash bash-prompt">unzip your_project.zip</code></pre>
-                        </li>
-                    </ol>
+                    <div>
+                        <h3 class="!text-xl !font-semibold !mb-2">Option B: Uploading a Zip File</h3>
+                         <ol class="!list-decimal !list-inside !space-y-2 !pl-4">
+                            <li>Zip your entire project directory locally.</li>
+                            <li>Go to the "Files" tab on PythonAnywhere.</li>
+                            <li>Navigate to the directory where you want your project (usually your home directory).</li>
+                            <li>Use the "Upload a file" button to upload your zip file.</li>
+                            <li>Open a "Bash Console".</li>
+                            <li>Unzip the file:
+                                <pre><code class="language-bash">unzip your_project.zip</code></pre>
+                            </li>
+                        </ol>
+                    </div>
                 </div>
-                 <p class="text-sm text-gray-600">Let's assume your project code is now located at `/home/yourusername/your-repo-name/`. Remember this path.</p>
+                 <p class="!text-sm !mt-4">Assume your project code is now located at `/home/yourusername/your-repo-name/`. Remember this path.</p>
             </section>
 
             <section id="virtualenv">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-green-600">3. Set Up Virtual Environment</h2>
-                <p class="mb-4 text-gray-700">Create and configure a virtual environment for your project on PythonAnywhere.</p>
-                 <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700">
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">3. Set Up Virtual Environment</h2>
+                <p>Create and configure a virtual environment for your project on PythonAnywhere.</p>
+                 <ol class="!list-decimal !list-inside !space-y-2 !pl-4">
                     <li>In your Bash Console, navigate *outside* your project directory (optional, but common practice).</li>
                     <li>Create the virtual environment using a specific Python version (check PythonAnywhere's available versions):
-                        <pre><code class="language-bash bash-prompt">mkvirtualenv --python=/usr/bin/python3.10 myenv</code></pre>
-                        <p class="text-sm text-gray-600 mt-1">Replace `python3.10` with your desired version and `myenv` with your preferred environment name. This automatically activates the environment.</p>
+                        <pre><code class="language-bash">mkvirtualenv --python=/usr/bin/python3.10 myenv</code></pre>
+                        <p class="!text-xs !mt-1">Replace `python3.10` with your desired version and `myenv` with your preferred environment name. This automatically activates the environment.</p>
                     </li>
                     <li>Navigate into your project directory:
-                        <pre><code class="language-bash pythonanywhere-prompt">cd /home/yourusername/your-repo-name/</code></pre>
+                        <pre><code class="language-bash">cd /home/yourusername/your-repo-name/</code></pre>
+                        <p class="!text-xs !mt-1">(Use `workon myenv` if you need to reactivate the virtualenv later).</p>
                     </li>
                     <li>Install dependencies from your `requirements.txt`:
-                         <pre><code class="language-bash pythonanywhere-prompt">pip install -r requirements.txt</code></pre>
+                         <pre><code class="language-bash">pip install -r requirements.txt</code></pre>
                     </li>
-                    <li>Remember the full path to your virtual environment. It's usually something like `/home/yourusername/.virtualenvs/myenv`. You can find it using:
-                        <pre><code class="language-bash pythonanywhere-prompt">which python</code></pre>
-                        (The path will be like `/home/yourusername/.virtualenvs/myenv/bin/python`).
-                    </li>
+                    <li>Remember the full path to your virtual environment. It's usually `/home/yourusername/.virtualenvs/myenv`. Find it using `which python` while the environment is active.</li>
                 </ol>
             </section>
 
             <section id="web-app-setup">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-green-600">4. Configure the Web App</h2>
-                <p class="mb-4 text-gray-700">Use the PythonAnywhere web interface to set up the web application.</p>
-                 <ol class="list-decimal list-inside space-y-3 pl-4 text-gray-700">
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">4. Configure the Web App</h2>
+                <p>Use the PythonAnywhere web interface to set up the web application.</p>
+                 <ol class="!list-decimal !list-inside !space-y-3 !pl-4">
                     <li>Go to the "Web" tab on your PythonAnywhere dashboard.</li>
                     <li>Click "Add a new web app".</li>
                     <li>Follow the prompts:
-                        <ul class="list-disc list-inside space-y-1 mt-2 pl-4 text-sm text-gray-600">
-                            <li>Your domain name will be `yourusername.pythonanywhere.com` (unless you have a paid account for custom domains).</li>
-                            <li>Select "Manual configuration" (NOT Django, Flask, etc. - we'll configure it ourselves).</li>
+                        <ul class="!list-disc !list-inside !space-y-1 !mt-2 !pl-4 !text-sm">
+                            <li>Your domain name will be `yourusername.pythonanywhere.com` (unless using a custom domain).</li>
+                            <li>Select "Manual configuration" (<strong>Important:</strong> Do NOT select the "Django" option here as it sets up a new default project).</li>
                             <li>Choose the Python version matching your virtual environment (e.g., Python 3.10).</li>
                         </ul>
                     </li>
                     <li>After creation, scroll down to the "Code" section:
-                         <ul class="list-disc list-inside space-y-1 mt-2 pl-4 text-sm text-gray-600">
+                         <ul class="!list-disc !list-inside !space-y-1 !mt-2 !pl-4 !text-sm">
                             <li><strong>Source code:</strong> Enter the full path to your project's directory (e.g., `/home/yourusername/your-repo-name/`).</li>
                             <li><strong>Working directory:</strong> Usually the same as the source code path.</li>
                          </ul>
                     </li>
                     <li>Scroll down to the "Virtualenv" section:
-                         <ul class="list-disc list-inside space-y-1 mt-2 pl-4 text-sm text-gray-600">
+                         <ul class="!list-disc !list-inside !space-y-1 !mt-2 !pl-4 !text-sm">
                             <li>Enter the full path to your virtual environment (e.g., `/home/yourusername/.virtualenvs/myenv`).</li>
                          </ul>
                     </li>
-                     <li>Find the "WSGI configuration file" link (usually near the top of the "Code" section) and click it. This opens an editor for your WSGI file.</li>
+                     <li>Find the "WSGI configuration file" link (usually near the top of the "Code" section) and click the path to edit it.</li>
                  </ol>
             </section>
 
             <section id="wsgi-config">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-green-600">5. Edit the WSGI Configuration File</h2>
-                <p class="mb-4 text-gray-700">Modify the WSGI file provided by PythonAnywhere to point to your Django application.</p>
-                <p class="mb-2 text-gray-700">The file path will be something like `/var/www/yourusername_pythonanywhere_com_wsgi.py`.</p>
-                <p class="mb-2 text-gray-700">Edit the file (in the PythonAnywhere editor) and find the Django section. Make it look like this:</p>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">5. Edit the WSGI Configuration File</h2>
+                <p>Modify the WSGI file provided by PythonAnywhere to point to your Django application.</p>
+                <p class="!text-sm">The file path will be something like `/var/www/yourusername_pythonanywhere_com_wsgi.py`.</p>
+                <p class="!text-sm">Edit the file in the PythonAnywhere editor. Delete most of the default content and replace it with the Django-specific configuration below:</p>
                 <pre><code class="language-python">
 import os
 import sys
 
 # Add your project directory to the sys.path
-path = '/home/yourusername/your-repo-name' # Use your actual path
+# Replace 'yourusername' and 'your-repo-name'
+path = '/home/yourusername/your-repo-name'
 if path not in sys.path:
     sys.path.insert(0, path)
 
-# Add your project's parent directory if your settings are inside a subdirectory
-# e.g. if settings.py is in /home/yourusername/your-repo-name/your_project_name/
-# project_path = '/home/yourusername/your-repo-name/your_project_name'
+# Add your project's parent directory IF your settings.py is inside a subdirectory
+# e.g., if settings.py is in /home/yourusername/your-repo-name/myproject/
+# project_path = '/home/yourusername/your-repo-name/myproject'
 # if project_path not in sys.path:
 #    sys.path.insert(0, project_path)
 
 # Set the DJANGO_SETTINGS_MODULE environment variable
-os.environ['DJANGO_SETTINGS_MODULE'] = 'your_project_name.settings' # Replace with your settings file path
+# Replace 'your_project_name' with the name of the directory containing settings.py
+os.environ['DJANGO_SETTINGS_MODULE'] = 'your_project_name.settings'
 
 # Import the Django WSGI application handler
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
                 </code></pre>
-                <p class="mt-2 text-sm text-gray-600">
-                    Replace `/home/yourusername/your-repo-name` with the actual path to your project code. <br>
-                    Replace `your_project_name.settings` with the Python import path to your `settings.py` file (e.g., `myproject.settings`).
+                <p class="!text-xs !mt-2">
+                    Replace placeholders (`yourusername`, `your-repo-name`, `your_project_name`) with your actual values.
                 </p>
-                <p class="mt-2 text-gray-700"><strong>Save the file.</strong></p>
+                <p class="!text-sm !mt-2"><strong>Save the file</strong> using the editor's save button.</p>
             </section>
 
              <section id="django-settings-db">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-green-600">6. Django Settings & Database</h2>
-                 <p class="mb-4 text-gray-700">Adjust your `settings.py` and set up the database.</p>
-                 <ul class="list-disc list-inside space-y-3 pl-4 text-gray-700">
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">6. Django Settings & Database</h2>
+                 <p>Adjust your `settings.py` and set up the database.</p>
+                 <ul class="!list-disc !list-inside !space-y-3 !pl-4">
                     <li>
                         <strong>ALLOWED_HOSTS:</strong> In your `settings.py` (edit via Files tab or console), add your PythonAnywhere domain:
                         <pre><code class="language-python">
 # settings.py
 ALLOWED_HOSTS = ['yourusername.pythonanywhere.com']
+# Add 'www.yourcustomdomain.com' if using a custom domain
                         </code></pre>
                     </li>
                      <li>
                         <strong>DEBUG:</strong> Ensure `DEBUG = False` in `settings.py` for production.
                     </li>
                      <li>
-                        <strong>SECRET_KEY:</strong> Do not hardcode! Use an environment variable (see Section 8). For now, ensure it's present in `settings.py`.
+                        <strong>SECRET_KEY:</strong> Load from an environment variable (see Section 8). Ensure it's not hardcoded if possible.
                     </li>
                     <li>
                         <strong>Database Setup:</strong>
-                        <ul class="list-disc list-inside space-y-2 mt-2 pl-4 text-sm text-gray-600">
-                            <li><strong>SQLite (Default/Free Tier):</strong> Your default Django `settings.py` using SQLite usually works out of the box. The SQLite file will be created within your project directory on PythonAnywhere. No extra setup needed initially.</li>
-                            <li><strong>MySQL/PostgreSQL (Paid Accounts):</strong> Go to the "Databases" tab on PythonAnywhere to create a MySQL or PostgreSQL database. Note the connection details (hostname, username, password, database name). Update your `settings.py` `DATABASES` dictionary accordingly. Install necessary drivers (`mysqlclient` or `psycopg2-binary`) in your virtualenv.</li>
+                        <ul class="!list-disc !list-inside !space-y-2 !mt-2 !pl-4 !text-sm">
+                            <li><strong>SQLite (Default/Free Tier):</strong> Usually works out-of-the-box. The `db.sqlite3` file will reside in your project directory.</li>
+                            <li><strong>MySQL/PostgreSQL (Paid Accounts):</strong> Go to the "Databases" tab on PythonAnywhere to create a database. Note the connection details (hostname, username, password, database name) provided there. Update your `settings.py` `DATABASES` dictionary. Install drivers (`mysqlclient` or `psycopg2-binary`) in your virtualenv.</li>
                         </ul>
                     </li>
                      <li>
-                        <strong>Run Migrations:</strong> Open a Bash console, activate your virtualenv (`workon myenv`), navigate to your project directory (`cd /home/yourusername/your-repo-name/`), and run migrations:
-                        <pre><code class="language-bash pythonanywhere-prompt">python manage.py migrate</code></pre>
+                        <strong>Run Migrations:</strong> Open a Bash console, activate your virtualenv (`workon myenv`), navigate to your project directory (`cd /home/yourusername/your-repo-name/`), and run:
+                        <pre><code class="language-bash">python manage.py migrate</code></pre>
                     </li>
                      <li>
                         <strong>Create Superuser (Optional):</strong>
-                        <pre><code class="language-bash pythonanywhere-prompt">python manage.py createsuperuser</code></pre>
+                        <pre><code class="language-bash">python manage.py createsuperuser</code></pre>
                     </li>
                 </ul>
             </section>
 
             <section id="static-files">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-green-600">7. Configure Static Files</h2>
-                <p class="mb-4 text-gray-700">PythonAnywhere serves static files directly. Configure the mapping in the "Web" tab.</p>
-                 <ol class="list-decimal list-inside space-y-3 pl-4 text-gray-700">
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">7. Configure Static Files</h2>
+                <p>PythonAnywhere serves static files directly. Configure the mapping in the "Web" tab.</p>
+                 <ol class="!list-decimal !list-inside !space-y-3 !pl-4">
                      <li>
-                        Ensure your `settings.py` defines `STATIC_URL` and `STATIC_ROOT`:
+                        Ensure `settings.py` defines `STATIC_URL` and `STATIC_ROOT`:
                         <pre><code class="language-python">
 # settings.py
 import os
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # BASE_DIR should be your project root
+# STATIC_ROOT should be an absolute path on PythonAnywhere servers
+STATIC_ROOT = '/home/yourusername/your-repo-name/staticfiles' # Adjust path
                         </code></pre>
+                        <p class="!text-xs !mt-1">Make sure `STATIC_ROOT` points to a directory *within* your allowed file storage area.</p>
                     </li>
                      <li>
                         Run `collectstatic` in your Bash console (with virtualenv activated):
-                        <pre><code class="language-bash pythonanywhere-prompt">python manage.py collectstatic --no-input</code></pre>
-                        <p class="text-sm text-gray-600 mt-1">This creates the `staticfiles` directory (or whatever `STATIC_ROOT` is named) in your project root.</p>
+                        <pre><code class="language-bash">python manage.py collectstatic --no-input</code></pre>
+                        <p class="!text-xs !mt-1">This creates the `staticfiles` directory (or your `STATIC_ROOT` name).</p>
                     </li>
                     <li>
                         Go to the "Web" tab on PythonAnywhere. Scroll down to the "Static files" section.
                     </li>
                     <li>
                         Add a new static file mapping:
-                        <ul class="list-disc list-inside space-y-1 mt-2 pl-4 text-sm text-gray-600">
-                            <li><strong>URL:</strong> Enter the value of your `STATIC_URL` (e.g., `/static/`).</li>
-                            <li><strong>Directory:</strong> Enter the full path to your `STATIC_ROOT` directory (e.g., `/home/yourusername/your-repo-name/staticfiles/`).</li>
+                        <ul class="!list-disc !list-inside !space-y-1 !mt-2 !pl-4 !text-sm">
+                            <li><strong>URL:</strong> Enter `/static/` (matching `STATIC_URL`).</li>
+                            <li><strong>Directory:</strong> Enter the full path to `STATIC_ROOT` (e.g., `/home/yourusername/your-repo-name/staticfiles/`).</li>
                         </ul>
                     </li>
-                     <li>Repeat for `MEDIA_URL` and `MEDIA_ROOT` if your application handles user-uploaded files.</li>
+                     <li>Repeat for `MEDIA_URL` and `MEDIA_ROOT` if handling user uploads. Map `MEDIA_URL` (e.g., `/media/`) to the full path of your `MEDIA_ROOT` (e.g., `/home/yourusername/your-repo-name/mediafiles/`).</li>
                  </ol>
-                 <p class="mt-2 text-sm text-gray-600">Note: WhiteNoise is generally *not* needed or recommended on PythonAnywhere as it handles static file serving directly.</p>
+                 <p class="!text-sm !mt-2">Note: WhiteNoise is generally *not* needed on PythonAnywhere.</p>
             </section>
 
              <section id="environment-variables">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-green-600">8. Environment Variables</h2>
-                <p class="mb-4 text-gray-700">Set sensitive information like `SECRET_KEY` or API keys securely.</p>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">8. Environment Variables (Secrets)</h2>
+                <p>Set sensitive information like `SECRET_KEY` or API keys securely.</p>
 
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2">Option A: Using the WSGI File</h3>
-                    <p class="mb-2 text-gray-700">You can set environment variables directly within your WSGI configuration file (before importing the Django application).</p>
-                     <pre><code class="language-python">
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="!text-xl !font-semibold !mb-2">Option A: Using the WSGI File (Simpler, Less Secure)</h3>
+                        <p class="!text-sm">Set environment variables directly within your WSGI configuration file (before importing `get_wsgi_application`).</p>
+                         <pre><code class="language-python">
 # /var/www/yourusername_pythonanywhere_com_wsgi.py
-
-import os
-import sys
-
 # ... (sys.path modifications) ...
 
 # Set environment variables
-os.environ['SECRET_KEY'] = 'your_very_secret_production_key' # Replace with your actual key
+os.environ['SECRET_KEY'] = 'your_very_secret_production_key' # Replace!
 os.environ['EMAIL_HOST_PASSWORD'] = 'your_email_password'
 # ... add other variables ...
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'your_project_name.settings'
+# ... (import get_wsgi_application) ...
+                        </code></pre>
+                         <p class="!text-xs !mt-2"><strong>Security Note:</strong> Secrets are visible in the file. Ensure file permissions are restricted.</p>
+                    </div>
 
-from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
-                    </code></pre>
-                     <p class="mt-2 text-sm text-gray-600"><strong>Security Note:</strong> While simple, this puts secrets directly in the WSGI file. Ensure file permissions are secure.</p>
-                </div>
-
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2">Option B: Using a `.env` File (Recommended)</h3>
-                     <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700">
-                        <li>Install `python-dotenv`: In your console (with virtualenv active), run <code>pip install python-dotenv</code> and update `requirements.txt`.</li>
-                        <li>Create a file named `.env` in your project's root directory (`/home/yourusername/your-repo-name/.env`). Add your secrets:
-                            <pre><code class="language-text">
+                    <div>
+                        <h3 class="!text-xl !font-semibold !mb-2">Option B: Using a `.env` File (Recommended)</h3>
+                         <ol class="!list-decimal !list-inside !space-y-2 !pl-4">
+                            <li>Install `python-dotenv` in your virtualenv: <code>pip install python-dotenv</code> (add to `requirements.txt`).</li>
+                            <li>Create `.env` in your project root (`/home/yourusername/your-repo-name/.env`). Add secrets:
+                                <pre><code class="language-text">
 SECRET_KEY='your_very_secret_production_key'
 DATABASE_URL='your_db_url_if_not_using_pa_db'
 EMAIL_HOST_PASSWORD='your_email_password'
-                            </code></pre>
-                        </li>
-                         <li>Modify your `settings.py` to load the `.env` file at the top:
-                            <pre><code class="language-python">
+                                </code></pre>
+                            </li>
+                             <li>Modify `settings.py` to load `.env` early:
+                                <pre><code class="language-python">
 # settings.py
 from pathlib import Path
 import os
-from dotenv import load_dotenv # Import load_dotenv
+from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# Load environment variables from .env file in project root
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
-# Load environment variables from .env file
-load_dotenv(os.path.join(BASE_DIR, '.env')) # Add this line
-
-# Now you can use os.environ.get() as usual
 SECRET_KEY = os.environ.get('SECRET_KEY')
 # ... other settings using os.environ.get() ...
-                            </code></pre>
-                        </li>
-                        <li>Modify your WSGI file to load the `.env` file as well (ensures variables are set for the WSGI process):
-                             <pre><code class="language-python">
+                                </code></pre>
+                            </li>
+                            <li>Modify your WSGI file to load `.env` *before* setting `DJANGO_SETTINGS_MODULE`:
+                                 <pre><code class="language-python">
 # /var/www/yourusername_pythonanywhere_com_wsgi.py
 import os
 import sys
@@ -329,58 +283,59 @@ if path not in sys.path:
     sys.path.insert(0, path)
 
 # Load .env file from project directory
-project_folder = os.path.expanduser(path) # Adjust path if needed
+project_folder = path # Use the defined path
 load_dotenv(os.path.join(project_folder, '.env')) # Add this line
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'your_project_name.settings'
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
-                            </code></pre>
-                        </li>
-                        <li><strong>Important:</strong> Add `.env` to your `.gitignore` file locally to prevent committing secrets to Git.</li>
-                    </ol>
+                                </code></pre>
+                            </li>
+                            <li><strong>Important:</strong> Add `.env` to your `.gitignore` file locally.</li>
+                        </ol>
+                    </div>
                 </div>
             </section>
 
             <section id="reload">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-green-600">9. Reload Web App</h2>
-                 <ol class="list-decimal list-inside space-y-3 pl-4 text-gray-700">
-                    <li>After making changes to your code, WSGI file, or static file mappings, go to the "Web" tab on PythonAnywhere.</li>
-                    <li>Click the big green "Reload yourusername.pythonanywhere.com" button.</li>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">9. Reload Web App</h2>
+                 <ol class="!list-decimal !list-inside !space-y-3 !pl-4">
+                    <li>After making changes to your code (via `git pull` or re-uploading), WSGI file, virtualenv, or static file mappings, go to the "Web" tab on PythonAnywhere.</li>
+                    <li>Click the big green "Reload yourusername.pythonanywhere.com" button. This applies your changes.</li>
                     <li>Visit your site at `http://yourusername.pythonanywhere.com` to check if it's working!</li>
                  </ol>
             </section>
 
             <section id="troubleshooting">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-green-600">10. Troubleshooting</h2>
-                <p class="mb-4 text-gray-700">Check these logs if you encounter errors:</p>
-                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
-                    <li><strong>Error Log:</strong> Found in the "Web" tab under the "Log files" section. Shows errors encountered by your web application code (e.g., Django errors, exceptions).</li>
-                    <li><strong>Server Log:</strong> Shows information about the server infrastructure serving your site, including WSGI startup messages.</li>
-                    <li><strong>Access Log:</strong> Records incoming requests to your site.</li>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">10. Troubleshooting</h2>
+                <p>Check these logs (found in the "Web" tab under "Log files") if you encounter errors:</p>
+                <ul class="!list-disc !list-inside !space-y-2 !pl-4">
+                    <li><strong>Error Log:</strong> Shows errors from your Django application code (exceptions, tracebacks).</li>
+                    <li><strong>Server Log:</strong> Shows messages from the server infrastructure (WSGI startup, process management).</li>
+                    <li><strong>Access Log:</strong> Records incoming HTTP requests.</li>
                     <li><strong>Common Issues:</strong>
-                        <ul class="list-disc list-inside space-y-1 mt-2 pl-4 text-sm text-gray-600">
+                        <ul class="!list-disc !list-inside !space-y-1 !mt-2 !pl-4 !text-sm">
                             <li>Incorrect paths in WSGI file (`sys.path`, `DJANGO_SETTINGS_MODULE`).</li>
-                            <li>Virtual environment not configured or path incorrect in "Web" tab.</li>
+                            <li>Virtual environment path incorrect in "Web" tab or environment not activated in console.</li>
                             <li>Missing dependencies in `requirements.txt` / virtualenv.</li>
-                            <li>Incorrect static file URL/Directory mapping.</li>
-                            <li>Database connection errors (check credentials in `settings.py` or environment variables).</li>
+                            <li>Incorrect static file URL/Directory mapping in "Web" tab.</li>
+                            <li>`STATIC_ROOT` in `settings.py` not matching the Directory path in the Web tab.</li>
+                            <li>Database connection errors (check credentials, hostname, DB name in `settings.py` or environment variables).</li>
                             <li>Syntax errors in `settings.py` or WSGI file.</li>
-                            <li>Forgetting to "Reload" the web app after changes.</li>
+                            <li>Forgetting to "Reload" the web app after making changes.</li>
                         </ul>
                     </li>
-                    <li>Consult the <a href="https://help.pythonanywhere.com/pages/DebuggingImportError/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">PythonAnywhere Help Pages</a>, especially the "Debugging ImportError" guide.</li>
+                    <li>Consult the <a href="https://help.pythonanywhere.com/pages/DebuggingImportError/" target="_blank" rel="noopener noreferrer">PythonAnywhere Help Pages</a>, especially the "Debugging ImportError" guide.</li>
                 </ul>
             </section>
 
-        </main>
+        </div>{# End Prose #}
+    </main>
 
-        <footer class="text-center text-gray-500 mt-8 text-sm">
-            <p>Happy Deploying on PythonAnywhere!</p>
-        </footer>
-
+    <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
     </div>
 
-</body>
-</html>
+</div>
+{% endblock %}

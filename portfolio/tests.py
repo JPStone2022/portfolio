@@ -358,3 +358,73 @@ class PortfolioViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['query'], '')
 
+    # --- NEW TESTS for Legal/Static Pages ---
+    def test_privacy_policy_view(self):
+        url = reverse('portfolio:privacy_policy')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'portfolio/privacy_policy.html')
+        self.assertContains(response, "Privacy Policy") # Check heading
+        # self.assertContains(response, "data handling") # Example content check
+
+    def test_accessibility_statement_view(self):
+        url = reverse('portfolio:accessibility')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'portfolio/accessibility_statement.html')
+        self.assertContains(response, "Accessibility Statement") # Check heading
+        self.assertContains(response, "WCAG") # Check some content
+
+    def test_terms_and_conditions_view(self):
+        url = reverse('portfolio:terms')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'portfolio/terms_and_conditions.html')
+        self.assertContains(response, "Terms and Conditions") # Check heading
+
+    def test_colophon_view(self):
+        url = reverse('portfolio:colophon')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'portfolio/colophon.html')
+        self.assertContains(response, "How This Site Was Built") # Check heading
+        self.assertContains(response, "Django Framework") # Check some content
+
+# --- NEW TEST ---
+    def test_search_results_view_skill_query(self):
+        if not SKILL_APP_EXISTS: self.skipTest("Skills app not installed")
+        url = reverse('portfolio:search_results') + '?q=Skill 1' # Matches skill name
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        # Project 1 has Skill 1
+        self.assertIn(self.project1, response.context['projects'])
+        # Skill 1 itself should be in skill results
+        self.assertIn(self.skill1, response.context['skills'])
+        # Project 2 and Skill 2 should not be present based on this query
+        self.assertNotIn(self.project2, response.context['projects'])
+        self.assertNotIn(self.skill2, response.context['skills'])
+
+    # --- NEW TEST ---
+    def test_search_results_view_topic_query(self):
+        if not TOPICS_APP_EXISTS: self.skipTest("Topics app not installed")
+        url = reverse('portfolio:search_results') + '?q=Topic 1' # Matches topic name
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        # Project 1 has Topic 1
+        self.assertIn(self.project1, response.context['projects'])
+        # Topic 1 itself should be in topic results
+        self.assertIn(self.topic1, response.context['topics'])
+        # Project 2 and Topic 2 should not be present based on this query
+        self.assertNotIn(self.project2, response.context['projects'])
+        self.assertNotIn(self.topic2, response.context['topics'])
+
+    # --- NEW TEST ---
+    def test_search_results_view_no_results(self):
+        url = reverse('portfolio:search_results') + '?q=NonExistentQueryStringXYZ'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['projects']), 0)
+        if SKILL_APP_EXISTS: self.assertEqual(len(response.context['skills']), 0)
+        if TOPICS_APP_EXISTS: self.assertEqual(len(response.context['topics']), 0)
+        self.assertContains(response, "No results found") # Check for no results message
+

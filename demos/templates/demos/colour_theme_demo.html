@@ -1,0 +1,99 @@
+{# demos/templates/demos/causal_inference_demo.html #}
+{% extends 'portfolio/base.html' %} {# Assumes base is in portfolio app #}
+{% load static %}
+
+{% block title %}{{ page_title|default:"Colour Theme Switcher Demo" }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Demonstration of dynamic theme switching using CSS and JavaScript." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"theme switcher, css themes, javascript, dark mode, light mode, web design demo" }}{% endblock %}
+
+{% block content %}
+    <div class="container mx-auto max-w-4xl bg-white p-6 md:p-8 rounded-lg shadow-lg">
+
+        <h1 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-8">Theme Switcher Demo</h1>
+
+        <div class="flex flex-wrap justify-center gap-3 mb-10">
+            <button id="playful-theme-btn"
+                    class="px-5 py-2 bg-sky-500 text-white font-semibold rounded-lg shadow-md hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-400 transition duration-200">
+                Playful Theme
+            </button>
+            <button id="dark-theme-btn"
+                    class="px-5 py-2 bg-slate-700 text-white font-semibold rounded-lg shadow-md hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition duration-200">
+                Dark Theme
+            </button>
+            <button id="professional-theme-btn"
+                    class="px-5 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 transition duration-200">
+                Professional Theme
+            </button>
+        </div>
+
+        <div id="theme-block" class="p-6 rounded-lg shadow-inner transition-all duration-300 ease-in-out space-y-8">
+
+            <div id="intro-block" class="p-6 rounded-lg shadow-sm border-l-4">
+                <h2 id="intro-heading" class="text-xl font-semibold mb-3">Welcome to the Demo</h2>
+                <p id="intro-text" class="mb-4 leading-relaxed">
+                    This demo illustrates how different sections of a page can adapt to various visual themes. Click the buttons above to switch between Playful, Dark, and Professional styles. Observe how colors, borders, and text styles change across all content blocks below.
+                </p>
+                <button id="intro-button" class="px-4 py-2 text-sm font-medium rounded-md shadow transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2">
+                    Learn More
+                </button>
+            </div>
+
+            <div id="project-card" class="rounded-lg shadow-md overflow-hidden flex flex-col">
+                 <img id="project-image" src="" alt="Project Placeholder Image" class="card-image"
+                      onerror="this.onerror=null; this.src='https://placehold.co/600x400/cccccc/ffffff?text=Error';">
+                 <div id="project-content" class="p-6 flex flex-col flex-grow border-t">
+                     <h3 id="project-heading" class="text-lg font-semibold mb-2">Featured Project: AI Analyzer</h3>
+                     <p id="project-text" class="text-sm mb-4 flex-grow">
+                         An application leveraging machine learning to analyze sentiment in user reviews, providing actionable insights for businesses. Built with Python and TensorFlow.
+                     </p>
+                     <div class="mt-auto flex justify-between items-center">
+                         <span id="project-skills" class="text-xs font-medium space-x-1">
+                             <span class="skill-tag inline-block px-2 py-0.5 rounded-full">Python</span>
+                             <span class="skill-tag inline-block px-2 py-0.5 rounded-full">AI</span>
+                             <span class="skill-tag inline-block px-2 py-0.5 rounded-full">NLP</span>
+                         </span>
+                         <a id="project-link" href="#" class="text-sm font-medium hover:underline focus:outline-none focus:ring-1 rounded px-1">
+                             View Project &rarr;
+                         </a>
+                     </div>
+                 </div>
+            </div>
+
+            <div id="demo-card" class="rounded-lg shadow-md overflow-hidden flex flex-col">
+                 <div id="demo-interactive-area" class="h-40 flex items-center justify-center">
+                     <span id="demo-placeholder-text" class="text-lg font-medium italic">Interactive Area</span>
+                 </div>
+                 <div id="demo-content" class="p-6 flex flex-col flex-grow border-t">
+                     <h3 id="demo-heading" class="text-lg font-semibold mb-2">Interactive Demo: Color Picker</h3>
+                     <p id="demo-text" class="text-sm mb-4 flex-grow">
+                         Try out this simple interactive component. Although just a placeholder here, imagine a tool that lets you visually select and configure options.
+                     </p>
+                     <div class="mt-auto text-right">
+                         <a id="demo-link" href="#" class="text-sm font-medium hover:underline focus:outline-none focus:ring-1 rounded px-1">
+                             Try Demo &rarr;
+                         </a>
+                     </div>
+                 </div>
+            </div>
+
+            
+             <div id="features-block" class="p-6 rounded-lg shadow-sm border-l-4">
+                <h2 id="features-heading" class="text-xl font-semibold mb-3">Key Features</h2>
+                <ul id="features-list" class="list-disc list-inside space-y-1 text-sm leading-relaxed">
+                    <li>Dynamic theme switching affecting multiple components.</li>
+                    <li>Clear visual distinction between themes.</li>
+                    <li>Utilizes Tailwind CSS for utility-first styling.</li>
+                    <li>Demonstrates adaptability for portfolio elements.</li>
+                </ul>
+            </div>
+
+        </div> 
+        <div class="text-center mt-16">
+            <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+        </div></div>
+
+        <script src="{% static 'portfolio/js/colour_theme.js' %}"></script>
+
+
+</div>
+{% endblock %}

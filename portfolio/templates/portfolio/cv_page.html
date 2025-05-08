@@ -3,6 +3,8 @@
 {% load static %}
 
 {% block title %}CV / Resume - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Julian Stone's machine learning downloadable CV." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Julian Stone, CV, downloadable, resume, portfolio, web development" }}{% endblock %}
 
 {% block content %}
 <div class="container mx-auto px-6 py-12">

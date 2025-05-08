@@ -3,61 +3,70 @@
 {% load static %}
 {% load humanize %}
 
-{% block title %}{{ page_title }} - Portfolio{% endblock %}
-{% block meta_description %}{{ meta_description|default:"Exploring AI tools in ML/DS development." }}{% endblock %}
-{% block meta_keywords %}{{ meta_keywords|default:"AI tools, LLM, machine learning, data science" }}{% endblock %}
+{% block title %}{{ page_title|default:"AI Tools in Development" }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Exploring the benefits and pitfalls of using AI code assistants like Copilot and ChatGPT in ML/DS development, emphasizing responsible use." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"AI tools, LLM, Copilot, ChatGPT, code assistant, machine learning, data science, development practices, AI ethics" }}{% endblock %}
 
 
 {% block content %}
 <div class="container mx-auto px-6 py-12">
     {# Apply gradient text to heading #}
     <h1 class="text-4xl md:text-5xl font-bold text-center mb-6 bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 dark:from-purple-400 dark:via-pink-400 dark:to-red-400 bg-clip-text text-transparent">
-        {{ page_title }}
+        {{ page_title|default:"Navigating AI Tools in Development" }}
     </h1>
     <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
-        AI tools like Large Language Models (LLMs) and code assistants (e.g., GitHub Copilot, ChatGPT) are rapidly changing development workflows. They offer huge potential, but also introduce many risks, especially depending on the user's experience level.
+        AI tools like Large Language Models (LLMs) and code assistants (e.g., GitHub Copilot, ChatGPT, Google Gemini Code Assist) are rapidly changing development workflows. They offer significant potential for acceleration but also introduce risks, requiring careful consideration based on user experience and task complexity.
     </p>
 
     {# Main content area - Two Columns #}
-    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-12">
 
         {# Column 1: Benefits for Experienced Users #}
         <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-green-900/20 border-t-4 border-green-500 dark:border-green-400 transition-colors duration-300 ease-in-out">
             <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
-                <svg class="w-6 h-6 text-green-500 dark:text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <svg class="w-6 h-6 text-green-500 dark:text-green-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 Productivity Boost for the Experienced
             </h2>
             <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                <p>For experienced data scientists, ML engineers, and developers, AI tools act as powerful <strong>accelerators</strong>: </p>
+                <p>For experienced data scientists, ML engineers, and developers, AI tools act as powerful <strong>co-pilots and accelerators</strong>:</p>
                 <ul>
-                    <li><strong>Boilerplate Code Generation:</strong> Quickly generate setup code, standard functions (e.g., data loading, plotting), or class structures, saving significant time.</li>
-                    <li><strong>Debugging Assistance:</strong> Explain error messages, suggest potential fixes for tricky bugs, or refactor complex code sections.</li>
-                    <li><strong>Learning & Exploration:</strong> Quickly grasp new libraries or concepts by asking for explanations or example implementations. Explore alternative approaches to a problem.</li>
-                    <li><strong>Documentation & Comments:</strong> Generate docstrings, comments, or even basic README files, improving code maintainability.</li>
-                    <li><strong>Unit Test Generation:</strong> Suggest test cases or generate basic unit test structures.</li>
-                    <li><strong>Code Translation/Modernization:</strong> Help translate code between languages (e.g., R to Python) or update older code to use modern library features.</li>
+                    <li><strong>Boilerplate & Scaffolding:</strong> Rapidly generate setup code, standard functions (data loading, plotting, API endpoints), class structures, or configuration files.</li>
+                    <li><strong>Debugging & Refactoring:</strong> Explain complex error messages, suggest fixes for tricky bugs, refactor code for clarity or performance, or add error handling.</li>
+                    <li><strong>Learning & Exploration:</strong> Quickly understand new libraries, frameworks, or algorithms by asking for explanations or example implementations. Explore alternative approaches.</li>
+                    <li><strong>Documentation & Comments:</strong> Generate docstrings following standard formats (like Google or NumPy style), write explanatory comments, or draft basic README sections.</li>
+                    <li><strong>Unit Test Generation:</strong> Suggest relevant test cases or generate basic unit test structures (e.g., using `unittest` or `pytest`).</li>
+                    <li><strong>Code Translation/Modernization:</strong> Assist in translating code snippets between languages (e.g., R to Python, SQL to Pandas) or updating older code to use modern library features.</li>
+                    <li><strong>Query Generation:</strong> Draft SQL queries, Pandas/PySpark operations, or API calls based on natural language descriptions.</li>
                 </ul>
-                 <p class="font-semibold">Key: The experienced user can quickly <strong>verify</strong>, <strong>debug</strong>, and <strong>adapt</strong> the AI's output, leveraging their foundational knowledge to ensure correctness and integrate it effectively.</p>
+                 <p class="font-semibold text-green-700 dark:text-green-300">Key: The experienced user can quickly <strong>verify</strong> the correctness, <strong>debug</strong> subtle issues, <strong>adapt</strong> the output to specific contexts, and <strong>integrate</strong> it effectively, leveraging their foundational knowledge.</p>
                  <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mt-4 mb-1">Illustrative Scenario:</h4>
-                 <pre><code class="language-text">
+                 <pre><code class="language-python">
 # User Prompt (Experienced Dev):
-# "Write a Python function using Pandas to load a CSV file,
-# fill missing 'age' values with the median,
-# and one-hot encode the 'category' column."
+# "Write a Python function using Pandas to load a CSV,
+# fill missing 'age' values with the column median,
+# and one-hot encode the 'category' column, returning the modified DataFrame."
 
 # AI Output (Example):
 import pandas as pd
 
-def preprocess_data(df):
-    if 'age' in df.columns and df['age'].isnull().any():
-        median_age = df['age'].median()
-        df['age'].fillna(median_age, inplace=True)
-    if 'category' in df.columns:
-        df = pd.get_dummies(df, columns=['category'], prefix='cat', drop_first=True)
-    return df
+def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Loads data, fills missing age with median, and OHE category."""
+    df_processed = df.copy() # Work on a copy
+    if 'age' in df_processed.columns and df_processed['age'].isnull().any():
+        if pd.api.types.is_numeric_dtype(df_processed['age']):
+            median_age = df_processed['age'].median()
+            df_processed['age'].fillna(median_age, inplace=True)
+        else:
+            # Handle non-numeric age column if necessary (e.g., log warning)
+            print("Warning: 'age' column is not numeric, cannot fill with median.")
+    if 'category' in df_processed.columns:
+        # Ensure category is treated as categorical type for robustness
+        df_processed['category'] = df_processed['category'].astype('category')
+        df_processed = pd.get_dummies(df_processed, columns=['category'], prefix='cat', drop_first=True)
+    return df_processed
 
-# Experienced Dev Review: Looks reasonable, checks edge cases, considers follow-up questions
-# (e.g., what if 'age' isn't numeric?), adapts column names if needed.
+# Experienced Dev Review: Verifies copy is made, checks numeric type for median,
+# considers edge cases (all missing?), adapts column names if needed, confirms drop_first logic.
                  </code></pre>
             </div>
         </div>
@@ -65,39 +74,69 @@ def preprocess_data(df):
         {# Column 2: Dangers for the Unskilled #}
         <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-red-900/20 border-t-4 border-red-500 dark:border-red-400 transition-colors duration-300 ease-in-out">
              <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
-                <svg class="w-6 h-6 text-red-500 dark:text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                Potential Pitfalls for the Inexperienced Coder
+                <svg class="w-6 h-6 text-red-500 dark:text-red-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                Potential Pitfalls for the Inexperienced
             </h2>
              <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
-                 <p>Without a solid understanding of the underlying concepts of programming, relying heavily on AI tools can be dangerous:</p>
+                 <p>Without a solid understanding of underlying programming concepts, algorithms, and security principles, relying heavily on AI tools can be detrimental:</p>
                  <ul>
-                     <li><strong>Subtle Bugs & "Hallucinations":</strong> AI can generate code that looks plausible but is logically flawed, statistically incorrect, or introduces subtle bugs that are hard to spot without expertise.</li>
-                     <li><strong>Security Vulnerabilities:</strong> Generated code might inadvertently include security flaws (e.g., improper input validation, susceptibility to injection attacks) if the user doesn't know what to look for.</li>
-                     <li><strong>Lack of Understanding:</strong> Copy-pasting code without understanding <strong>why</strong> it works prevents true learning, and makes debugging or modification extremely difficult.</li>
-                     <li><strong>Reinforcing Bad Practices:</strong> The AI might generate inefficient, unidiomatic, or outdated code based on its training data, which the user might adopt without realizing better alternatives exist.</li>
-                     <li><strong>Over-Reliance / Skill Atrophy:</strong> Depending too much on AI for core tasks can hinder the development of fundamental problem-solving and coding skills.</li>
-                     <li><strong>Data Privacy/Leakage:</strong> Pasting sensitive data or proprietary code into external AI tools carries significant privacy and intellectual property risks.</li>
+                     <li><strong>Subtle Bugs & "Hallucinations":</strong> AI can generate code that looks correct superficially but contains hidden logical flaws, incorrect assumptions (e.g., about data distribution), off-by-one errors, or race conditions.</li>
+                     <li><strong>Security Vulnerabilities:</strong> Generated code might introduce vulnerabilities like SQL injection, cross-site scripting (XSS), improper handling of secrets, or insecure library usage if the user cannot identify these risks.</li>
+                     <li><strong>Impeded Learning:</strong> Blindly copy-pasting without understanding the "why" prevents true skill development and makes debugging, modification, or extension nearly impossible later.</li>
+                     <li><strong>Reinforcing Bad Practices:</strong> AI models trained on vast datasets might reproduce inefficient algorithms, unidiomatic code, outdated library usage, or poor architectural patterns.</li>
+                     <li><strong>Over-Reliance & Skill Atrophy:</strong> Excessive dependence can hinder the development of fundamental problem-solving, algorithmic thinking, and debugging skills.</li>
+                     <li><strong>Data Privacy/IP Risks:</strong> Pasting sensitive data, proprietary algorithms, or company-specific code into external, cloud-based AI tools can lead to data breaches or intellectual property leakage. Check tool policies carefully.</li>
+                     <li><strong>Bias Amplification:</strong> AI tools can sometimes generate code or suggest approaches that reflect biases present in their training data.</li>
                  </ul>
-                  <p class="font-semibold">Key: The inexperienced user may <strong>lack the ability to critically evaluate</strong> the AI's output, potentially introducing errors, security holes, or technical debt without realizing it.</p>
+                  <p class="font-semibold text-red-700 dark:text-red-300">Key: The inexperienced user may <strong>lack the critical evaluation skills</strong> needed to identify flaws, security risks, or inefficiencies in the AI's output, potentially leading to technical debt or outright system failure.</p>
                   <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mt-4 mb-1">Illustrative Scenario:</h4>
-                  <pre><code class="language-text">
-# User Prompt (Beginner):
-# "Make my website get data from user input"
+                  <pre><code class="language-sql">
+-- User Prompt (Beginner):
+-- "Get user info from database based on username from website form"
 
-# AI Output (Potential Bad Example):
-# (Might generate code using raw SQL with string formatting - vulnerable to SQL injection)
-cursor.execute(f"SELECT * FROM users WHERE name = '{user_input}'")
+-- AI Output (Potential Bad Example - Vulnerable):
+-- (Might generate code using raw SQL with direct string formatting)
+-- Assume user_input = "admin' OR '1'='1"
+-- query = f"SELECT * FROM users WHERE name = '{user_input}'"
+-- This becomes: SELECT * FROM users WHERE name = 'admin' OR '1'='1'
+-- The database returns ALL users!
 
-# Beginner Review: "It works!" - doesn't recognize the huge security risk.
-# Experienced Dev Review: Immediately flags the SQL injection vulnerability and acts accordingly.
+-- Beginner Review: "It works when I type my name!" - doesn't recognize the SQL injection risk.
+-- Experienced Dev Review: Immediately flags the vulnerability and replaces it with parameterized queries or ORM usage.
                   </code></pre>
              </div>
         </div>
 
     </div> {# End Grid #}
 
-     <div class="text-center mt-16">
+    {# NEW Section: Responsible Use #}
+    <section id="responsible-use" class="py-12">
+        <div class="max-w-4xl mx-auto bg-blue-50 dark:bg-gray-800 p-6 rounded-lg shadow-md border-l-4 border-blue-500 dark:border-blue-400">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+                <svg class="w-6 h-6 text-blue-500 dark:text-blue-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                Responsible Use & Best Practices
+            </h2>
+            <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-3">
+                <p>To harness the benefits while mitigating risks, consider these practices:</p>
+                <ul>
+                    <li><strong>Treat AI as a Tool, Not an Oracle:</strong> Use it to augment your skills, not replace critical thinking.</li>
+                    <li><strong>Always Verify & Test:</strong> Rigorously test AI-generated code for correctness, edge cases, performance, and security. Never trust it blindly.</li>
+                    <li><strong>Understand the Output:</strong> Don't use code you don't understand. Ask the AI to explain it or research the concepts yourself.</li>
+                    <li><strong>Focus on Fundamentals:</strong> Continue strengthening your core programming, algorithmic, and domain knowledge.</li>
+                    <li><strong>Be Mindful of Context:</strong> AI suggestions might lack awareness of your project's specific architecture, constraints, or existing codebase. Adapt accordingly.</li>
+                    <li><strong>Check for Security:</strong> Be especially critical of code involving user input, database queries, file handling, or authentication. Use secure practices like parameterized queries/ORMs.</li>
+                    <li><strong>Protect Sensitive Data:</strong> Avoid pasting proprietary code, sensitive data, or API keys into public or untrusted AI tools. Use enterprise versions or local models where appropriate.</li>
+                    <li><strong>Attribute When Necessary:</strong> If using significant generated portions in open-source projects or documentation, consider acknowledging the AI tool's assistance.</li>
+                </ul>
+                <p class="font-medium">Effective use involves a cycle of prompting, evaluating, refining, testing, and integrating, guided by human expertise.</p>
+                {# Placeholder for external links #}
+                </div>
+        </div>
+    </section>
+
+    <div class="text-center mt-16">
         <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
     </div>
 </div>
 {% endblock %}
+

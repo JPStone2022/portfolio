@@ -77,4 +77,6 @@ urlpatterns = [
     path('django-deployment-comparisons/', views.deploying_comparisons_view, name='deploying_django_comparisons'),
     # Add path for DRF concepts demo explanation page
     path('drf-concepts/', views.drf_concepts_demo_view, name='drf_concepts_demo'),
+    # Add path for DRF concepts demo explanation page
+    path('colour-theme-demo/', views.colour_theme_demo_view, name='colour_theme_demo'),
 ]

@@ -14,13 +14,14 @@
   </script>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My Deep Learning Portfolio{% endblock %}</title>
 
     {# --- SEO Meta Tags --- #}
-    <meta name="description" content="{% block meta_description %}Portfolio website showcasing deep learning projects, skills, and blog posts by [Your Name]. Specializing in computer vision, NLP, and AI development.{% endblock %}">
-    <meta name="keywords" content="{% block meta_keywords %}deep learning, machine learning, AI, artificial intelligence, portfolio, Python, TensorFlow, PyTorch, computer vision, NLP, [Your Name]{% endblock %}">
+    <meta name="description" content="{% block meta_description %}Portfolio website showcasing deep learning projects, skills, and blog posts by Julian Stone. Specializing in computer vision, NLP, and AI development.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}deep learning, machine learning, AI, artificial intelligence, portfolio, Python, TensorFlow, PyTorch, computer vision, NLP, Julian Stone{% endblock %}">
     {# --- End SEO Meta Tags --- #}
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -85,11 +86,7 @@
                 {# Add Demos Link #}
                 <a href="{% url 'demos:all_demos_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Demos</a>
                 <a href="{% url 'topics:topic_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Topics</a>
-                <!-- <a href="{% url 'blog:blog_post_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Blog</a> -->
-                {# Conditionally display Recommendations Link #}
-                {% if recommendation_count > 0 %}
-                <a href="{% url 'recommendations:recommendation_list' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Recommends</a>
-                {% endif %}
+                
                 <!-- <a href="{% url 'portfolio:cv' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">CV</a> -->
                 <a href="{% url 'portfolio:contact' %}" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Contact</a>
                 {# Add Hire Me link - maybe make it stand out? #}
@@ -121,6 +118,8 @@
                 <span class="mx-2">|</span>
                 <a href="{% url 'portfolio:terms' %}" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Terms and Conditions</a>
                 <span class="mx-2">|</span>
+                <a href="{% url 'portfolio:colophon' %}" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">How I build this website (Colophon)</a>
+                <span class="mx-2">|</span>
                 Built by Julian, with <a href="https://www.djangoproject.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Django</a> & <a href="https://tailwindcss.com/" target="_blank" rel="noopener noreferrer" class="hover:text-white dark:hover:text-gray-300 transition-colors duration-200">Tailwind CSS</a>.</p>
         </div>
     </footer>
@@ -132,55 +131,10 @@
     {# --- End Prism.js JS --- #}
 
     {# --- Theme Toggle JS (keep as before) --- #}
-    <script>
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const themeToggleSunIcon = document.getElementById('theme-toggle-sun-icon');
-        const themeToggleMoonIcon = document.getElementById('theme-toggle-moon-icon');
-        const htmlElement = document.documentElement; // Still need this reference
 
-        // Function to update button icon based on current theme
-        function updateButtonIcon() {
-            if (htmlElement.classList.contains('dark')) {
-                themeToggleMoonIcon.classList.remove('hidden');
-                themeToggleSunIcon.classList.add('hidden');
-            } else {
-                themeToggleSunIcon.classList.remove('hidden');
-                themeToggleMoonIcon.classList.add('hidden');
-            }
-        }
-
-        // Update button icon on initial load based on class set by script in <head>
-        updateButtonIcon();
-
-        // Add event listener for the toggle button click
-        themeToggleBtn.addEventListener('click', function() {
-            // Toggle the class on <html>
-            htmlElement.classList.toggle('dark');
-
-            // Update localStorage
-            if (htmlElement.classList.contains('dark')) {
-                localStorage.setItem('color-theme', 'dark');
-            } else {
-                localStorage.setItem('color-theme', 'light');
-            }
-
-            // Update button icon
-            updateButtonIcon();
-        });
-
-        // Optional: Listen for system theme changes (if no user preference stored)
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-            if (!localStorage.getItem('color-theme')) {
-                if (event.matches) {
-                    htmlElement.classList.add('dark');
-                } else {
-                    htmlElement.classList.remove('dark');
-                }
-                updateButtonIcon(); // Update icon if system preference changes
-            }
-        });
-    </script>
-
-    {% block extra_scripts %}{% endblock %}
+    {% block extra_scripts %}
+    {{block.super}}
+    <script src="{% static 'portfolio/js/theme-toggle.js' %}" defer></script>
+    {% endblock %}
     </body>
 </html>

@@ -1,109 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deploying Django to Render.com Guide</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Apply Inter font */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Style for code blocks */
-        pre {
-            background-color: #1f2937; /* bg-gray-800 */
-            color: #f3f4f6; /* text-gray-100 */
-            padding: 1rem;
-            border-radius: 0.5rem; /* rounded-lg */
-            overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.875rem; /* text-sm */
-        }
-        code {
-             font-family: 'Courier New', Courier, monospace;
-             background-color: #e5e7eb; /* bg-gray-200 */
-             padding: 0.1rem 0.3rem;
-             border-radius: 0.25rem; /* rounded */
-             font-size: 0.875rem; /* text-sm */
-             color: #1f2937; /* text-gray-800 */
-        }
-        pre code {
-            background-color: transparent;
-            padding: 0;
-            border-radius: 0;
-            color: inherit;
-        }
-        /* Style for headings */
-        h1, h2, h3 {
-            font-weight: 600; /* font-semibold */
-        }
-    </style>
-</head>
-<body class="bg-gray-100 text-gray-800 leading-relaxed">
+{# demos/templates/demos/deploying_django_app_to_render.html #}
+{% extends 'portfolio/base.html' %}
+{% load static %}
 
-    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+{% block title %}{{ page_title|default:"Deploying Django to Render" }} - Portfolio{% endblock %}
+{% block meta_description %}{{ meta_description|default:"Step-by-step guide for deploying Django applications to the Render platform." }}{% endblock %}
+{% block meta_keywords %}{{ meta_keywords|default:"Django, Render, Deployment, Guide, PaaS, Python, Gunicorn, WhiteNoise, PostgreSQL" }}{% endblock %}
 
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-cyan-700 mb-2">Deploying Your Django Project to Render</h1>
-            <p class="text-lg text-gray-600">A step-by-step guide to get your Django app live on Render.com.</p>
-        </header>
+{% block content %}
+<div class="container mx-auto px-6 py-12">
 
-        <main class="bg-white p-6 md:p-8 rounded-lg shadow-md space-y-8">
+    <header class="mb-10 text-center">
+        {# Gradient heading #}
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 dark:from-cyan-400 dark:via-teal-400 dark:to-emerald-400 bg-clip-text text-transparent">
+            {{ page_title|default:"Deploying Django to Render" }}
+        </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400">A step-by-step guide to get your Django app live on Render.com.</p>
+    </header>
+
+    <main class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg dark:shadow-teal-900/20 transition-colors duration-300 ease-in-out">
+        {# Use prose for overall text formatting #}
+        <div class="prose prose-indigo dark:prose-invert lg:prose-lg max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-8">
 
             <section id="prerequisites">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-cyan-600">1. Prerequisites</h2>
-                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
-                    <li>A working Django project committed to a Git repository (GitHub, GitLab, or Bitbucket).</li>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">1. Prerequisites</h2>
+                <ul class="!list-disc !list-inside !space-y-2 !pl-4">
+                    <li>A working Django project committed to a Git repository (GitHub, GitLab, or Bitbucket). Render connects directly.</li>
                     <li>Python and Pip installed locally.</li>
-                    <li>A <a href="https://dashboard.render.com/register" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Render account</a> (Free tier available).</li>
+                    <li>A <a href="https://dashboard.render.com/register" target="_blank" rel="noopener noreferrer">Render account</a> (Free tier available).</li>
                     <li>Git installed locally.</li>
-                    <li>Gunicorn installed in your project: <code>pip install gunicorn</code></li>
+                    <li>Gunicorn installed in your project: <code>pip install gunicorn</code> (Add to `requirements.txt`).</li>
                 </ul>
             </section>
 
             <section id="config-files">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-cyan-600">2. Project Configuration</h2>
-                <p class="mb-4 text-gray-700">Ensure these files are present and correctly configured in your project repository.</p>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">2. Project Configuration</h2>
+                <p>Ensure these files are present and correctly configured in your project repository.</p>
 
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2">requirements.txt</h3>
-                    <p class="mb-2 text-gray-700">Lists all Python dependencies Render needs to install.</p>
-                    <p class="mb-2 text-gray-700">Generate or update it using pip:</p>
-                    <pre><code class="language-bash">pip freeze > requirements.txt</code></pre>
-                    <p class="mt-2 text-sm text-gray-600">Ensure your `requirements.txt` includes:</p>
-                    <ul class="list-disc list-inside space-y-1 pl-4 text-sm text-gray-600">
-                        <li><code>Django</code></li>
-                        <li><code>gunicorn</code> (Used for the Start Command)</li>
-                        <li><code>psycopg2-binary</code> (If using Render Postgres)</li>
-                        <li><code>dj-database-url</code> (Recommended for parsing database URLs)</li>
-                        <li><code>whitenoise</code> (For serving static files)</li>
-                        <li>Any other libraries your project uses.</li>
-                    </ul>
-                     <p class="mt-1 text-sm text-gray-600">Install recommended helpers: <code>pip install dj-database-url whitenoise</code></p>
-                </div>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="!text-xl !font-semibold !mb-2">requirements.txt</h3>
+                        <p class="!text-sm">Lists all Python dependencies Render needs to install.</p>
+                        <pre><code class="language-bash">pip freeze > requirements.txt</code></pre>
+                        <p class="!text-xs !mt-2">Ensure it includes:</p>
+                        <ul class="!list-disc !list-inside !space-y-1 !pl-4 !text-xs">
+                            <li><code>Django</code></li>
+                            <li><code>gunicorn</code> (Used for the Start Command)</li>
+                            <li><code>psycopg2-binary</code> (If using Render Postgres)</li>
+                            <li><code>dj-database-url</code> (Recommended for parsing database URLs)</li>
+                            <li><code>whitenoise[brotli]</code> (For serving static files efficiently)</li>
+                            <li>Any other libraries your project uses.</li>
+                        </ul>
+                        <p class="!text-xs !mt-1">Install helpers: <code>pip install dj-database-url "whitenoise[brotli]"</code></p>
+                    </div>
 
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2">runtime.txt (Optional but Recommended)</h3>
-                    <p class="mb-2 text-gray-700">Specifies the Python version Render should use. If omitted, Render uses a default version.</p>
-                    <pre><code class="language-text">python-3.10.4</code></pre>
-                    <p class="mt-2 text-sm text-gray-600">Replace `3.10.4` with a specific Python version supported by Render (check their docs). You can also set this via the `PYTHON_VERSION` environment variable in the Render dashboard.</p>
-                </div>
+                    <div>
+                        <h3 class="!text-xl !font-semibold !mb-2">runtime.txt (Optional but Recommended)</h3>
+                        <p class="!text-sm">Specifies the Python version Render should use. If omitted, Render uses a default. Can also be set via `PYTHON_VERSION` env var.</p>
+                        <pre><code class="language-text">python-3.11.5</code></pre> {# Example version #}
+                        <p class="!text-xs !mt-2">Replace with a specific Python version supported by Render.</p>
+                    </div>
 
-                 <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2">render.yaml (Optional "Infrastructure as Code")</h3>
-                    <p class="mb-2 text-gray-700">Alternatively, you can define your services (web server, database) in a `render.yaml` file in your project root. This allows version controlling your infrastructure setup. Configuration can also be done entirely via the Render web UI.</p>
-                    <pre><code class="language-yaml">
+                     <div>
+                        <h3 class="!text-xl !font-semibold !mb-2">render.yaml (Optional "Infrastructure as Code")</h3>
+                        <p class="!text-sm">Define your services (web server, database) declaratively in your project root. Configuration can also be done entirely via the Render web UI.</p>
+                        <pre><code class="language-yaml">
 # Example render.yaml
 databases:
   - name: mydjangodb # Name for your database service
     databaseName: mydjangodbname # Actual database name
     user: mydjangouser # Actual database user
     plan: free # Or a paid plan
-    region: oregon # Choose a region close to your users
+    region: oregon # Choose a region
 
 services:
   - type: web # Type of service: web server
@@ -111,8 +78,9 @@ services:
     runtime: python # Specify the runtime
     region: oregon # Should match database region if possible
     plan: free # Or a paid plan
+    branch: main # Branch to deploy from
     buildCommand: "./build.sh" # Script to run build steps (see below)
-    startCommand: "gunicorn your_project_name.wsgi" # Command to start the app
+    startCommand: "gunicorn your_project_name.wsgi:application" # Command to start the app
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -122,17 +90,21 @@ services:
         generateValue: true # Render generates a secure secret key
       - key: WEB_CONCURRENCY # Optional: Number of Gunicorn workers
         value: 4
-      - key: PYTHON_VERSION
-        value: 3.10.4 # Specify Python version here if not using runtime.txt
+      - key: PYTHON_VERSION # Specify Python version here if not using runtime.txt
+        value: 3.11.5
+      - key: DJANGO_SETTINGS_MODULE # Important for manage.py commands
+        value: 'your_project_name.settings'
+      # Add other env vars like DJANGO_DEBUG=False, security headers etc.
+      # - key: DJANGO_CSRF_COOKIE_SECURE
+      #   value: True
 </code></pre>
-                     <p class="mt-2 text-sm text-gray-600">Replace `your_project_name` with your Django project's name.</p>
-                     <p class="mt-1 text-sm text-gray-600">If using `render.yaml`, you might also need a `build.sh` script.</p>
-                </div>
+                         <p class="!text-xs !mt-2">Replace placeholders (`mydjangodb`, `mydjangodbname`, `mydjangouser`, `my-django-app`, `your_project_name`, Python version) with your actual values.</p>
+                    </div>
 
-                 <div class="mb-6">
-                    <h3 class="text-xl font-semibold mb-2">build.sh (Optional - used with `render.yaml`)</h3>
-                    <p class="mb-2 text-gray-700">A script to execute build commands, referenced in `render.yaml`.</p>
-                    <pre><code class="language-bash">
+                     <div>
+                        <h3 class="!text-xl !font-semibold !mb-2">build.sh (Optional - needed if using `render.yaml` buildCommand)</h3>
+                        <p class="!text-sm">A script to execute build commands, referenced in `render.yaml`.</p>
+                        <pre><code class="language-bash">
 #!/usr/bin/env bash
 # Exit on error
 set -o errexit
@@ -141,60 +113,67 @@ set -o errexit
 pip install -r requirements.txt
 
 # Collect static files
+# Ensure DJANGO_SETTINGS_MODULE is set if not already in the environment
 python manage.py collectstatic --no-input
 
-# Apply database migrations (optional here, can be run manually later)
-# python manage.py migrate
-                    </code></pre>
-                     <p class="mt-2 text-sm text-gray-600">Make this script executable: <code>chmod +x build.sh</code></p>
+# Apply database migrations (can be run here or later via Shell/Job)
+# python manage.py migrate --noinput
+                        </code></pre>
+                         <p class="!text-xs !mt-2">Make this script executable: <code>chmod +x build.sh</code></p>
+                    </div>
                 </div>
             </section>
 
             <section id="django-settings">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-cyan-600">3. Django Settings (`settings.py`)</h2>
-                <p class="mb-4 text-gray-700">Modify your project's `settings.py` file for Render compatibility.</p>
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">3. Django Settings (`settings.py`)</h2>
+                <p>Modify your project's `settings.py` file for Render compatibility.</p>
 
-                <ul class="list-disc list-inside space-y-4 pl-4 text-gray-700">
+                <ul class="!list-disc !list-inside !space-y-4 !pl-4">
                     <li>
-                        <strong>SECRET_KEY:</strong> Do not hardcode! Use environment variables provided by Render.
+                        <strong>SECRET_KEY:</strong> Load from environment variables. Render can generate one if using `render.yaml`.
                         <pre><code class="language-python">
 # settings.py
 import os
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
-# Render can generate this automatically if using render.yaml
-# Otherwise, set it manually in the Render dashboard environment variables.
-# Add a fallback for local development if needed:
-# SECRET_KEY = os.environ.get('SECRET_KEY', 'your-local-dev-secret-key')
+# Render sets SECRET_KEY env var (or generateValue in render.yaml)
+# Provide a fallback ONLY for local development if needed
+SECRET_KEY = os.environ.get('SECRET_KEY', 'local-dev-key-only')
                         </code></pre>
+                        <p class="!text-xs !mt-1">Ensure the fallback is never used in production.</p>
                     </li>
                     <li>
-                        <strong>DEBUG:</strong> Should be `False` in production. Read from environment variable.
+                        <strong>DEBUG:</strong> Set based on environment variable.
                         <pre><code class="language-python">
 # settings.py
-# Set DEBUG to False unless an environment variable is set to True
+# Defaults to False unless DEBUG env var is set to 'True'
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
                         </code></pre>
-                        <p class="text-sm text-gray-600">Do not set `DEBUG=True` in your Render environment variables for production.</p>
+                        <p class="!text-xs !mt-1">Do not set `DEBUG=True` in your Render environment.</p>
                     </li>
                     <li>
-                        <strong>ALLOWED_HOSTS:</strong> Allow Render's domain and your custom domain if applicable.
+                        <strong>ALLOWED_HOSTS:</strong> Use Render's provided hostname and your custom domain.
                         <pre><code class="language-python">
 # settings.py
 ALLOWED_HOSTS = []
 
+# Render automatically sets RENDER_EXTERNAL_HOSTNAME
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-# Add your custom domain if you have one
-# ALLOWED_HOSTS.append('www.yourdomain.com')
+# Add your custom domain if you configure one on Render
+# CUSTOM_DOMAIN = os.environ.get('CUSTOM_DOMAIN')
+# if CUSTOM_DOMAIN:
+#     ALLOWED_HOSTS.append(CUSTOM_DOMAIN)
 
-# Add localhost for local development if needed
-# if not RENDER_EXTERNAL_HOSTNAME:
-#     ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+# Allow local hosts only if DEBUG is True
+if DEBUG:
+   ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+
+if not DEBUG and not ALLOWED_HOSTS:
+    import warnings
+    warnings.warn("ALLOWED_HOSTS is empty in production environment!")
                         </code></pre>
-                        <p class="text-sm text-gray-600">Render automatically sets the `RENDER_EXTERNAL_HOSTNAME` environment variable.</p>
                     </li>
                     <li>
                         <strong>Database:</strong> Use `dj-database-url` to parse the `DATABASE_URL` environment variable set by Render.
@@ -205,95 +184,116 @@ import os
 
 DATABASES = {
     'default': dj_database_url.config(
-        # Default database URL provided by Render
+        # Render provides DATABASE_URL env var automatically when DB is linked
         default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600 # Recommended for pooling connections
+        conn_max_age=600, # Recommended for pooling connections
+        # Render's managed Postgres typically handles SSL correctly without ssl_require
     )
 }
-# Render's managed Postgres doesn't typically require ssl_require=True from the app side
+
+# Add fallback to SQLite for local development if DATABASE_URL isn't set
+if not DATABASES['default'].get('ENGINE'):
+     DATABASES['default'] = {
+         'ENGINE': 'django.db.backends.sqlite3',
+         'NAME': BASE_DIR / 'db.sqlite3', # Assuming BASE_DIR is defined
+     }
+                        </code></pre>
+                    </li>
+                     <li>
+                        <strong>Static Files (WhiteNoise):</strong> Configure WhiteNoise for serving static files.
+                        <pre><code class="language-python">
+# settings.py
+import os # Ensure os is imported
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Add WhiteNoise right after SecurityMiddleware
+    # ... other middleware ...
+]
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Directory for collectstatic
+
+# Use STORAGES for Django 4.2+
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+    # Keep default storage if not using external media storage
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+}
+# For Django < 4.2, use this instead of STORAGES["staticfiles"]:
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+                        </code></pre>
+                    </li>
+                    <li>
+                        **Security Middleware (Production):** Enable HTTPS settings. Render terminates SSL, so `SECURE_PROXY_SSL_HEADER` is needed.
+                        <pre><code class="language-python">
+# settings.py
+if not DEBUG: # Only apply these in production (DEBUG=False)
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = os.environ.get('DJANGO_SECURE_SSL_REDIRECT', 'True') == 'True' # Default True on Render
+    SESSION_COOKIE_SECURE = os.environ.get('DJANGO_SESSION_COOKIE_SECURE', 'True') == 'True' # Default True
+    CSRF_COOKIE_SECURE = os.environ.get('DJANGO_CSRF_COOKIE_SECURE', 'True') == 'True' # Default True
+    # Consider HSTS settings carefully
+    # SECURE_HSTS_SECONDS = int(os.environ.get('DJANGO_SECURE_HSTS_SECONDS', 31536000)) # Example: 1 year
+    # SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    # SECURE_HSTS_PRELOAD = True
                         </code></pre>
                     </li>
                 </ul>
             </section>
 
-             <section id="static-files">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-cyan-600">4. Static Files Handling (WhiteNoise)</h2>
-                 <p class="mb-4 text-gray-700">Configure Django and WhiteNoise to serve static files efficiently in production. This setup is identical to the Heroku guide.</p>
-                 <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700">
-                     <li>Ensure WhiteNoise is installed and in `requirements.txt`.</li>
-                     <li>
-                         Modify `settings.py`:
-                         <pre><code class="language-python">
-# settings.py
-
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    # Add WhiteNoiseMiddleware right after SecurityMiddleware
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    # ... other middleware ...
-]
-
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-# Directory where collectstatic will gather files for deployment
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Enable WhiteNoise storage for compression and caching
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-                         </code></pre>
-                     </li>
-                      <li>Ensure your Build Command runs `python manage.py collectstatic --no-input` (either in `build.sh` or the Render dashboard setting).</li>
-                 </ol>
-            </section>
-
             <section id="deployment">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-cyan-600">5. Deployment Steps (Using Render Dashboard)</h2>
-                <p class="mb-4 text-gray-700">These steps assume you are configuring via the Render web UI, not solely `render.yaml`.</p>
-                <ol class="list-decimal list-inside space-y-4 pl-4 text-gray-700">
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">4. Deployment Steps (Using Render Dashboard)</h2>
+                <p>These steps assume configuration via the Render web UI.</p>
+                <ol class="!list-decimal !list-inside !space-y-4 !pl-4">
                     <li>
-                        <strong>Push changes to Git:</strong> Ensure all configuration files (`requirements.txt`, etc.) and code changes are committed and pushed to your repository (GitHub/GitLab/Bitbucket).
+                        <strong>Push changes to Git:</strong> Ensure all config files and code are committed and pushed to GitHub/GitLab/Bitbucket.
                         <pre><code class="language-bash">
 git add .
-git commit -m "Configure project for Render deployment"
-git push origin main # Or your default branch
+git commit -m "Configure project for Render"
+git push origin main # Or your deployment branch
                         </code></pre>
                     </li>
                     <li>
-                        <strong>Create Database (Optional):</strong> In the Render Dashboard, go to "New" > "PostgreSQL". Configure the database details (name, region, plan). Copy the "Internal Connection String" - you'll need it if not linking automatically.
+                        <strong>Create Database (Optional):</strong> In Render Dashboard: "New" > "PostgreSQL". Configure details. Copy the "Internal Connection String" if needed later.
                     </li>
                     <li>
-                        <strong>Create Web Service:</strong> Go to "New" > "Web Service". Connect your Git repository.
+                        <strong>Create Web Service:</strong> In Render Dashboard: "New" > "Web Service". Connect your Git repository.
                     </li>
                      <li>
                         <strong>Configure Web Service Settings:</strong>
-                        <ul class="list-disc list-inside space-y-2 mt-2 pl-4 text-sm text-gray-600">
-                            <li><strong>Name:</strong> Give your service a name (e.g., `my-django-app`).</li>
-                            <li><strong>Region:</strong> Choose a region (ideally same as database).</li>
-                            <li><strong>Branch:</strong> Select the branch to deploy (e.g., `main`).</li>
-                            <li><strong>Root Directory:</strong> Leave blank if config files are in the root, otherwise specify path.</li>
-                            <li><strong>Runtime:</strong> Select `Python 3`.</li>
-                            <li><strong>Build Command:</strong> Set to `pip install -r requirements.txt && python manage.py collectstatic --no-input`. (Or use `build.sh` if preferred).</li>
-                            <li><strong>Start Command:</strong> Set to `gunicorn your_project_name.wsgi` (replace `your_project_name`).</li>
-                            <li><strong>Plan:</strong> Choose Free or a paid plan.</li>
+                        <ul class="!list-disc !list-inside !space-y-2 !mt-2 !pl-4 !text-sm">
+                            <li>**Name:** e.g., `my-django-app`.</li>
+                            <li>**Region:** Choose region (ideally same as DB).</li>
+                            <li>**Branch:** e.g., `main`.</li>
+                            <li>**Root Directory:** Leave blank if project root, else specify path.</li>
+                            <li>**Runtime:** `Python 3`.</li>
+                            <li>**Build Command:** `pip install -r requirements.txt && python manage.py collectstatic --no-input` (Or `./build.sh` if using `render.yaml`).</li>
+                            <li>**Start Command:** `gunicorn your_project_name.wsgi:application` (Replace `your_project_name`).</li>
+                            <li>**Plan:** Free or paid.</li>
                         </ul>
                     </li>
                      <li>
-                        <strong>Set Environment Variables:</strong> Under the "Environment" section for your Web Service:
-                         <ul class="list-disc list-inside space-y-2 mt-2 pl-4 text-sm text-gray-600">
-                            <li>Click "Add Environment Variable" or "Add Secret File".</li>
-                            <li>Add `SECRET_KEY`: Paste a securely generated key or let Render generate one if using `render.yaml`.</li>
-                            <li>Add `PYTHON_VERSION` (e.g., `3.10.4`) if you didn't use `runtime.txt`.</li>
-                            <li>Add `DATABASE_URL`: If you created a Render database, click "Add Environment Variable", use key `DATABASE_URL`, and for the value, select the database service you created from the dropdown (Render automatically links it). If using an external DB, paste its connection string.</li>
-                            <li>Add any other required variables (API keys, email settings, etc.).</li>
+                        <strong>Set Environment Variables:</strong> Under "Environment" for the Web Service:
+                         <ul class="!list-disc !list-inside !space-y-2 !mt-2 !pl-4 !text-sm">
+                            <li>Add `SECRET_KEY`: Paste a securely generated key.</li>
+                            <li>Add `PYTHON_VERSION` (e.g., `3.11.5`) if not using `runtime.txt`.</li>
+                            <li>Add `DATABASE_URL`: Click "Add Environment Variable", use key `DATABASE_URL`. For the value, select your Render database service from the dropdown (it links automatically).</li>
+                            <li>Add `DJANGO_SETTINGS_MODULE` (e.g., `your_project_name.settings`).</li>
+                            <li>Add other variables (e.g., `DJANGO_DEBUG=False`, HTTPS security flags if needed, email credentials).</li>
                          </ul>
                     </li>
                     <li>
-                        <strong>Create Service & Deploy:</strong> Click "Create Web Service". Render will clone your repo, run the build command, and then the start command. The first deploy might take a few minutes.
+                        <strong>Create Service & Deploy:</strong> Click "Create Web Service". Render clones, builds, and deploys.
                     </li>
                     <li>
-                        <strong>Run Migrations:</strong> Once the deployment is live, go to your Web Service page in Render and open the "Shell" tab. Run migrations:
+                        <strong>Run Migrations:</strong> Once live, go to the service's "Shell" tab in Render and run:
                         <pre><code class="language-bash">python manage.py migrate</code></pre>
-                        <p class="text-sm text-gray-600">Alternatively, configure migrations as a "Job" in Render to run after successful builds.</p>
+                        <p class="!text-xs !mt-1">Alternatively, configure migrations as a Render "Job".</p>
                     </li>
                      <li>
                         <strong>Create Superuser (Optional):</strong> In the Render Shell:
@@ -306,29 +306,28 @@ git push origin main # Or your default branch
             </section>
 
             <section id="troubleshooting">
-                <h2 class="text-2xl font-semibold border-b border-gray-300 pb-2 mb-4 text-cyan-600">6. Troubleshooting</h2>
-                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
+                <h2 class="!text-2xl !font-semibold !border-b !border-gray-300 dark:!border-gray-700 !pb-2 !mb-4 text-gray-800 dark:text-gray-100">5. Troubleshooting</h2>
+                <ul class="!list-disc !list-inside !space-y-2 !pl-4">
                     <li>
-                        <strong>Check Logs:</strong> Go to your Web Service page in Render and view the "Logs" tab for build and runtime errors.
+                        <strong>Check Logs:</strong> Use the "Logs" tab on your Render service page.
                     </li>
                      <li>
-                        <strong>Check Events:</strong> The "Events" tab shows deployment progress and errors.
+                        <strong>Check Events:</strong> Use the "Events" tab for deployment progress and errors.
                     </li>
-                    <li><strong>Build Failed:</strong> Often due to missing dependencies in `requirements.txt`, errors in `build.sh` or the Build Command, or syntax errors in your code. Check build logs.</li>
-                     <li><strong>Deploy Failed / App Not Starting:</strong> Check runtime logs. Common causes include incorrect Start Command (`gunicorn`), missing environment variables (`SECRET_KEY`, `DATABASE_URL`), failed database connection, or errors in `settings.py` or `wsgi.py`.</li>
-                    <li><strong>Static files not loading:</strong> Ensure WhiteNoise is configured, `collectstatic` runs successfully during the build, `STATIC_ROOT` is set, and `DEBUG` is `False`.</li>
-                    <li><strong>Database connection issues:</strong> Verify the `DATABASE_URL` environment variable is correctly set and pointing to your Render database (or external DB). Ensure `psycopg2-binary` is installed.</li>
-                    <li>Consult the <a href="https://render.com/docs/deploy-django" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Render Django Deployment Docs</a> for more details.</li>
+                    <li><strong>Build Failed:</strong> Check build logs. Often missing dependencies (`requirements.txt`), errors in Build Command/`build.sh`.</li>
+                     <li><strong>Deploy Failed / App Not Starting:</strong> Check runtime logs. Common causes: incorrect Start Command, missing env vars (`SECRET_KEY`, `DATABASE_URL`), DB connection failure, errors in `settings.py`/`wsgi.py`.</li>
+                    <li><strong>Static files not loading:</strong> Ensure WhiteNoise is configured, `collectstatic` ran in build, `STATIC_ROOT` correct, `DEBUG=False`.</li>
+                    <li><strong>Database connection issues:</strong> Verify `DATABASE_URL` is correctly linked/set. Check `psycopg2-binary` installed.</li>
+                    <li>Consult the <a href="https://render.com/docs/deploy-django" target="_blank" rel="noopener noreferrer">Render Django Deployment Docs</a>.</li>
                 </ul>
             </section>
 
-        </main>
+        </div>{# End Prose #}
+    </main>
 
-        <footer class="text-center text-gray-500 mt-8 text-sm">
-            <p>Happy Deploying on Render!</p>
-        </footer>
-
+    <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
     </div>
 
-</body>
-</html>
+</div>
+{% endblock %}

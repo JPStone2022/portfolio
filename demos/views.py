@@ -11,12 +11,14 @@ from .forms import ImageUploadForm, SentimentAnalysisForm, CSVUploadForm, Explai
 import numpy as np
 # Import Demo model
 from .models import Demo
+import logging # Import logging
 
+logger = logging.getLogger(__name__) # Define logger at module level
 # --- TensorFlow / Keras Imports (for Image Classification) ---
 try:
     import tensorflow as tf
     from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2, preprocess_input, decode_predictions
-    from tensorflow.keras.preprocessing import image
+    from tensorflow.keras.preprocessing import image as keras_image_utils
     
     TF_AVAILABLE = True
     try:
@@ -24,15 +26,23 @@ try:
         # Consider lazy loading if memory is a concern
         image_model = MobileNetV2(weights='imagenet')
         IMAGE_MODEL_LOADED = True
+        logger.info("MobileNetV2 model loaded successfully.")
     except Exception as e:
-        print(f"Error loading MobileNetV2 model: {e}")
+        logger.error(f"Error loading MobileNetV2 model: {e}", exc_info=True)
         IMAGE_MODEL_LOADED = False
         image_model = None # Define as None on error
 except ImportError:
-    print("TensorFlow not found. Image Classification demo disabled.")
+    logger.warning("TensorFlow not found. Image Classification demo disabled.")
     TF_AVAILABLE = False
     IMAGE_MODEL_LOADED = False
     image_model = None # Define as None if TF not available
+    # Define dummy classes/functions if TF not available to prevent NameErrors later if needed
+    class keras_image_utils: # Dummy class
+        @staticmethod
+        def load_img(*args, **kwargs): raise ImportError("TensorFlow not available")
+        @staticmethod
+        def img_to_array(*args, **kwargs): raise ImportError("TensorFlow not available")
+
 
 # --- Hugging Face Transformers Imports (for Sentiment Analysis) ---
 sentiment_pipeline = None # Initialize as None at module level
@@ -47,13 +57,13 @@ try:
         # Using a distilled version for potentially faster/smaller footprint
         sentiment_pipeline = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
         SENTIMENT_MODEL_LOADED = True
-        print("Sentiment analysis pipeline loaded successfully.") # Confirmation
+        logger.info("Sentiment analysis pipeline loaded successfully.")
     except Exception as e:
-        print(f"Error loading sentiment analysis pipeline: {e}")
+        logger.error(f"Error loading sentiment analysis pipeline: {e}", exc_info=True)
         # sentiment_pipeline remains None
         SENTIMENT_MODEL_LOADED = False
 except ImportError:
-    print("Transformers library not found. Install using 'pip install transformers[torch]' or 'transformers[tf]'. Sentiment Analysis demo disabled.")
+    logger.warning("Transformers library not found. Sentiment Analysis demo disabled.")
     # sentiment_pipeline remains None
     TRANSFORMERS_AVAILABLE = False
     SENTIMENT_MODEL_LOADED = False
@@ -67,7 +77,7 @@ try:
     matplotlib.use('Agg')
     DATA_LIBS_AVAILABLE = True
 except ImportError:
-    print("Pandas, Matplotlib, or Seaborn not found. Data Analysis demo disabled.")
+    logger.warning("Pandas, Matplotlib, or Seaborn not found. Data Analysis/Wrangling demos disabled.")
     DATA_LIBS_AVAILABLE = False
 
 # --- Scikit-learn Imports (for XAI Demo) ---
@@ -85,15 +95,15 @@ try:
         decision_tree_model = DecisionTreeClassifier(max_depth=3, random_state=42) # Limit depth for simplicity
         decision_tree_model.fit(X_iris, y_iris)
         TREE_MODEL_LOADED = True
-        print("Decision Tree model trained successfully.")
+        logger.info("Decision Tree model trained successfully.")
     except Exception as e:
-        print(f"Error loading Iris data or training Decision Tree: {e}")
+        logger.error(f"Error loading Iris data or training Decision Tree: {e}", exc_info=True)
         TREE_MODEL_LOADED = False
         decision_tree_model = None
         iris = None
 
 except ImportError:
-    print("Scikit-learn not found. Explainable AI demo disabled.")
+    logger.warning("Scikit-learn not found. Explainable AI demo disabled.")
     SKLEARN_AVAILABLE = False
     TREE_MODEL_LOADED = False
     decision_tree_model = None
@@ -104,14 +114,16 @@ try:
     import statsmodels.formula.api as smf
     STATSMODELS_AVAILABLE = True
 except ImportError:
-    print("Statsmodels not found. Causal Inference demo disabled."); STATSMODELS_AVAILABLE = False
+    logger.warning("Statsmodels not found. Causal Inference demo disabled.")
+    STATSMODELS_AVAILABLE = False
 
 # SciPy (for Optimization Demo)
 try:
     from scipy import optimize
     SCIPY_AVAILABLE = True
 except ImportError:
-    print("SciPy not found. Optimization demo disabled."); SCIPY_AVAILABLE = False
+    logger.warning("SciPy not found. Optimization demo disabled.")
+    SCIPY_AVAILABLE = False
 
 
 # --- All Demos List View (NEW) ---
@@ -128,49 +140,115 @@ def all_demos_view(request):
 
 
 
-# --- Image Classification View ---
+# # --- Image Classification View ---
+# def image_classification_view(request):
+#     form = ImageUploadForm()
+#     prediction_results = None
+#     uploaded_image_url = None
+#     error_message = None
+#     uploaded_image_path = None
+
+#     if not TF_AVAILABLE: error_message = "TensorFlow library is not installed."
+#     elif not IMAGE_MODEL_LOADED: error_message = "Image classification model could not be loaded."
+
+#     if request.method == 'POST' and TF_AVAILABLE and IMAGE_MODEL_LOADED:
+#         form = ImageUploadForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             uploaded_image = form.cleaned_data['image']
+#             temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp_demos')
+#             os.makedirs(temp_dir, exist_ok=True)
+#             fs = FileSystemStorage(location=temp_dir)
+#             safe_filename = fs.get_valid_name(uploaded_image.name)
+#             filename = fs.save(safe_filename, uploaded_image)
+#             uploaded_image_path = fs.path(filename)
+#             uploaded_image_url = os.path.join(settings.MEDIA_URL, 'temp_demos', filename).replace("\\", "/")
+
+#             try:
+#                 img = image.load_img(uploaded_image_path, target_size=(224, 224))
+#                 img_array = image.img_to_array(img)
+#                 img_array_expanded = np.expand_dims(img_array, axis=0)
+#                 img_preprocessed = preprocess_input(img_array_expanded)
+#                 predictions = image_model.predict(img_preprocessed) # Use image_model
+#                 decoded = decode_predictions(predictions, top=3)[0]
+#                 prediction_results = [{'label': label.replace('_', ' '), 'probability': float(prob) * 100} for (_, label, prob) in decoded]
+#             except Exception as e:
+#                 error_message = f"Error processing image or making prediction: {e}"
+#                 if uploaded_image_path and os.path.exists(uploaded_image_path):
+#                     try: os.remove(uploaded_image_path)
+#                     except OSError as oe: print(f"Error removing temp file {uploaded_image_path}: {oe}")
+#                 uploaded_image_url = None
+#         else: error_message = "Invalid form submission. Please upload a valid image."
+
+#     context = { 'form': form, 'prediction_results': prediction_results, 'uploaded_image_url': uploaded_image_url, 'error_message': error_message, 'page_title': 'Image Classification Demo', }
+#     return render(request, 'demos/image_classification_demo.html', context=context)
+
+
+# --- Image Classification View (MODIFIED) ---
 def image_classification_view(request):
     form = ImageUploadForm()
     prediction_results = None
-    uploaded_image_url = None
+    uploaded_image_base64 = None # Store image as base64 for display
     error_message = None
-    uploaded_image_path = None
 
-    if not TF_AVAILABLE: error_message = "TensorFlow library is not installed."
-    elif not IMAGE_MODEL_LOADED: error_message = "Image classification model could not be loaded."
+    if not TF_AVAILABLE:
+        error_message = "TensorFlow library is not installed. This demo cannot function."
+    elif not IMAGE_MODEL_LOADED:
+        error_message = "Image classification model could not be loaded. Please check server logs."
 
     if request.method == 'POST' and TF_AVAILABLE and IMAGE_MODEL_LOADED:
         form = ImageUploadForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded_image = form.cleaned_data['image']
-            temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp_demos')
-            os.makedirs(temp_dir, exist_ok=True)
-            fs = FileSystemStorage(location=temp_dir)
-            safe_filename = fs.get_valid_name(uploaded_image.name)
-            filename = fs.save(safe_filename, uploaded_image)
-            uploaded_image_path = fs.path(filename)
-            uploaded_image_url = os.path.join(settings.MEDIA_URL, 'temp_demos', filename).replace("\\", "/")
 
+            # --- Process Image In-Memory ---
             try:
-                img = image.load_img(uploaded_image_path, target_size=(224, 224))
-                img_array = image.img_to_array(img)
+                # 1. Read image content into memory
+                image_bytes = uploaded_image.read()
+
+                # 2. Load image using Keras utils from bytes
+                # Use io.BytesIO to treat the bytes as a file
+                img = keras_image_utils.load_img(io.BytesIO(image_bytes), target_size=(224, 224))
+
+                # 3. Prepare for display (convert original bytes to base64)
+                # Determine image format (optional, but good for data URI)
+                image_format = uploaded_image.content_type.split('/')[-1] # e.g., 'jpeg', 'png'
+                uploaded_image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+                # Prepend the data URI scheme
+                uploaded_image_base64 = f"data:{uploaded_image.content_type};base64,{uploaded_image_base64}"
+
+                # 4. Preprocess for prediction
+                img_array = keras_image_utils.img_to_array(img)
                 img_array_expanded = np.expand_dims(img_array, axis=0)
                 img_preprocessed = preprocess_input(img_array_expanded)
-                predictions = image_model.predict(img_preprocessed) # Use image_model
+
+                # 5. Predict
+                predictions = image_model.predict(img_preprocessed)
                 decoded = decode_predictions(predictions, top=3)[0]
                 prediction_results = [{'label': label.replace('_', ' '), 'probability': float(prob) * 100} for (_, label, prob) in decoded]
+
+            except ImportError:
+                 # This might happen if the dummy keras_image_utils is used
+                 error_message = "TensorFlow library is not available for image processing."
+                 logger.error("Attempted image processing without TensorFlow.")
             except Exception as e:
                 error_message = f"Error processing image or making prediction: {e}"
-                if uploaded_image_path and os.path.exists(uploaded_image_path):
-                    try: os.remove(uploaded_image_path)
-                    except OSError as oe: print(f"Error removing temp file {uploaded_image_path}: {oe}")
-                uploaded_image_url = None
-        else: error_message = "Invalid form submission. Please upload a valid image."
+                logger.error(f"Image Classification Error: {e}", exc_info=True)
+                uploaded_image_base64 = None # Clear image on error
+            # --- End In-Memory Processing ---
 
-    context = { 'form': form, 'prediction_results': prediction_results, 'uploaded_image_url': uploaded_image_url, 'error_message': error_message, 'page_title': 'Image Classification Demo', }
+        else:
+            error_message = "Invalid form submission. Please upload a valid image file."
+
+    context = {
+        'form': form,
+        'prediction_results': prediction_results,
+        'uploaded_image_url': uploaded_image_base64, # Pass base64 data URI instead of file URL
+        'error_message': error_message,
+        'page_title': 'Image Classification Demo',
+        'meta_description': "Upload an image and see predictions from the MobileNetV2 model.",
+        'meta_keywords': "image classification, deep learning, MobileNetV2, TensorFlow, Keras, demo",
+    }
     return render(request, 'demos/image_classification_demo.html', context=context)
-
-
 
 # --- Sentiment Analysis View (NEW) ---
 def sentiment_analysis_view(request):
@@ -1000,4 +1078,15 @@ def drf_concepts_demo_view(request):
         'meta_keywords': "Django REST Framework, DRF, API, REST API, machine learning, deployment, Python, Django",
     }
     return render(request, 'demos/drf_concepts_demo.html', context=context)
+
+
+# --- Colour Theme Demo View (NEW) ---
+def colour_theme_demo_view(request):
+    """ Renders the page explaining Django REST Framework for APIs. """
+    context = {
+        'page_title': 'Demo: Colour Theme Switcher Demo',
+        'meta_description': "Demonstration of dynamic theme switching using CSS and JavaScript.",
+        'meta_keywords': "theme switcher, css themes, javascript, dark mode, light mode, web design demo",
+    }
+    return render(request, 'demos/colour_theme_demo.html', context=context)
 

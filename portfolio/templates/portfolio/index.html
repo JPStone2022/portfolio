@@ -3,7 +3,7 @@
 {% load static %}
 {% load humanize %}
 
-{% block title %}{{ page_title|default:"Deep Learning Portfolio - Home" }}{% endblock %}
+{% block title %}{{ page_title|default:"Machine Learning, Data Science and AI Development Portfolio Julian Stone" }}{% endblock %}
 
 {% block content %}
     <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20 md:py-32">
@@ -50,7 +50,7 @@
                  <!-- {# Optional: Add profile pic here #}
                  <div class="mb-4"> {# Add margin below image #}
                      <img src="{% static 'portfolio/images/profile_small.jpg' %}" {# Use a smaller image for homepage #}
-                          alt="Your Name"
+                          alt="Julian Stone"
                           class="w-32 h-32 rounded-full mx-auto shadow-lg border-4 border-white dark:border-gray-700"
                           onerror="this.onerror=null; this.src='https://placehold.co/128x128/E0E0E0/BDBDBD?text=Profile';">
                           {# Make sure profile_small.jpg exists or update path #}
@@ -371,4 +371,6 @@
 {% endblock %}
 
 {% block extra_scripts %}
+    {{ block.super }} {# This is crucial! It includes scripts from base.html's extra_scripts block #}
+
 {% endblock %}

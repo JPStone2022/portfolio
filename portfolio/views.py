@@ -3,6 +3,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
+import logging
+logger = logging.getLogger(__name__)
 from .models import Project, Certificate
 from topics.models import ProjectTopic
 # Import models from other apps
@@ -13,8 +15,8 @@ except ImportError:
 try:
     from skills.models import Skill, SkillCategory
 except ImportError:
-    Skill = None
-    SkillCategory = None
+    Skill, SkillCategory = None, None
+
 try: from recommendations.models import RecommendedProduct # Import recommendations model
 except ImportError: RecommendedProduct = None
 try: from demos.models import Demo # Import Demo model
@@ -28,10 +30,12 @@ from django.db.models import Q # Import Q object for complex lookups
 # Import utility for truncating words
 from django.utils.text import Truncator
 
+FEATURED_ITEMS_COUNT = 6
+
 def index(request):
     """ View function for the home page. """
-    featured_projects = Project.objects.all()[:6]
-    featured_certificates = Certificate.objects.all()[:6]
+    featured_projects = Project.objects.order_by('-date_created')[:FEATURED_ITEMS_COUNT]
+    featured_certificates = Certificate.objects.order_by('-date_issued')[:FEATURED_ITEMS_COUNT]
     latest_blog_post = None
     if BlogPost:
         try:
@@ -40,34 +44,34 @@ def index(request):
                 published_date__lte=timezone.now()
             ).order_by('-published_date').first()
         except Exception as e:
-            print(f"Could not query BlogPost: {e}")
-            pass
+            logging.getLogger(__name__); logger.error(f"Could not query BlogPost: {e}")
 
     # Fetch featured recommendations
     featured_recommendations = None
     if RecommendedProduct:
         try:
-            featured_recommendations = RecommendedProduct.objects.all()[:3] # Get top 3 based on order
-        except Exception as e: print(f"Could not query RecommendedProduct: {e}"); pass
+            featured_recommendations = RecommendedProduct.objects.order_by('order')[:FEATURED_ITEMS_COUNT] # Get top 3 based on order
+        except Exception as e:
+            logging.getLogger(__name__); logger.error(f"Could not query Recommendations: {e}")
 
     # Fetch featured topics (e.g., top 3 based on ordering)
-    featured_topics = ProjectTopic.objects.all()[:10]
+    featured_topics = ProjectTopic.objects.order_by('order')[:FEATURED_ITEMS_COUNT] 
 
     # Fetch featured skills (e.g., top 6 based on ordering)
     featured_skills = None
     if Skill:
         try:
-            featured_skills = Skill.objects.all()[:10] # Get top 6 based on default ordering
+            featured_skills = Skill.objects.order_by('order')[:FEATURED_ITEMS_COUNT] # Get top 6 based on default ordering
         except Exception as e:
-            print(f"Could not query Skill: {e}"); pass
+            logging.getLogger(__name__); logger.error(f"Could not query Skill: {e}")
 
     # Fetch featured demos
     featured_demos = None
     if Demo:
         try:
-            featured_demos = Demo.objects.filter(is_featured=True).order_by('order')[:6] # Get top 3 featured
+            featured_demos = Demo.objects.filter(is_featured=True).order_by('order')[:FEATURED_ITEMS_COUNT] # Get top 3 featured
         except Exception as e:
-            print(f"Could not query Demo: {e}"); pass
+            logging.getLogger(__name__); logger.error(f"Could not query Demo: {e}")
 
     context = {
         'page_title': 'My Deep Learning Portfolio',
@@ -171,7 +175,7 @@ def contact_view(request):
                           settings.DEFAULT_FROM_EMAIL, [recipient_email], fail_silently=False)
                 messages.success(request, 'Message sent successfully! Thank you.')
             except Exception as e:
-                print(f"Email error: {e}"); messages.error(request, 'Sorry, error sending message.')
+                logger.error(f"Email sending failed: {e}")
             return redirect(reverse('portfolio:contact'))
         else: messages.error(request, 'Please correct the errors below.')
     else: form = ContactForm()
@@ -183,8 +187,8 @@ def about_me_view(request):
     """ Renders the detailed About Me page. """
     context = {
         'page_title': 'About Me',
-        'meta_description': "Learn more about [Your Name], a deep learning engineer specializing in [mention key areas like CV/NLP]. Discover my background, experience, and technical skills.",
-        'meta_keywords': "about me, deep learning engineer, AI developer, machine learning, background, experience, skills, [Your Name]",
+        'meta_description': "Learn more about Julian Stone, a deep learning engineer specializing in [mention key areas like CV/NLP]. Discover my background, experience, and technical skills.",
+        'meta_keywords': "about me, deep learning engineer, AI developer, machine learning, background, experience, skills, Julian Stone",
     }
     return render(request, 'portfolio/about_me_page.html', context=context)
 
@@ -193,8 +197,8 @@ def cv_view(request):
     """ Renders the CV/Resume download page. """
     context = {
         'page_title': 'CV / Resume',
-        'meta_description': "View or download the CV / Resume for [Your Name], detailing experience in deep learning, AI, and software development.",
-        'meta_keywords': "cv, resume, curriculum vitae, deep learning, AI, machine learning, portfolio, download, [Your Name]",
+        'meta_description': "View or download the CV / Resume for Julian Stone, detailing experience in deep learning, AI, and software development.",
+        'meta_keywords': "cv, resume, curriculum vitae, deep learning, AI, machine learning, portfolio, download, Julian Stone",
     }
     return render(request, 'portfolio/cv_page.html', context=context)
 
@@ -203,7 +207,10 @@ def search_results_view(request):
     """ Handles searching across projects, skills, and topics. """
     query = request.GET.get('q', '')
     project_results = Project.objects.none()
-    skill_results = Skill.objects.none() if Skill else Skill.objects.none()
+    skill_results = None # Initialize as None
+    if Skill: # Only try to query if the Skill model was imported
+        skill_query = ( Q(name__icontains=query) | Q(description__icontains=query) )
+        skill_results = Skill.objects.filter(skill_query).distinct()
     topic_results = ProjectTopic.objects.none() # Initialize empty queryset for topics
 
     if query:
@@ -231,7 +238,7 @@ def search_results_view(request):
         'skills': skill_results,
         'topics': topic_results, # Add topics to context
         'page_title': f'Search Results for "{query}"' if query else 'Search',
-        'meta_description': f"Search results for '{query}' on [Your Name]'s deep learning portfolio.",
+        'meta_description': f"Search results for '{query}' on Julian Stone's deep learning portfolio.",
         'meta_keywords': f"search results, {query}, deep learning, AI, portfolio, topic, skill",
     }
     return render(request, 'portfolio/search_results.html', context=context)
@@ -243,7 +250,7 @@ def hire_me_view(request):
         'page_title': 'Hire Me',
         # Add specific meta tags if desired
         'meta_description': "Looking to hire a Deep Learning Engineer? Learn about my skills, availability, and the types of opportunities I'm seeking.",
-        'meta_keywords': "hire me, deep learning engineer, machine learning engineer, AI developer, freelance AI, available for hire, [Your Name]",
+        'meta_keywords': "hire me, deep learning engineer, machine learning engineer, AI developer, freelance AI, available for hire, Julian Stone",
     }
     # You could potentially add context here about specific services if you model them
     return render(request, 'portfolio/hire_me_page.html', context=context)
@@ -253,7 +260,9 @@ def privacy_policy_view(request):
     """ Renders the Privacy Policy page. """
     context = {
         'page_title': 'Privacy Policy',
-    }
+        'meta_description': "Privacy policy for Julian Stone's portfolio website, detailing how user data is handled.",
+        'meta_keywords': "privacy policy, data protection, user data, portfolio, Julian Stone",
+}
     return render(request, 'portfolio/privacy_policy.html', context)
 
 # --- Colophon View (NEW) ---
@@ -272,6 +281,9 @@ def accessibility_statement_view(request):
     """ Renders the Accessibility Statement page. """
     context = {
         'page_title': 'Accessibility Statement',
+        'meta_description': "Accessibility Statement for Julian Stone's portfolio website, detailing how user data is handled.",
+        'meta_keywords': "accessibility statement, data protection, user data, portfolio, Julian Stone",
+
     }
     return render(request, 'portfolio/accessibility_statement.html', context=context)
 
@@ -281,6 +293,9 @@ def terms_and_conditions_view(request):
     """ Renders the Terms and Conditions page. """
     context = {
         'page_title': 'Terms and Conditions',
+        'meta_description': "Terms and Conditions for Julian Stone's portfolio website, detailing how user data is handled.",
+        'meta_keywords': "terms and conditions, data protection, user data, portfolio, Julian Stone",
+
     }
     return render(request, 'portfolio/terms_and_conditions.html', context=context)
 
