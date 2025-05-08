@@ -75,4 +75,6 @@ urlpatterns = [
     path('django-deployment-options/', views.deploying_options_view, name='deploying_django_options'),
     # Add path for Ethical Hacking concepts demo explanation page
     path('django-deployment-comparisons/', views.deploying_comparisons_view, name='deploying_django_comparisons'),
+    # Add path for DRF concepts demo explanation page
+    path('drf-concepts/', views.drf_concepts_demo_view, name='drf_concepts_demo'),
 ]

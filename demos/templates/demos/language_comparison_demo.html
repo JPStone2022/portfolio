@@ -15,8 +15,9 @@
         {{ page_title }}
     </h1>
     <p class="text-center text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
-        While Python is the undisputed leader, the ecosystem for Machine Learning, AI, and Data Science involves several programming languages, each with its own strengths and typical use cases. Understanding their roles provides a broader perspective.
-    </p>
+        A Comparison of Strengths, Weaknesses, and Use Cases: While Python is the undisputed leader, the ecosystem for Machine Learning, AI, and Data Science involves several programming languages, each with its own strengths and typical use cases. Understanding their roles provides a broader perspective.<br>
+        This guide compares the most prominent languages used in ML, Data Science, and AI development.
+        </p>
 
     {# Main content area #}
     <div class="max-w-5xl mx-auto space-y-8">
@@ -57,6 +58,7 @@ model.fit(X_train, y_train)
 accuracy = model.score(X_test, y_test)
 print(f"Model Accuracy: {accuracy}")
             </code></pre>
+            <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><strong>Why Preferred:</strong> The sheer breadth and depth of its ML/DS libraries, combined with ease of use, make it incredibly productive for researchers and engineers alike.</h4>
         </section>
 
         {# --- R Language --- #}
@@ -95,6 +97,7 @@ facet_wrap(~Species) + # Separate plots by species
 labs(title = "Iris Sepal Dimensions") +
 theme_bw() # Apply theme
             </code></pre>
+            <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><strong>Why Used:</strong> Ideal for complex statistical modeling, data exploration, and high-quality visualization, particularly in research settings</h4>
         </section>
 
         {# --- SQL --- #}
@@ -128,6 +131,7 @@ COUNT(*) >= 5
 ORDER BY
 average_price DESC;
             </code></pre>
+            <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><strong>Why Used:</strong> Indispensable for accessing and preparing the data that fuels ML models.</h4>
         </section>
 
         {# --- Scala / Java --- #}
@@ -150,6 +154,7 @@ average_price DESC;
 //               .count()
 // println(s"Number of UK records with value > 100: $count")
              </code></pre>
+             <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><strong>Why Used:</strong> Often chosen for deploying ML models within established enterprise Java environments and for performance-sensitive big data tasks.</h4>
         </section>
 
         {# --- C++ / C# --- #}
@@ -185,6 +190,7 @@ average_price DESC;
 // auto results = processOutput(outputTensor);
 // std::cout << "Prediction: " << results << std::endl;
              </code></pre>
+             <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"><strong>Why Used:</strong> For performance-critical backend components of ML systems, game AI, robotics, and environments where speed and resource efficiency are paramount.</h4>
         </section>
 
          {# --- Others (JavaScript, Julia, Ruby etc.) --- #}
@@ -195,17 +201,48 @@ average_price DESC;
                     <li><strong>JavaScript:</strong> Primarily for front-end visualization (D3.js, Plotly.js) and in-browser ML (TensorFlow.js).</li>
                     <li><strong>Julia:</strong> Designed for high-performance technical computing, gaining traction in scientific ML and specific research areas.</li>
                     <li><strong>Ruby/PHP:</strong> Generally used for web development; ML integration typically involves calling Python-based APIs.</li>
+                    <li><strong>Swift:</strong> Used for iOS/macOS development, with libraries like Core ML enabling on-device machine learning.</li>
                 </ul>
                 <p>While Python and R are the main languages for day-to-day data science and ML development, understanding the roles of SQL, Scala/Java, and occasionally C++/Go is important for working within larger systems, big data environments, or performance-critical applications.</p>
             </div>
         </section>
 
+        {# --- Others (JavaScript, Julia, Ruby etc.) --- #}
+        <section>
+           <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Why Python Often Wins</h2>
+           <p class="mb-4 text-gray-700">Python's dominance isn't just about the language itself, but the synergy of several factors:</p>
+           <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+               <ul>
+                <li><strong>Unmatched Libraries:</strong> The comprehensive, well-maintained, and cutting-edge libraries for data manipulation (Pandas), numerical computing (NumPy), general ML (Scikit-learn), and deep learning (TensorFlow, PyTorch) form an unbeatable toolkit.</li>
+                <li><strong>Productivity:</strong> Rapid development cycles allow researchers and engineers to iterate quickly on ideas and models.</li>
+                <li><strong>Community & Learning Resources:</strong> Easy to find help, tutorials, and pre-existing code.</li>
+                <li><strong>"Glue" Language:</strong> Python excels at connecting different components, including libraries written in C/C++ for performance.</li>
+                <li><strong>Full-Stack Capability:</strong> Can handle tasks from data ingestion and cleaning to model training, evaluation, and deployment via web frameworks.</li>
+            </ul>
+           </div>
+       </section>
+
+       {# --- Others (JavaScript, Julia, Ruby etc.) --- #}
+       <section>
+          <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-3">Language Synergy</h2>
+          <p class="text-gray-700">It's common for different languages to be used together in a larger ML system:</p>
+          <div class="prose prose-sm prose-indigo dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+              <ul>
+                <li><strong>SQL</strong> retrieves and preprocesses data from databases.</li>
+                <li><strong>Python</strong> is used for exploratory analysis, model training, and building APIs.</li>
+                <li><strong>C++</strong> might be used for performance-critical inference engines or algorithms called by Python.</li>
+                <li><strong>Java/Scala</strong> might be used for integrating models into large enterprise systems or big data pipelines (Spark).</li>
+                <li><strong>JavaScript</strong> might be used to run models in the browser (TensorFlow.js).</li>
+            </ul>
+          </div>
+      </section>
+
     </div>
-
+    <div class="text-center mt-12">
+        <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
+    </div>
 </div>
 
- <div class="text-center mt-12">
-    <a href="{% url 'portfolio:index' %}" class="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 rounded">&larr; Back to Home</a>
-</div>
+
 </div>
 {% endblock %}

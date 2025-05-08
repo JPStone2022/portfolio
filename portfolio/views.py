@@ -276,3 +276,12 @@ def accessibility_statement_view(request):
     return render(request, 'portfolio/accessibility_statement.html', context=context)
 
 
+# --- Terms and Conditions View (NEW) ---
+def terms_and_conditions_view(request):
+    """ Renders the Terms and Conditions page. """
+    context = {
+        'page_title': 'Terms and Conditions',
+    }
+    return render(request, 'portfolio/terms_and_conditions.html', context=context)
+
+

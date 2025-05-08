@@ -990,3 +990,14 @@ def deploying_comparisons_view(request):
     }
     return render(request, 'demos/deploying_django_comparisons.html', context=context)
 
+
+# --- DRF Concepts Demo View (NEW) ---
+def drf_concepts_demo_view(request):
+    """ Renders the page explaining Django REST Framework for APIs. """
+    context = {
+        'page_title': 'Demo: Django REST Framework (DRF) for APIs',
+        'meta_description': "Understanding how Django REST Framework (DRF) builds powerful Web APIs, often used to serve machine learning model predictions or data science results.",
+        'meta_keywords': "Django REST Framework, DRF, API, REST API, machine learning, deployment, Python, Django",
+    }
+    return render(request, 'demos/drf_concepts_demo.html', context=context)
+
